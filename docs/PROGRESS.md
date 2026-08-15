@@ -29,21 +29,22 @@ every single iteration.
 
 ## My open list (must be empty before hand-off)
 
-Iteration 10 closed: sash floating, cloth value, chest medallion, belt wrap, throat
-cowl, cloth blotching, seam visibility. Still open:
+Iterations 10–11 closed: floating sash, cloth value, chest medallion, belt wrap,
+throat cowl, cloth blotching, seam visibility, front placket, rolled cuffs, shoulder
+yoke, closed stance, tail no longer showing between the legs, maroon brow band,
+horn band. Still open — **these must be fixed before the next hand-off**:
 
-1. **Shoulder yoke seam barely reads** and only on one side. The reference shows a
-   clear sleeve/torso seam over each deltoid. Strengthen the roll in `clothing.js`
-   (the `capsule` yoke) and/or the shader seam term in `CLOTH_FRAG`.
-2. **No front opening on the tunic.** The reference has a vertical slot down the chest
-   centre with the lighter undershirt behind it and two hem edges.
-3. **Horn is thicker and paler than the reference's** and dominates the profile.
-   Just thinned; re-check. The reference horn also carries a metal band near its
-   midpoint (ours has a dark ring, not a metal cuff).
-4. **Sleeve cuffs read as pale bracelets**, not rolled sleeve ends.
-5. Hands: fingers still fairly uniform; claws could seat 1-2 mm deeper.
-6. Verify the throat cowl reads at normal viewing distance (it is hidden in the
-   torso crop framing — shoot it directly).
+1. **The muzzle is still lighter and yellower than the reference's dark olive**,
+   especially the lower half and chin. Closer than it was but not converged. Keep
+   pulling `warmOl`/`belly` down in `SKIN_FRAG` and re-measure against the reference
+   crop rather than eyeballing.
+2. **The jaw and lower cheek are smooth** where the reference is plated and textured.
+   The `crownZone` plate mask covers the cranium only — extend a coarser plate zone
+   down over the jaw.
+3. **The reference horn carries a metal cuff** near its midpoint; ours is a painted
+   dark ring. Consider a small swept torus in a metal material.
+4. Hands: fingers still fairly uniform in length; claws could seat 1–2 mm deeper.
+5. Legs/feet still simple (plausibility only — the references never show them).
 
 ## Reference numbers to converge (from critic round 3)
 
