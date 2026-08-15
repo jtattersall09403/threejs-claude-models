@@ -15,7 +15,7 @@ import { TAIL_SPINE } from '../rig/skeleton.js';
 
 export const EYE = {
   c: [0.0468, 1.6975, 0.0688],   // mirrored on x
-  r: 0.0163,   // The ball stays a decent size; what stops a free sphere edge showing
+  r: 0.0192,   // The ball stays a decent size; what stops a free sphere edge showing
                // is the APERTURE being clearly smaller than the ball, below. Shrinking
                // and sinking the ball instead just makes the eye vanish.
   gaze: [0.055, 0.0, 0.9985],    // near-forward. At 0.16 outward the iris sat off to
@@ -210,15 +210,18 @@ export function buildHeadField() {
   for (const s of [1, -1]) {
         // A LENS-shaped cut, not a round crater: the skin left above and below forms
     // the upper and lower lids, so the eyeball is clipped the way a real eye is.
+    // Bigger. Measured on the front reference the eye opening is about a fifth of the
+    // head's width; ours was under an eighth and read as a bean rather than as the
+    // large forward-facing almond that carries the whole expression.
     f.sub(ellipsoid([s * EYE.c[0], EYE.c[1] + 0.0015, EYE.c[2] + 0.008],
-      [0.0226, 0.0128, 0.0252], { k: 0.006 }));
+      [0.0262, 0.0142, 0.0284], { k: 0.006 }));
     // Lid rims above and below, so the opening reads as lidded rather than as a
     // crater. The upper lid is built from two lobes at different heights — outer
     // high, inner low — so the eye slants down toward the snout. The references'
     // whole expression comes from that angle; a level lid reads placid.
-    f.add(ellipsoid([s * 0.0592, 1.7192, 0.0530], [0.0165, 0.0068, 0.0210], { k: 0.007 }));
-    f.add(ellipsoid([s * 0.0388, 1.7098, 0.0672], [0.0180, 0.0066, 0.0215], { k: 0.007 }));
-    f.add(ellipsoid([s * 0.0482, 1.6798, 0.0630], [0.0250, 0.0058, 0.0225], { k: 0.007 }));
+    f.add(ellipsoid([s * 0.0604, 1.7212, 0.0530], [0.0180, 0.0070, 0.0224], { k: 0.007 }));
+    f.add(ellipsoid([s * 0.0382, 1.7118, 0.0680], [0.0194, 0.0068, 0.0228], { k: 0.007 }));
+    f.add(ellipsoid([s * 0.0482, 1.6768, 0.0636], [0.0268, 0.0060, 0.0240], { k: 0.007 }));
   }
   // mouth crease — rises toward the jaw hinge like a real reptile jaw line
   // x-extent follows the muzzle's own half-width, narrowing toward the snout, so the

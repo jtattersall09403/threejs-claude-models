@@ -186,13 +186,20 @@ const SKIN_FRAG = /* glsl */`
   cap = max(cap, ss(1.682, 1.702, J.y) * ss(0.140, 0.106, J.z));     // crown, full width
 
   // dark scaled band around the eye socket and temple
+  // BOTH of these are CHEEK marks and neither may cross the muzzle. Their per-axis
+  // weights are small in x (0.60 and 0.40), so measured from a centre 47-56 mm out on
+  // the cheek their ellipsoidal falloff still evaluated to ~0.9 on the CENTRELINE of
+  // the snout — and since they paint near-black plate at 98%, the whole front of the
+  // muzzle rendered as a black mask. Nothing about the masks looked wrong in isolation;
+  // it was the reach across x that did it. An explicit lateral gate is the fix.
+  float lateral = ss(0.024, 0.046, abs(J.x));
   float eyeD = length((J - vec3(EYE_X, EYE_Y + 0.004, EYE_Z + 0.018)) * vec3(0.60, 1.05, 0.46));
-  float socket = ss(0.140, 0.050, eyeD) * ss(1.618, 1.646, H.y);
+  float socket = ss(0.140, 0.050, eyeD) * ss(1.618, 1.646, H.y) * lateral;
   // ...continuing back from the eye to the jaw hinge as a dark mask stripe. This is
   // the strongest value break on the reference face and without it the cheek reads
   // as one flat panel between brow and jaw.
   float maskD = length((J - vec3(0.054, 1.6775, -0.004)) * vec3(0.40, 1.75, 0.80));
-  socket = max(socket, ss(0.110, 0.032, maskD) * 0.92);
+  socket = max(socket, ss(0.110, 0.032, maskD) * 0.92 * lateral * ss(0.095, 0.042, J.z));
 
   // maroon plate over the brow ridges and between the eyes. This is a NARROW band
   // just above the eyes in the reference; at its old extent it flooded the whole
@@ -200,7 +207,7 @@ const SKIN_FRAG = /* glsl */`
   // A FIELD, not a stripe. At a y-weight of 4.6 this covered a 2.6 cm band; the
   // references carry dark red over the whole brow shelf and back to the horn roots,
   // roughly a fifth of the frontal head area.
-  float browD = length((J - vec3(0.040, 1.7180, 0.030)) * vec3(0.56, 1.60, 1.05));
+  float browD = length((J - vec3(0.0435, 1.7135, 0.026)) * vec3(0.50, 1.28, 0.86));
   float brow = ss(0.088, 0.020, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.638, 1.664, H.y);
 
   // dorsal scute ridge down the tail — a plain taper reads as a rubber tube
@@ -239,8 +246,8 @@ const SKIN_FRAG = /* glsl */`
   // panel of green; the reference muzzle is mottled dark-on-dark, with the top of
   // the snout markedly darker than the flanks.
   float snoutTop = ss(1.630, 1.676, H.y) * ss(0.020, 0.090, H.z) * ss(0.20, 0.78, Nr.y);
-  col = mix(col, col * 0.76, headMask * snoutTop * 0.35);
-  col = mix(col, col * mix(0.70, 1.16, ss(0.34, 0.70, fbm(P * 8.5 + 61.0))), headMask * 0.55);
+  col = mix(col, col * 0.87, headMask * snoutTop * 0.35);
+  col = mix(col, col * mix(0.84, 1.18, ss(0.34, 0.70, fbm(P * 8.5 + 61.0))), headMask * 0.55);
   col = mix(col, belly, ventral * 0.66);
   col = mix(col, belly * vec3(1.06, 1.00, 0.80), bandZone * bands * 0.55);
   col = mix(col, mix(dorsal2, plate, 0.5), tailTop * (0.35 + 0.5 * tailScute));
@@ -248,7 +255,7 @@ const SKIN_FRAG = /* glsl */`
   col = mix(col, plate * vec3(1.15, 1.20, 1.55), socket * 0.98);
   // partial mix, so the olive hide shows through and the band lands near the
   // reference's 1.74 rather than at the paint's own ratio
-  col = mix(col, maroon, brow * 0.72);
+  col = mix(col, maroon, brow * 0.88);
   // three cream claw-mark streaks across the maroon brow band
   float streak = ss(0.72, 0.97, abs(sin((J.x - 0.010) * 150.0)));
   col = mix(col, boneCol * 0.78, brow * streak * ss(0.012, 0.052, abs(J.x)) * 0.95);
@@ -341,7 +348,7 @@ const SKIN_FRAG = /* glsl */`
   // suppressed along the mouth: the bright net was filling the crease back in
   float mortar = (1.0 - ss(0.14, 0.34, h)) * headMask * (1.0 - cap * 0.92)
                * (1.0 - ss(0.012, 0.004, abs(H.y - (LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE))));
-  col = mix(col, boneCol * 0.46, mortar * 0.62);
+  col = mix(col, boneCol * 0.58, mortar * 0.80);
   // darker AND warmer: the jaw was not merely bright, it was the greenest thing on
   // the head, where the reference jaw is its most neutral, most shadowed area
   col = mix(col, col * vec3(0.74, 0.70, 0.66), chinZone * 0.60);
@@ -460,8 +467,8 @@ const EYE_FRAG = /* glsl */`
 
   // Deep amber-orange, not the near-white yellow it was: in the references the eye
   // is a dark jewel set in a black socket, and it must not out-glow the horns.
-  vec3 amber = vec3(0.480, 0.330, 0.062);
-  vec3 amberHot = vec3(0.860, 0.700, 0.220);
+  vec3 amber = vec3(0.330, 0.176, 0.030);
+  vec3 amberHot = vec3(0.640, 0.402, 0.098);
   float fibers = fbm(vec3(atan(y, x) * 5.0, r * 26.0, 0.0));
   vec3 iris = mix(amber, amberHot, fibers * 0.85);
   iris *= 0.86 + 0.42 * ss(0.05, 0.55, r);
