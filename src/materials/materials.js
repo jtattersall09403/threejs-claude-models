@@ -126,7 +126,10 @@ const SKIN_FRAG = /* glsl */`
   vec3 H = (P - vec3(HEAD_OX, HEAD_OY, HEAD_OZ) - HP) / HEAD_S + HP;
   vec3 A = vec3(abs(H.x), H.y, H.z);
 
-  float headMask = ss(1.53, 1.61, P.y);
+  // H.y, not P.y. Driven from world Y this only reached 1 above the eyes, so the
+  // whole lower jaw was shaded as body — coarse scales, none of the head's macro
+  // variation — and read as a pale smooth panel bolted under a detailed muzzle.
+  float headMask = ss(1.535, 1.585, H.y);
   // Two FIXED scale frequencies blended by a noise mask. Scaling the triplanar UVs
   // by a spatially varying factor warps the domain and produces contour-line swirls.
   float freq = mix(16.0, 25.0, headMask);
@@ -136,7 +139,10 @@ const SKIN_FRAG = /* glsl */`
   // zoned scale size: big armour plates over the cranium, fine pebbling on the
   // muzzle and cheek. One uniform frequency reads as fishnet, not hide.
   float crownZone = ss(1.652, 1.690, H.y) * ss(0.170, 0.105, H.z);
-  float plateMix = clamp(sizeMix + crownZone * 0.8, 0.0, 1.0);
+  // big scutes under the chin and along the lower jaw — in the references these are
+  // the largest scales on the animal and markedly darker than the muzzle
+  float chinZone = ss(1.618, 1.572, H.y) * ss(0.185, 0.155, H.z) * headMask;
+  float plateMix = clamp(sizeMix + crownZone * 0.8 + chinZone * 0.7, 0.0, 1.0);
   gNormal = normalize(mix(fine.xyz, plateD.xyz, plateMix));
   float h = mix(fine.w, plateD.w, plateMix);
 
@@ -225,8 +231,11 @@ const SKIN_FRAG = /* glsl */`
             * ss(0.186, 0.174, H.z) * ss(0.006, 0.028, H.z);
   col = mix(col, vec3(0.0032, 0.0028, 0.0026), lip * 0.99);
 
-  // crevices between scales go dark
-  col *= mix(0.42, 1.06, ss(0.02, 0.55, h));
+  // crevices between scales go dark. Range kept narrow: at 0.42..1.06 the detail
+  // height alone swung local brightness 2.5x, so wherever the scale texture happened
+  // to sit high the hide jumped to a pale wash that read as a lighting error.
+  col *= mix(0.52, 1.04, ss(0.02, 0.55, h));
+  col = mix(col, col * 0.62, chinZone * 0.72);
   // cream mortar lines between the cranial plates — in the reference the gaps are
   // LIGHTER than the plates, the opposite of a generic crevice darkening
   col = mix(col, boneCol * 0.30, crownZone * (1.0 - ss(0.06, 0.30, h)) * 0.38);
@@ -238,13 +247,26 @@ const SKIN_FRAG = /* glsl */`
   rough = mix(rough, 0.56, socket * 0.75);   // the orbital mass is glossier, not wet
   gRoughOut = clamp(rough + (mottle - 0.5) * 0.12, 0.28, 0.98);
 
-  // uDebug: 1 = cap/brow/socket as R/G/B, 2 = ventral/bands, 3 = rest-space normal.
-  // Set via window.argonian.debugMasks(n). Invaluable when a mask silently reads 0.
+  // uDebug: 1 = cap/brow/socket as R/G/B, 2 = ventral/bandZone/bands, 3 = rest-space
+  // normal, 4 = ventral ALONE in greyscale, 5 = head-space H.y banded every 10 mm
+  // with a red stripe at 1.60. Set via window.argonian.debugMasks(n).
+  //
+  // Mode 5 is the one to reach for first: nearly every mis-placed mask in this
+  // shader has turned out to be a threshold sitting somewhere other than where it
+  // was assumed to, and reading the coordinate straight off the surface settles it
+  // in one look instead of a rebuild per hypothesis.
   if (uDebug > 0.5) {
     vec3 dbg = vec3(0.0);
     if (uDebug < 1.5) dbg = vec3(cap, brow, socket);
     else if (uDebug < 2.5) dbg = vec3(ventral, bandZone, bands);
-    else dbg = Nr * 0.5 + 0.5;
+    else if (uDebug < 3.5) dbg = Nr * 0.5 + 0.5;
+    else if (uDebug < 4.5) dbg = vec3(ventral);
+    else {
+      float band = fract((H.y - 1.50) * 100.0);
+      dbg = vec3(step(0.5, band) * 0.7 + 0.15);
+      dbg.r += ss(0.004, 0.0, abs(H.y - 1.60));
+      dbg.g += ss(0.004, 0.0, abs(H.y - 1.70)) ;
+    }
     diffuseColor.rgb = dbg;
     gRoughOut = 1.0;
   }

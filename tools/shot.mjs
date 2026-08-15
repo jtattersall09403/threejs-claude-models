@@ -19,6 +19,10 @@ const ctx = await browser.newContext({ viewport: { width: +w, height: +h }, devi
 const tab = await ctx.newPage();
 await tab.goto(pathToFileURL(resolve(root, 'dist/argonian.html')).href);
 await tab.waitForFunction('window.__ready === true', null, { timeout: 180000 });
+// DEBUG=5 npm run shot -- ... renders a mask channel instead of the beauty pass.
+// See the uDebug block in materials.js; mode 5 (head-space Y, banded) is the fastest
+// way to find out where a mask threshold actually lands.
+if (process.env.DEBUG) await tab.evaluate((k) => window.argonian.debugMasks(k), +process.env.DEBUG);
 await tab.evaluate(([a, e, d, t, f]) => window.__setCamera(a, e, d, t, f),
   [+az, +el, +dist, +ty, +fov]);
 await tab.waitForTimeout(80);
