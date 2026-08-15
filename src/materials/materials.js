@@ -320,9 +320,15 @@ const HORN_FRAG = /* glsl */`
   col *= mix(0.62, 1.05, ss(0.1, 0.7, h));
   gRoughOut = clamp(0.48 + (1.0 - h) * 0.28 + grime * 0.12, 0.3, 0.95);
 
+  // region 3 is the claws: dark horn, not the pale bone of the head spikes. Left the
+  // same value they caught the light and the hand read as a fistful of ivory talons.
+  if (vRegion > 2.5) {
+    col *= vec3(0.36, 0.34, 0.32);
+    gRoughOut = clamp(gRoughOut - 0.12, 0.24, 0.9);
+  }
   // region 2 is the metal cuff: tarnished dark bronze, and actually metallic, so it
   // catches the rim lights differently from the keratin it is clamped to
-  if (vRegion > 1.5) {
+  else if (vRegion > 1.5) {
     // dull, tarnished and DARKER than the keratin it clamps — a bright band reads as
     // jewellery and pulls the eye off the face
     vec3 metal = vec3(0.062, 0.052, 0.038);
@@ -449,7 +455,7 @@ function finishRoughness(material) {
 
 export function createMaterials() {
   const scale = makeScaleTexture(512, 15, 7);
-  const cloth = makeClothTexture(512, 26, 19);
+  const cloth = makeClothTexture(512, 16, 19);
   const leather = makeLeatherTexture(512, 22, 41);
 
   const mk = (name, opts, frag, uniforms, fragNormal = true) => {

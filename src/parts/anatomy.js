@@ -86,13 +86,15 @@ export function buildBodyField() {
   }
 
   // ---- tail ------------------------------------------------------------------
+  // Thicker than it looks like it should be on paper: at the previous radii the tail
+  // read as a flat strap hanging off the back rather than a heavy muscular counterweight.
   const tail = [
-    [[0, 0.940, -0.118], 0.062],
-    [[0, 0.838, -0.272], 0.048],
-    [[0, 0.694, -0.396], 0.036],
-    [[0, 0.542, -0.468], 0.026],
-    [[0, 0.398, -0.480], 0.017],
-    [[0, 0.272, -0.440], 0.008],
+    [[0, 0.940, -0.118], 0.074],
+    [[0, 0.838, -0.272], 0.058],
+    [[0, 0.694, -0.396], 0.044],
+    [[0, 0.542, -0.468], 0.032],
+    [[0, 0.398, -0.480], 0.021],
+    [[0, 0.272, -0.440], 0.010],
   ];
   for (let i = 0; i < tail.length - 1; i++) {
     f.add(capsule(tail[i][0], tail[i + 1][0], tail[i][1], tail[i + 1][1], {

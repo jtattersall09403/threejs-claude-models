@@ -149,7 +149,9 @@ export function buildTeeth() {
 const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 const FINGER_R = { thumb: 0.0150, index: 0.0128, middle: 0.0134, ring: 0.0122, pinky: 0.0104 };
 // relaxed curl: each joint bends a little forward, so the hand is not a garden fork
-const FINGER_CURL = { thumb: 0.006, index: 0.012, middle: 0.014, ring: 0.012, pinky: 0.009 };
+// Curled well forward. Nearly straight, the fingers splay and the hand reads as a
+// garden rake of pale talons rather than a relaxed hand.
+const FINGER_CURL = { thumb: 0.015, index: 0.030, middle: 0.034, ring: 0.030, pinky: 0.023 };
 
 /** Fingers swept along their bones, each finished with a claw. */
 export function buildFingers(rig) {

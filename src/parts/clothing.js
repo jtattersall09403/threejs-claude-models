@@ -63,11 +63,12 @@ export function clothingFields(body) {
 
   // ---- undershirt: thin, only visible at the collar and the V of the tunic ----
   {
-    const bounds = [-0.26, 1.12, -0.24, 0.26, 1.66, 0.24];
+    const bounds = [-0.26, 1.12, -0.30, 0.26, 1.68, 0.24];
     // coverage only bounds the EXTENT of the garment; it must be generously wider
     // than the offset body surface or the intersection lands inside the skin
     const cover = coverage([
       roundBox([0, 1.352, 0.005], [0.30, 0.156, 0.28], 0.02),
+      roundBox([0, 1.480, -0.078], [0.13, 0.075, 0.09], 0.03),   // rolled-down cowl
     ]);
     const f = garment(body, 0.010, cover, bounds, 0.020, folds(0.0038, 24));
     // A wrapped cloth cowl that rises to just under the jaw. It used to stop ~6 cm
@@ -77,6 +78,10 @@ export function clothingFields(body) {
     f.add(capsule([0, 1.432, -0.008], [0, 1.550, 0.006], 0.102, 0.082, { k: 0.024 }));
     f.add(ellipsoid([0, 1.490, 0.038], [0.084, 0.042, 0.062], { k: 0.020 }));  // knotted front
     f.add(ellipsoid([0.030, 1.462, 0.066], [0.036, 0.026, 0.030], { k: 0.018 }));
+    // The cowl rolled down at the nape. Kept LOW and small — built up as a full hood
+    // it read as a backpack strapped between the shoulder blades.
+    f.add(ellipsoid([0, 1.462, -0.074], [0.086, 0.048, 0.044], { k: 0.030 }));
+    f.add(ellipsoid([0, 1.502, -0.086], [0.066, 0.036, 0.032], { k: 0.028 }));
     f.sub(capsule([0, 1.43, -0.016], [0, 1.70, 0.014], 0.066, 0.074, { k: 0.018 })); // neck hole
     out.push({ field: f, bounds, cell: 0.0055, region: REGION.UNDERSHIRT });
   }
@@ -249,9 +254,11 @@ export function buildStrap(tunicField, lift = 0.013) {
     const t = i / (N - 1);
     return {
       p,
-      r: [0.0175, 0.0078],
-      profile: (a) => 1 + 0.20 * Math.sin(a * 3.0 + t * 40.0)
-                    + 0.09 * Math.sin(a * 6.0 - t * 62.0),  // braided cord relief
+      // FLAT: the reference strap is a broad braided band lying on the coat, so the
+      // cross-section is a wide thin ribbon. Nearer to round it reads as a rope.
+      r: [0.0198, 0.0050],
+      profile: (a) => 1 + 0.10 * Math.sin(a * 3.0 + t * 40.0)
+                    + 0.05 * Math.sin(a * 6.0 - t * 62.0),  // braid relief
     };
   });
   return sweep(rings, {

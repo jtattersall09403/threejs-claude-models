@@ -129,7 +129,7 @@ export function buildArgonian(opts = {}) {
     hornB.add(q, skinPart(q), region);
   }
   for (const f of buildFingers(rig)) {
-    if (f.region === 'horn') hornB.add(f.geom, skinPart(f.geom), 0);
+    if (f.region === 'horn') hornB.add(f.geom, skinPart(f.geom), 3);  // 3 = claw
   }
   meshes.horn = skinnedMesh(hornB, materials.horn, rig, 'horn');
 
