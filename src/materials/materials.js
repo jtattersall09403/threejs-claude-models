@@ -415,6 +415,11 @@ const SKIN_FRAG = /* glsl */`
       dbg = vec3(lip);
       dbg.g += ss(0.0015, 0.0, abs(H.y - lipY6));
     }
+    // 8 = the scale-texture HEIGHT h, and 9 = plateMix. If a patch of hide looks
+    // smooth, these say whether the detail sample is missing (h flat) or merely being
+    // taken at the wrong scale (plateMix high).
+    else if (uDebug > 8.5) dbg = vec3(plateMix);
+    else if (uDebug > 7.5) dbg = vec3(h);
     else {
       float band = fract((H.y - 1.50) * 100.0);
       dbg = vec3(step(0.5, band) * 0.7 + 0.15);

@@ -140,18 +140,20 @@ export function buildJawSpikes(field) {
         taper: 0.62, flat: 0.40, sides: 10, steps: 7, bend: [0, -0.004, 0.008],
       }));
     }
-    // Cheek spikes. THREE, LARGE, swept back — measured off face-left-profile, where
-    // they are roughly a sixth of the head's height each. There used to be nine spikes
-    // a side here (three jaw tusks, two hinge nubs and a four-spike "frill"), and at
-    // that count and size they read from any distance as a picket fence stapled round
-    // the skull rather than as a few heavy keratin blades.
+    // JAWLINE blades. The user's annotation settles what these are and where they go:
+    // a row of four flat pale plates lying ALONG the lower jaw and running back up onto
+    // the cheek, each pointing BACKWARD along the jaw edge. Every previous arrangement
+    // — swept back off the cheek, hanging down as tusks, standing out sideways — put
+    // them somewhere the reference does not have them, and read as whiskers or a
+    // picket fence rather than as part of the jaw's outline.
     for (const [p, dir, len, r] of [
-      [[s * 0.0575, 1.6810, 0.020], [s * 0.80, 0.06, -0.60], 0.0420, 0.0112],
-      [[s * 0.0605, 1.6640, 0.000], [s * 0.82, -0.06, -0.57], 0.0400, 0.0105],
-      [[s * 0.0580, 1.6455, -0.012], [s * 0.78, -0.24, -0.58], 0.0340, 0.0092],
+      [[s * 0.0300, 1.5960, 0.100], [s * 0.30, -0.26, -0.92], 0.0310, 0.0125],
+      [[s * 0.0400, 1.5975, 0.056], [s * 0.34, -0.20, -0.92], 0.0370, 0.0145],
+      [[s * 0.0500, 1.6110, 0.014], [s * 0.40, -0.06, -0.91], 0.0410, 0.0162],
+      [[s * 0.0560, 1.6390, -0.004], [s * 0.44, 0.12, -0.89], 0.0430, 0.0168],
     ]) {
       out.push(spike(seat(field, p, dir, 0.004), dir, len, r, {
-        taper: 0.72, flat: 0.52, sides: 10, steps: 7, bend: [0, -0.003, -0.008],
+        taper: 0.62, flat: 0.34, sides: 10, steps: 7, bend: [0, -0.004, 0.0],
       }));
     }
     // brow scutes: three flat claw-like plates lying back along the brow ridge,

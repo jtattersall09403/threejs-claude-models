@@ -41,7 +41,7 @@ const SPEC = [
   ['head', 'neck', [0, 1.578, 0.018]],
   ['headTop', 'head', [0, 1.762, 0.01]],
   ['jaw', 'head', [0, 1.645, 0.006]],   // hinge, at the back of the lower jaw
-  ['jawTip', 'jaw', [0, 1.6, 0.222]],
+  ['jawTip', 'jaw', [0, 1.604, 0.190]],
 
   ...TAIL_SPINE.map((p, i) => [`tail${i + 1}`, i === 0 ? 'hips' : `tail${i}`, p]),
 ];
@@ -149,10 +149,10 @@ export function createSkeleton() {
 // Bones whose auto-generated span sits in the wrong flesh get hand-authored spans
 // instead. Without these the upper muzzle binds to the jaw and opens with it.
 const EXTRA_SEGMENTS = [
-  { bone: 'head', a: [0, 1.668, 0.070], b: [0, 1.652, 0.212] },   // upper muzzle
-  { bone: 'head', a: [-0.062, 1.686, 0.010], b: [0.062, 1.686, 0.010] }, // temples
-  { bone: 'head', a: [0, 1.590, 0.005], b: [0, 1.756, 0.005] },   // braincase
-  { bone: 'jaw', a: [0, 1.606, 0.100], b: [0, 1.601, 0.194] },    // lower jaw only
+  { bone: 'head', a: [0, 1.670, 0.066], b: [0, 1.658, 0.176] },   // upper muzzle
+  { bone: 'head', a: [-0.062, 1.690, 0.010], b: [0.062, 1.690, 0.010] }, // temples
+  { bone: 'head', a: [0, 1.590, 0.005], b: [0, 1.772, 0.005] },   // braincase
+  { bone: 'jaw', a: [0, 1.606, 0.090], b: [0, 1.604, 0.164] },    // lower jaw only
 ];
 const SUPPRESS_AUTO = new Set(['jaw', 'jawTip', 'headTop']);
 
