@@ -3,10 +3,10 @@
 import * as THREE from 'three';
 import { polygonise } from './core/mc.js';
 import { computeSkinning } from './core/skin.js';
-import { MeshBuilder } from './core/geom.js';
+import { MeshBuilder, scalePartAbout } from './core/geom.js';
 import { createSkeleton, buildSegments } from './rig/skeleton.js';
 import {
-  buildBodyField, buildHeadField, BODY_BOUNDS, HEAD_BOUNDS,
+  buildBodyField, buildHeadField, BODY_BOUNDS, HEAD_BOUNDS, HEAD_XF,
 } from './parts/anatomy.js';
 import {
   buildHorn, buildCrownSpikes, buildJawSpikes, buildTeeth, buildFingers, buildEyes,
@@ -106,13 +106,15 @@ export function buildArgonian(opts = {}) {
 
   // ---- horns, spikes, teeth, claws --------------------------------------------
   log('horns and spikes');
+  const toHead = (p) => scalePartAbout(p, HEAD_XF.scale, HEAD_XF.pivot);
   const hornB = new MeshBuilder();
   for (const s of [1, -1]) {
-    const h = buildHorn(s);
+    const h = toHead(buildHorn(s));
     hornB.add(h, skinPart(h), 1);           // region 1 => banded ring in the shader
   }
   for (const p of [...buildCrownSpikes(), ...buildJawSpikes(), ...buildTeeth()]) {
-    hornB.add(p, skinPart(p), 0);
+    const q = toHead(p);
+    hornB.add(q, skinPart(q), 0);
   }
   for (const f of buildFingers(rig)) {
     if (f.region === 'horn') hornB.add(f.geom, skinPart(f.geom), 0);
@@ -121,7 +123,7 @@ export function buildArgonian(opts = {}) {
 
   // ---- eyes --------------------------------------------------------------------
   const eyeB = new MeshBuilder();
-  for (const e of buildEyes()) eyeB.add(e, skinPart(e), REGION.EYE);
+  for (const e of buildEyes()) { const q = toHead(e); eyeB.add(q, skinPart(q), REGION.EYE); }
   meshes.eye = skinnedMesh(eyeB, materials.eye, rig, 'eye');
   meshes.eye.castShadow = false;
 

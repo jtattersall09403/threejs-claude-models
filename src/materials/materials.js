@@ -6,13 +6,19 @@
 // need no tangents.
 import * as THREE from 'three';
 import { makeScaleTexture, makeClothTexture, makeLeatherTexture } from './textures.js';
-import { EYE } from '../parts/anatomy.js';
+import { EYE, HEAD_XF } from '../parts/anatomy.js';
 
 const COMMON = /* glsl */`
 varying vec3 vRest;
 varying vec3 vRestN;
 varying float vRegion;
 varying vec2 vRun;
+
+// GLSL smoothstep is undefined when edge0 >= edge1; several of our masks read most
+// naturally in descending form, so route them through this.
+float ss(float a, float b, float x) {
+  return a < b ? smoothstep(a, b, x) : 1.0 - smoothstep(b, a, x);
+}
 
 vec3 alignRot(vec3 from, vec3 to, vec3 v) {
   vec3 axis = cross(from, to);
@@ -115,64 +121,69 @@ function patch(material, { fragColor, fragNormal = true, uniforms = {} }) {
 const SKIN_FRAG = /* glsl */`
   vec3 Nr = normalize(vRestN);
   vec3 P = vRest;
+  // head masks are authored pre-scale, so undo the head transform for them
+  vec3 HP = vec3(HEAD_PX, HEAD_PY, HEAD_PZ);
+  vec3 H = (P - HP) / HEAD_S + HP;
+  vec3 A = vec3(abs(H.x), H.y, H.z);
 
-  float headMask = smoothstep(1.50, 1.58, P.y);
-  float freq = mix(26.0, 52.0, headMask);
-  vec4 det = triDetail(P, Nr, freq, mix(1.15, 0.95, headMask));
+  float headMask = ss(1.50, 1.58, P.y);
+  float freq = mix(25.0, 46.0, headMask);
+  vec4 det = triDetail(P, Nr, freq, mix(1.2, 1.0, headMask));
   gNormal = det.xyz;
   float h = det.w;
 
+  // jitter the mask coordinates so painted edges follow the scales instead of
+  // cutting across them in hard geometric arcs
+  vec3 J = A + (vec3(fbm(P * 44.0), fbm(P * 44.0 + 9.0), fbm(P * 44.0 + 21.0)) - 0.5) * 0.016;
+
   // --- masks -------------------------------------------------------------
-  // surfaces facing down / forward-down read as belly, throat, inner limbs
-  float ventral = smoothstep(0.10, -0.55, dot(Nr, normalize(vec3(0.0, -0.80, 0.60))));
-  ventral = max(ventral, smoothstep(0.15, -0.5, Nr.y) * smoothstep(1.66, 1.55, P.y));
+  float ventral = ss(0.10, -0.55, dot(Nr, normalize(vec3(0.0, -0.80, 0.60))));
+  ventral = max(ventral, ss(0.15, -0.5, Nr.y) * ss(1.66, 1.55, H.y));
 
-  // armoured skull cap
-  float cap = smoothstep(1.648, 1.672, P.y) * smoothstep(-0.05, 0.42, Nr.y);
-  cap *= smoothstep(0.20, 0.10, P.z);
-  cap = max(cap, smoothstep(1.60, 1.64, P.y) * smoothstep(-0.15, -0.55, P.z) * smoothstep(-0.2, 0.3, Nr.y));
+  // armoured skull cap: top of the braincase, wrapping down over the temples
+  float cap = ss(1.628, 1.672, J.y) * ss(-0.25, 0.35, Nr.y) * ss(0.155, 0.055, J.z);
+  cap = max(cap, ss(1.598, 1.648, J.y) * ss(-0.02, -0.09, J.z) * ss(-0.35, 0.15, Nr.y));
 
-  // dark band around the eye socket + temple
-  vec3 e = vec3(abs(P.x), P.y, P.z) - vec3(EYE_X, EYE_Y, EYE_Z);
-  float eyeD = length(e * vec3(1.0, 1.35, 1.0));
-  float socket = smoothstep(0.062, 0.030, eyeD) * step(1.55, P.y);
+  // dark scaled band around the eye socket and temple
+  float eyeD = length((J - vec3(EYE_X, EYE_Y, EYE_Z)) * vec3(0.85, 1.5, 1.0));
+  float socket = ss(0.055, 0.026, eyeD) * step(1.56, H.y);
 
   // maroon plate over the brow ridges and between the eyes
-  float browD = length((vec3(abs(P.x), P.y, P.z) - vec3(0.042, 1.6805, 0.052)) * vec3(0.85, 2.4, 1.0));
-  float brow = smoothstep(0.072, 0.020, browD) * smoothstep(-0.1, 0.35, Nr.y) * step(1.60, P.y);
+  float browD = length((J - vec3(0.040, 1.6815, 0.048)) * vec3(0.80, 2.6, 1.05));
+  float brow = ss(0.062, 0.016, browD) * ss(-0.15, 0.30, Nr.y) * step(1.605, H.y);
 
   // banded scutes on throat and belly
-  float bandPhase = P.y * 96.0 + P.z * 12.0;
-  float bands = smoothstep(0.35, 0.9, abs(sin(bandPhase)));
-  float bandZone = ventral * smoothstep(1.50, 1.58, P.y) * smoothstep(1.70, 1.62, P.y);
-  bandZone = max(bandZone, ventral * smoothstep(1.35, 1.25, P.y) * smoothstep(0.80, 0.95, P.y));
+  float bands = ss(0.30, 0.92, abs(sin(P.y * 92.0 + P.z * 10.0)));
+  float bandZone = ventral * ss(1.49, 1.56, H.y) * ss(1.66, 1.60, H.y);
+  bandZone = max(bandZone, ventral * ss(1.35, 1.25, P.y) * ss(0.80, 0.95, P.y));
 
   // --- colour ------------------------------------------------------------
-  float mottle = fbm(P * 21.0);
-  float blotch = fbm(P * 6.3 + 11.0);
+  float mottle = fbm(P * 19.0);
+  float blotch = fbm(P * 5.6 + 11.0);
 
-  vec3 dorsal   = vec3(0.113, 0.126, 0.062);
-  vec3 dorsal2  = vec3(0.062, 0.070, 0.036);
-  vec3 belly    = vec3(0.232, 0.219, 0.126);
-  vec3 plate    = vec3(0.030, 0.030, 0.028);
-  vec3 maroon   = vec3(0.112, 0.036, 0.030);
+  vec3 dorsal   = vec3(0.084, 0.093, 0.043);
+  vec3 dorsal2  = vec3(0.044, 0.050, 0.024);
+  vec3 warmOl   = vec3(0.121, 0.115, 0.051);
+  vec3 belly    = vec3(0.196, 0.183, 0.104);
+  vec3 plate    = vec3(0.021, 0.021, 0.020);
+  vec3 maroon   = vec3(0.098, 0.030, 0.026);
 
-  vec3 col = mix(dorsal2, dorsal, smoothstep(0.30, 0.72, mottle * 0.6 + blotch * 0.7));
-  col = mix(col, col * vec3(1.25, 1.16, 0.86), smoothstep(0.45, 0.85, blotch));
-  col = mix(col, belly, ventral * 0.86);
-  col = mix(col, belly * vec3(1.06, 1.02, 0.92), bandZone * bands * 0.5);
-  col = mix(col, plate, cap * 0.94);
-  col = mix(col, plate * 1.25, socket * 0.9);
-  col = mix(col, maroon, brow * 0.85);
+  vec3 col = mix(dorsal2, dorsal, ss(0.30, 0.72, mottle * 0.6 + blotch * 0.7));
+  col = mix(col, warmOl, ss(0.45, 0.88, blotch));
+  col = mix(col, belly, ventral * 0.88);
+  col = mix(col, belly * vec3(1.10, 1.04, 0.90), bandZone * bands * 0.55);
+  col = mix(col, plate, cap * 0.92);
+  col = mix(col, plate * 1.5, socket * 0.85);
+  col = mix(col, maroon, brow * 0.88);
 
   // crevices between scales go dark
-  col *= mix(0.42, 1.06, smoothstep(0.05, 0.62, h));
+  col *= mix(0.44, 1.06, ss(0.05, 0.62, h));
 
   diffuseColor.rgb = col;
-  vec3 gRough = vec3(mix(0.86, 0.58, smoothstep(0.2, 0.8, h)));
-  gRough *= mix(1.0, 0.82, ventral);
-  gRough *= mix(1.0, 0.74, cap);
-  gRoughOut = clamp(gRough.x + (mottle - 0.5) * 0.12, 0.28, 0.98);
+  float rough = mix(0.88, 0.60, ss(0.2, 0.8, h));
+  rough *= mix(1.0, 0.80, ventral);
+  rough *= mix(1.0, 0.70, cap);
+  gRoughOut = clamp(rough + (mottle - 0.5) * 0.12, 0.28, 0.98);
 `;
 
 // ---------------------------------------------------------------------------
@@ -187,16 +198,16 @@ const HORN_FRAG = /* glsl */`
   vec3 tip   = vec3(0.212, 0.183, 0.126);
   vec3 dark  = vec3(0.043, 0.036, 0.030);
 
-  vec3 col = mix(bone, tip, smoothstep(0.45, 1.0, t));
+  vec3 col = mix(bone, tip, ss(0.45, 1.0, t));
   // dark root where the horn leaves the hide
-  col = mix(col, dark, smoothstep(0.22, 0.02, t));
+  col = mix(col, dark, ss(0.22, 0.02, t));
   // banded ring on the big horns only
-  float ring = step(0.5, vRegion) * smoothstep(0.055, 0.02, abs(t - 0.175));
+  float ring = step(0.5, vRegion) * ss(0.055, 0.02, abs(t - 0.175));
   col = mix(col, dark * 1.6, ring * 0.85);
 
   float grime = fbm(vRest * 60.0);
   col *= 0.80 + 0.34 * grime;
-  col *= mix(0.62, 1.05, smoothstep(0.1, 0.7, h));
+  col *= mix(0.62, 1.05, ss(0.1, 0.7, h));
   diffuseColor.rgb = col;
   gRoughOut = clamp(0.48 + (1.0 - h) * 0.28 + grime * 0.12, 0.3, 0.95);
 `;
@@ -214,14 +225,14 @@ const EYE_FRAG = /* glsl */`
   vec3 amberHot = vec3(0.780, 0.470, 0.070);
   float fibers = fbm(vec3(atan(y, x) * 5.0, r * 26.0, 0.0));
   vec3 iris = mix(amber, amberHot, fibers * 0.85);
-  iris *= 0.72 + 0.55 * smoothstep(0.05, 0.5, r);
+  iris *= 0.72 + 0.55 * ss(0.05, 0.5, r);
 
-  vec3 col = mix(iris, vec3(0.020, 0.014, 0.008), smoothstep(0.46, 0.60, r));
+  vec3 col = mix(iris, vec3(0.020, 0.014, 0.008), ss(0.46, 0.60, r));
   // vertical slit pupil
   float slit = length(vec2(x / 0.115, y / 0.40));
-  col = mix(vec3(0.006, 0.005, 0.004), col, smoothstep(0.86, 1.06, slit));
+  col = mix(vec3(0.006, 0.005, 0.004), col, ss(0.86, 1.06, slit));
   // limbal ring
-  col *= 1.0 - 0.6 * smoothstep(0.36, 0.47, r) * (1.0 - smoothstep(0.47, 0.56, r));
+  col *= 1.0 - 0.6 * ss(0.36, 0.47, r) * (1.0 - ss(0.47, 0.56, r));
 
   diffuseColor.rgb = col;
   gRoughOut = 0.14;
@@ -235,11 +246,11 @@ const CLOTH_FRAG = /* glsl */`
   float dirt = fbm(vRest * 7.5);
   float wear = fbm(vRest * 24.0);
   vec3 col = uBase * (0.72 + 0.55 * dirt);
-  col = mix(col, uBase * 0.42, smoothstep(0.55, 0.9, fbm(vRest * 3.1 + 5.0)));
-  col *= mix(0.58, 1.08, smoothstep(0.1, 0.75, h));
+  col = mix(col, uBase * 0.42, ss(0.55, 0.9, fbm(vRest * 3.1 + 5.0)));
+  col *= mix(0.58, 1.08, ss(0.1, 0.75, h));
   col *= 0.9 + 0.2 * wear;
   // grime settles low on the garment
-  col *= mix(0.72, 1.0, smoothstep(0.75, 1.15, vRest.y));
+  col *= mix(0.72, 1.0, ss(0.75, 1.15, vRest.y));
   diffuseColor.rgb = col;
   gRoughOut = clamp(uRough + (1.0 - h) * 0.16 - wear * 0.08, 0.35, 1.0);
 `;
@@ -250,6 +261,8 @@ function defines() {
   return {
     EYE_X: EYE.c[0].toFixed(5), EYE_Y: EYE.c[1].toFixed(5), EYE_Z: EYE.c[2].toFixed(5),
     GAZE_X: EYE.gaze[0].toFixed(4), GAZE_Y: EYE.gaze[1].toFixed(4), GAZE_Z: EYE.gaze[2].toFixed(4),
+    HEAD_S: HEAD_XF.scale.toFixed(5),
+    HEAD_PX: HEAD_XF.pivot[0].toFixed(5), HEAD_PY: HEAD_XF.pivot[1].toFixed(5), HEAD_PZ: HEAD_XF.pivot[2].toFixed(5),
   };
 }
 

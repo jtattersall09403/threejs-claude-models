@@ -95,6 +95,10 @@ export function createSkeleton() {
 
   const index = new Map();
   bones.forEach((b, i) => index.set(b.name, i));
+  // Skeleton's constructor snapshots bone.matrixWorld to build the bind inverses,
+  // so the rest pose has to be resolved *before* it is created — otherwise every
+  // vertex ends up with its rest transform applied twice.
+  byName.get('root').updateMatrixWorld(true);
   const skeleton = new THREE.Skeleton(bones);
 
   return {

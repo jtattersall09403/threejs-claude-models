@@ -134,6 +134,40 @@ export function spike(base, dir, length, radius, opts = {}) {
   return sweep(rings, { sides: opts.sides || 10, capEnd: false });
 }
 
+/** Uniformly scale a generated part about a pivot (normals are scale-invariant). */
+export function scalePartAbout(part, s, pivot) {
+  const q = part.positions;
+  for (let i = 0; i < q.length; i += 3) {
+    q[i] = pivot[0] + (q[i] - pivot[0]) * s;
+    q[i + 1] = pivot[1] + (q[i + 1] - pivot[1]) * s;
+    q[i + 2] = pivot[2] + (q[i + 2] - pivot[2]) * s;
+  }
+  return part;
+}
+
+/** Area-weighted smooth vertex normals for a part that didn't supply its own. */
+export function computeNormalsFor(part) {
+  const { positions, indices } = part;
+  const normals = new Float32Array(positions.length);
+  for (let i = 0; i < indices.length; i += 3) {
+    const a = indices[i] * 3, b = indices[i + 1] * 3, c = indices[i + 2] * 3;
+    const e1x = positions[b] - positions[a], e1y = positions[b + 1] - positions[a + 1], e1z = positions[b + 2] - positions[a + 2];
+    const e2x = positions[c] - positions[a], e2y = positions[c + 1] - positions[a + 1], e2z = positions[c + 2] - positions[a + 2];
+    const nx = e1y * e2z - e1z * e2y;
+    const ny = e1z * e2x - e1x * e2z;
+    const nz = e1x * e2y - e1y * e2x;
+    for (const o of [a, b, c]) {
+      normals[o] += nx; normals[o + 1] += ny; normals[o + 2] += nz;
+    }
+  }
+  for (let i = 0; i < normals.length; i += 3) {
+    const l = Math.hypot(normals[i], normals[i + 1], normals[i + 2]) || 1;
+    normals[i] /= l; normals[i + 1] /= l; normals[i + 2] /= l;
+  }
+  part.normals = normals;
+  return part;
+}
+
 /** Accumulates parts into a single indexed skinned geometry. */
 export class MeshBuilder {
   constructor() {
@@ -157,11 +191,8 @@ export class MeshBuilder {
     const n = part.positions.length / 3;
     for (let i = 0; i < part.positions.length; i++) this.positions.push(part.positions[i]);
     for (let i = 0; i < part.positions.length; i++) this.rest.push(part.positions[i]);
-    if (part.normals) {
-      for (let i = 0; i < part.normals.length; i++) this.normals.push(part.normals[i]);
-    } else {
-      for (let i = 0; i < n * 3; i++) this.normals.push(0);
-    }
+    if (!part.normals) computeNormalsFor(part);
+    for (let i = 0; i < part.normals.length; i++) this.normals.push(part.normals[i]);
     if (part.uvs) {
       for (let i = 0; i < part.uvs.length; i++) this.uvs.push(part.uvs[i]);
     } else {

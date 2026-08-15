@@ -113,6 +113,34 @@ export class Field {
   sub(prim) { this.subs.push(prim); return this; }
   addAll(list) { list.forEach((p) => this.add(p)); return this; }
 
+  /**
+   * Uniformly scale everything already added, about a pivot. Lets a whole region
+   * (the head) be resized from one number without re-authoring every primitive.
+   */
+  scaleAbout(s, pivot) {
+    const xf = (prim) => {
+      const inner = prim.d;
+      const bb = prim.aabb;
+      return {
+        k: prim.k * s,
+        aabb: [
+          pivot[0] + (bb[0] - pivot[0]) * s, pivot[1] + (bb[1] - pivot[1]) * s, pivot[2] + (bb[2] - pivot[2]) * s,
+          pivot[0] + (bb[3] - pivot[0]) * s, pivot[1] + (bb[4] - pivot[1]) * s, pivot[2] + (bb[5] - pivot[2]) * s,
+        ],
+        d(px, py, pz) {
+          return inner(
+            pivot[0] + (px - pivot[0]) / s,
+            pivot[1] + (py - pivot[1]) / s,
+            pivot[2] + (pz - pivot[2]) / s,
+          ) * s;
+        },
+      };
+    };
+    this.adds = this.adds.map(xf);
+    this.subs = this.subs.map(xf);
+    return this;
+  }
+
   /** Distance at an arbitrary point (used for vertex normals / weight refinement). */
   sample(px, py, pz) {
     let d = 1e3;

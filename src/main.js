@@ -43,6 +43,7 @@ function boot() {
     boneNames: model.rig.bones.map((b) => b.name),
   };
   window.__setCamera = viewer.setCamera;
+  window.__frameStats = () => viewer.frameStats(model.meshes.skin);
 
   const ms = Math.round(performance.now() - t0);
   const tris = Math.round(model.stats.triangles / 1000);

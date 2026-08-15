@@ -81,7 +81,7 @@ function ground() {
       float g = n2(vWP.xz*7.0)*0.55 + n2(vWP.xz*23.0)*0.3 + n2(vWP.xz*61.0)*0.15;
       float r = length(vWP.xz);
       diffuseColor.rgb *= 0.45 + g*1.1;
-      diffuseColor.rgb *= smoothstep(6.8, 1.6, r);`)
+      diffuseColor.rgb *= 1.0 - smoothstep(1.6, 6.8, r);`)
       .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
       roughnessFactor = clamp(0.98 - g*0.22, 0.6, 1.0);`);
   };
@@ -106,7 +106,7 @@ export function createViewer(container) {
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x07070a, 0.055);
   scene.environment = environmentMap(renderer);
-  scene.environmentIntensity = 0.55;
+  scene.environmentIntensity = 0.32;
   scene.add(backdrop());
   scene.add(ground());
 
@@ -123,7 +123,7 @@ export function createViewer(container) {
   controls.update();
 
   // ---- lights ---------------------------------------------------------------
-  const key = new THREE.SpotLight(0xffcf9a, 90, 14, 0.62, 0.75, 2);
+  const key = new THREE.SpotLight(0xffcf9a, 11, 14, 0.62, 0.75, 2);
   key.position.set(2.0, 3.0, 2.5);
   key.target.position.set(0, 1.15, 0);
   key.castShadow = true;
@@ -135,23 +135,23 @@ export function createViewer(container) {
   key.shadow.radius = 2.5;
   scene.add(key, key.target);
 
-  const fill = new THREE.DirectionalLight(0x6c86ad, 0.34);
+  const fill = new THREE.DirectionalLight(0x6c86ad, 0.12);
   fill.position.set(-2.8, 1.6, 1.4);
   scene.add(fill);
 
-  const rimWarm = new THREE.DirectionalLight(0xffb173, 1.65);
+  const rimWarm = new THREE.DirectionalLight(0xffb173, 0.55);
   rimWarm.position.set(-1.5, 2.0, -2.8);
   scene.add(rimWarm);
 
-  const rimCool = new THREE.DirectionalLight(0x87a6cf, 0.85);
+  const rimCool = new THREE.DirectionalLight(0x87a6cf, 0.30);
   rimCool.position.set(2.2, 1.7, -2.4);
   scene.add(rimCool);
 
-  const bounce = new THREE.HemisphereLight(0x2a2a33, 0x151009, 0.35);
+  const bounce = new THREE.HemisphereLight(0x2a2a33, 0x151009, 0.14);
   scene.add(bounce);
 
   // a small warm practical near the face, like a candle just off-frame
-  const practical = new THREE.PointLight(0xff9d4a, 2.2, 3.2, 2);
+  const practical = new THREE.PointLight(0xff9d4a, 0.5, 3.2, 2);
   practical.position.set(0.85, 1.42, 0.95);
   scene.add(practical);
 
@@ -193,5 +193,28 @@ export function createViewer(container) {
     renderer.render(scene, camera);
   }
 
-  return { renderer, scene, camera, controls, setCamera, updaters, lights: { key, fill, rimWarm, rimCool, practical } };
+  /**
+   * Screen-space extent of the subject, so the capture tool can prove a framing
+   * actually contains what it claims to. Returns NDC-normalised 0..1 coords plus
+   * the fraction of frame height the subject fills.
+   */
+  function frameStats(object) {
+    const box = new THREE.Box3().setFromObject(object);
+    const v = new THREE.Vector3();
+    let minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
+    for (let i = 0; i < 8; i++) {
+      v.set(i & 1 ? box.max.x : box.min.x, i & 2 ? box.max.y : box.min.y, i & 4 ? box.max.z : box.min.z);
+      v.project(camera);
+      minX = Math.min(minX, v.x); maxX = Math.max(maxX, v.x);
+      minY = Math.min(minY, v.y); maxY = Math.max(maxY, v.y);
+    }
+    return {
+      left: (minX + 1) / 2, right: (maxX + 1) / 2,
+      bottom: (minY + 1) / 2, top: (maxY + 1) / 2,
+      fillH: (maxY - minY) / 2, fillW: (maxX - minX) / 2,
+    };
+  }
+
+  return { renderer, scene, camera, controls, setCamera, frameStats, updaters,
+           lights: { key, fill, rimWarm, rimCool, practical } };
 }
