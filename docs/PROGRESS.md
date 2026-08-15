@@ -22,7 +22,7 @@ session transcript; the actionable residue is captured here.
 ### Critic round 4 list — status after iteration 16
 | # | defect | status |
 |---|---|---|
-| 1 | hands read as a bundle of sticks; palm was 9.6 cm deep | palm rebuilt as a flat wedge, finger curl 3-4x, deeper taper — **re-check** |
+| 1 | hands read as a bundle of sticks; palm was 9.6 cm deep | Palm rebuilt as a flat wedge. **Applying the critic's "3-4x curl" literally made it far worse** — `FINGER_CURL` is already multiplied by `TIP_CURL` at the fingertip, so it compounded and swept the fingers forward into tentacles. Moderate curl + deeper knuckles + reduced splay reads correctly. |
 | 2 | eye sits too high / muzzle too long, and the jaw NARROWS where the reference FLARES | jaw and muzzle blocks widened ~20 %, braincase raised — **not fully closed** |
 | 3 | horns 55 % too long, 19 deg too steep, 30 % too slender | re-authored to ~27 deg, base 0.0212; over-shortened, then lengthened back toward 0.66x head length — **re-check** |
 | 4 | oxblood brow field absent (hue contrast 3x under) | widened and strengthened, then **overshot to pink and dialled back** to R/G ~2.1 |
@@ -111,6 +111,21 @@ normalises both to a `muzzle_top` anchor so exposure cancels, and prints ratios.
 sample coordinates are currently mis-registered (they were authored against the wrong
 reference screenshot), so its numbers are not trustworthy until they are re-placed
 against the crops `tools/compare.mjs` uses.
+
+## Careful with critic numbers
+
+Round 4's list was measured and mostly right, but two of its prescriptions had to be
+applied with judgement rather than literally:
+
+- **"raise `FINGER_CURL` 3-4x"** — that constant is already multiplied by `TIP_CURL`
+  at the tip, so 3-4x compounded into a ~17 cm forward sweep on an 11 cm finger. The
+  hands came out visibly worse than the defect being fixed.
+- **"raise `maroon` red to ~0.055"** — as a pure red that flooded the crown pink. The
+  critic's own measurement (reference brow R/G 1.74) was the better target; the fix
+  was a partial mix over the olive, not a more saturated paint.
+
+Read a prescription against the surrounding code before applying it, and re-capture
+immediately — both of these were obvious in one frame.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
 
