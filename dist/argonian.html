@@ -4085,7 +4085,12 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
   // R/G ~2.1, not ~4.8. The critic measured the reference brow at R/G 1.74 against a
   // 1.17 muzzle; pushed to a pure red this floods the crown salmon-pink instead of
   // reading as dark oxblood over olive.
-  vec3 maroon   = vec3(0.0330, 0.0158, 0.0126);
+  // DARKER than the hide as well as redder. At R/G 2.1 and a luminance close to the
+  // olive's, mixing it in at 40% produced a warm neutral that vanished under the warm
+  // key \u2014 the reference's brow plates read because they are dark shields, not because
+  // they are red. (The old note about pure red flooding the crown pink applied when
+  // this field covered the whole cranium; it is a confined band now.)
+  vec3 maroon   = vec3(0.0286, 0.0094, 0.0078);
   vec3 boneCol  = vec3(0.082, 0.080, 0.052);
 
   vec3 col = mix(dorsal2, dorsal, ss(0.30, 0.72, mottle * 0.6 + blotch * 0.7));
@@ -4117,7 +4122,7 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
   col = mix(col, plate * vec3(1.15, 1.20, 1.55), socket * 0.98);
   // partial mix, so the olive hide shows through and the band lands near the
   // reference's 1.74 rather than at the paint's own ratio
-  col = mix(col, maroon, brow * 0.84);
+  col = mix(col, maroon, brow * 0.95);
   // three cream claw-mark streaks across the maroon brow band
   float streak = ss(0.72, 0.97, abs(sin((J.x - 0.010) * 150.0)));
   col = mix(col, boneCol * 0.78, brow * streak * ss(0.012, 0.052, abs(J.x)) * 0.95);
@@ -4208,7 +4213,11 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
   // reticulated net dividing large flat plates. Generic crevice darkening is the
   // exact opposite, so on the head it is damped hard and this runs on top of it.
   // suppressed along the mouth: the bright net was filling the crease back in
-  float mortar = (1.0 - ss(0.02, 0.62, h)) * headMask * (1.0 - cap * 0.55)
+  // NARROW. This paints pale olive at 92% and it is applied AFTER the brow plates and
+  // the crown cap, so widening it to catch more of the scale height did not strengthen
+  // the net \u2014 it flooded the whole head with one flat tone and ERASED the maroon brow.
+  // Three "no visible change" iterations on the brow were this, not the brow.
+  float mortar = (1.0 - ss(0.06, 0.32, h)) * headMask * (1.0 - cap * 0.55)
                * (1.0 - ss(0.012, 0.004, abs(H.y - (LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE))));
   // The reticulation is a PALE OLIVE net, not a cream one. Painted with boneCol it
   // covered most of the head in warm bone at 80% and was the main reason the head
