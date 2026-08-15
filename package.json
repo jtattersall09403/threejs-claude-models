@@ -6,7 +6,8 @@
     "build": "node tools/build.mjs",
     "capture": "node tools/capture.mjs",
     "shot": "node tools/shot.mjs",
-    "compare": "node tools/compare.mjs"
+    "compare": "node tools/compare.mjs",
+    "measure": "node tools/measure.mjs"
   },
   "repository": {
     "type": "git",
