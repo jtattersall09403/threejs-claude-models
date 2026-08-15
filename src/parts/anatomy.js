@@ -21,7 +21,10 @@ export const EYE = {
 // One knob for overall head size. Head anatomy, horns, spikes, teeth and eyes are
 // all authored at scale 1 and pushed through this transform, and the skin shader
 // undoes it to evaluate its head masks, so the whole head resizes coherently.
-export const HEAD_XF = { scale: 1.0, pivot: [0, 1.578, 0.028], offset: [0, -0.034, 0.004] };
+// scale 1.16: measured against the full-body reference, head height against shoulder
+// width was 0.38 where the reference is ~0.6. The head was reading as too small for
+// the body from every full-length angle.
+export const HEAD_XF = { scale: 1.16, pivot: [0, 1.578, 0.028], offset: [0, -0.034, 0.004] };
 
 export function headPoint(p) {
   const { scale: s, pivot: c, offset: o } = HEAD_XF;

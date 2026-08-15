@@ -340,9 +340,16 @@ const HORN_FRAG = /* glsl */`
 `;
 
 const EYE_FRAG = /* glsl */`
-  vec3 c = vec3(sign(vRest.x) * EYE_X, EYE_Y, EYE_Z);
-  vec3 d = normalize(vRest - c);
-  vec3 G = normalize(vec3(sign(vRest.x) * GAZE_X, GAZE_Y, GAZE_Z));
+  // vRest is WORLD space; EYE_X/Y/Z are authoring space. Undo the head transform
+  // first, exactly as SKIN_FRAG does. Compared directly, the iris centre lands about
+  // two eyeball radii off the eyeball — the head offset alone is 34 mm against an
+  // 18 mm ball — and every subsequent "the eye looks wrong" tweak is compensating
+  // for that rather than fixing it.
+  vec3 EHP = vec3(HEAD_PX, HEAD_PY, HEAD_PZ);
+  vec3 EH = (vRest - vec3(HEAD_OX, HEAD_OY, HEAD_OZ) - EHP) / HEAD_S + EHP;
+  vec3 c = vec3(sign(EH.x) * EYE_X, EYE_Y, EYE_Z);
+  vec3 d = normalize(EH - c);
+  vec3 G = normalize(vec3(sign(EH.x) * GAZE_X, GAZE_Y, GAZE_Z));
   vec3 up = normalize(vec3(0.0, 1.0, 0.0) - G * G.y);
   vec3 rt = normalize(cross(up, G));
   float x = dot(d, rt), y = dot(d, up);
