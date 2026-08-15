@@ -4097,8 +4097,13 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
   // neck rather than continuing into it. NOT gated by headMask \u2014 headMask fades out
   // across 1.535..1.585, which is precisely the band this is trying to darken, so
   // multiplying by it cancels the effect exactly where it is wanted.
-  float jawShadow = ss(1.594, 1.546, H.y) * ss(1.468, 1.512, H.y) * ss(-0.03, 0.02, H.z);
-  col *= mix(1.0, 0.40, jawShadow);
+  float jawShadow = ss(1.606, 1.552, H.y) * ss(1.462, 1.508, H.y) * ss(-0.05, 0.01, H.z);
+  col *= mix(1.0, 0.34, jawShadow);
+  // ...and a lit edge right along the jawline itself, so the boundary reads as an
+  // edge the light catches rather than only as a gradient
+  float jawEdge = ss(0.0085, 0.0018, abs(H.y - 1.6075)) * ss(-0.03, 0.02, H.z)
+                * ss(0.176, 0.150, H.z);
+  col = mix(col, col * 1.55, jawEdge * 0.55);
 
   // Rust-red hands. In the reference the hands are markedly warmer than the green
   // forearms \u2014 one of the few strong hue breaks anywhere on the character, and its

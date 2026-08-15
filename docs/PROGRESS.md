@@ -47,6 +47,30 @@ now genuinely close to the reference** — that was the main win. Still open:
 7. Hands: fingers still fairly uniform in length.
 8. The tail is plausible but exits fairly horizontally and its tip kink reads oddly.
 
+## Direct feedback from the user on the head (iteration 13) — keep checking these
+
+These came from the user looking at the live artifact, and they were all correct:
+
+- **The big expanse of scales below the mouth is NOT all jaw and snout.** The
+  reference has a strong jawline, spiked, with a *shadowed neck and clavicle area
+  underneath it*. Ours ran the jaw straight into the throat as one continuous
+  surface. Partly fixed (throat dropped clear, jaw shadow painted, spike row
+  enlarged) but the shadowed recess is still weaker than the reference's.
+- **Cheekbones** — added a ridge from under the eye back to the hinge; could go
+  further.
+- **Eyebrow spines** — these are spines, not small scutes. Lengthened.
+- **The angle of the eyes and brow.** The reference eye slants down toward the snout
+  and that angle carries the whole expression. Fixed by building the upper lid from
+  two lobes, outer high and inner low.
+- **An orange rim around the eyes** — a warm ring of scales right at the opening.
+  Added; note it must be TIGHT (the aperture is only ~24 mm across) or it floods the
+  cheek.
+- **The mouth was solid at the front but sliced clean through at the sides.** Real
+  bug: `creaseSlot` was a band in y inside a hard limit in x, i.e. a through-cut. Out
+  at the corners of the mouth, where the surface turns to face sideways, it sawed a
+  slit through the jaw instead of grazing a groove. Now tapers closed in x as well as
+  z, and its x-extent follows the muzzle's own half-width.
+
 ## Measuring rather than eyeballing
 
 `npm run measure` samples matched points on a reference crop and the render,
