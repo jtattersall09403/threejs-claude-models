@@ -8,19 +8,23 @@
 import { Field, capsule, ellipsoid, roundBox, creaseSlot } from '../core/sdf.js';
 
 export const EYE = {
-  c: [0.0578, 1.6975, 0.0715],   // mirrored on x
-  r: 0.0208,
+  c: [0.0578, 1.6975, 0.0675],   // mirrored on x
+  r: 0.0176,
   gaze: [0.34, 0.05, 0.939],     // outward/forward gaze axis for the left(+x) eye
 };
 
 // One knob for overall head size. Head anatomy, horns, spikes, teeth and eyes are
 // all authored at scale 1 and pushed through this transform, and the skin shader
 // undoes it to evaluate its head masks, so the whole head resizes coherently.
-export const HEAD_XF = { scale: 1.0, pivot: [0, 1.578, 0.028] };
+export const HEAD_XF = { scale: 1.0, pivot: [0, 1.578, 0.028], offset: [0, -0.034, 0.004] };
 
 export function headPoint(p) {
-  const { scale: s, pivot: c } = HEAD_XF;
-  return [c[0] + (p[0] - c[0]) * s, c[1] + (p[1] - c[1]) * s, c[2] + (p[2] - c[2]) * s];
+  const { scale: s, pivot: c, offset: o } = HEAD_XF;
+  return [
+    c[0] + (p[0] - c[0]) * s + o[0],
+    c[1] + (p[1] - c[1]) * s + o[1],
+    c[2] + (p[2] - c[2]) * s + o[2],
+  ];
 }
 
 export const EYE_WORLD = headPoint(EYE.c);
@@ -42,21 +46,21 @@ export function buildBodyField() {
   f.add(ellipsoid([0, 1.245, 0.008], [0.158, 0.135, 0.111], { k: K }));    // ribcage
   f.add(ellipsoid([0, 1.345, 0.0], [0.152, 0.09, 0.103], { k: K }));       // upper chest
   f.add(capsule([-0.155, 1.392, -0.004], [0.155, 1.392, -0.004], 0.076, 0.076, { k: 0.045 }));
-  f.add(ellipsoid([0, 1.378, -0.06], [0.122, 0.078, 0.058], { k: 0.06 })); // trapezius mass
+  f.add(ellipsoid([0, 1.386, -0.055], [0.134, 0.086, 0.066], { k: 0.06 })); // trapezius mass
   f.add(ellipsoid([0, 0.95, -0.062], [0.146, 0.09, 0.07], { k: K }));      // glutes
 
   // ---- neck (continues up into the head bake) --------------------------------
-  f.add(capsule([0, 1.39, -0.018], [0, 1.575, 0.012], 0.092, 0.08, { k: 0.05 }));
+  f.add(capsule([0, 1.375, -0.02], [0, 1.535, 0.012], 0.108, 0.084, { k: 0.055 }));
 
   // ---- arms ------------------------------------------------------------------
   for (const s of [1, -1]) {
     f.add(ellipsoid([s * 0.186, 1.392, -0.004], [0.062, 0.072, 0.064], { k: 0.03 })); // deltoid
-    f.add(capsule([s * 0.19, 1.388, 0], [s * 0.208, 1.145, -0.014], 0.05, 0.039, { k: 0.026 }));
+    f.add(capsule([s * 0.192, 1.388, 0], [s * 0.211, 1.145, -0.014], 0.05, 0.039, { k: 0.026 }));
     f.add(ellipsoid([s * 0.199, 1.275, -0.005], [0.047, 0.068, 0.048], { k: 0.03 }));  // biceps
-    f.add(capsule([s * 0.208, 1.145, -0.014], [s * 0.216, 0.892, 0.014], 0.044, 0.029, { k: 0.026 }));
-    f.add(ellipsoid([s * 0.211, 1.074, -0.008], [0.041, 0.06, 0.043], { k: 0.03 }));   // forearm swell
+    f.add(capsule([s * 0.211, 1.145, -0.014], [s * 0.228, 0.892, 0.012], 0.044, 0.029, { k: 0.026 }));
+    f.add(ellipsoid([s * 0.216, 1.074, -0.008], [0.041, 0.06, 0.043], { k: 0.03 }));   // forearm swell
     // palm: a mitten; individual fingers are swept separately at higher detail
-    f.add(roundBox([s * 0.217, 0.822, 0.01], [0.014, 0.036, 0.036], 0.016, { k: 0.03 }));
+    f.add(roundBox([s * 0.229, 0.822, 0.006], [0.013, 0.034, 0.031], 0.026, { k: 0.03 }));
   }
 
   // ---- legs ------------------------------------------------------------------
@@ -97,39 +101,43 @@ export function buildHeadField() {
 
   // ---- brow / eye ridges -------------------------------------------------------
   for (const s of [1, -1]) {
-    f.add(ellipsoid([s * 0.058, 1.7215, 0.05], [0.036, 0.020, 0.042], { k: 0.026 })); // brow shelf
+    f.add(ellipsoid([s * 0.0585, 1.7235, 0.044], [0.035, 0.018, 0.038], { k: 0.024 })); // brow shelf
     f.add(ellipsoid([s * 0.0755, 1.686, 0.022], [0.021, 0.05, 0.056], { k: 0.035 }));  // temple
   }
 
-  // ---- muzzle ------------------------------------------------------------------
-  f.add(capsule([0, 1.6705, 0.058], [0, 1.6555, 0.1795], 0.0635, 0.0375,
-    { k: 0.034, scale: [1, 0.74, 1] }));
-  f.add(capsule([0, 1.6555, 0.1795], [0, 1.6505, 0.2135], 0.0375, 0.0272,
-    { k: 0.026, scale: [1, 0.8, 1] }));
-  f.add(roundBox([0, 1.6755, 0.128], [0.041, 0.011, 0.056], 0.013, { k: 0.024 })); // flat snout top
-  f.add(capsule([0, 1.6885, 0.07], [0, 1.6665, 0.196], 0.031, 0.018,
-    { k: 0.028, scale: [1, 0.8, 1] }));                                       // nasal bridge ridge
-  f.add(ellipsoid([0, 1.6545, 0.2185], [0.0285, 0.0205, 0.0185], { k: 0.018 })); // nose pad
+  // ---- muzzle: squared blocks, not tubes. The reference snout is a box with a
+  // level top and near-parallel sides; capsules give a drooping bulb instead. -----
+  f.add(roundBox([0, 1.6555, 0.108], [0.038, 0.023, 0.062], 0.017, { k: 0.045 }));
+  f.add(roundBox([0, 1.6545, 0.186], [0.028, 0.018, 0.024], 0.014, { k: 0.030 }));
+  f.add(capsule([0, 1.6845, 0.07], [0, 1.6805, 0.196], 0.030, 0.019,
+    { k: 0.020, scale: [1, 0.72, 1] }));                                      // nasal bridge ridge
+  f.add(ellipsoid([0, 1.6535, 0.2165], [0.0225, 0.0162, 0.0125], { k: 0.011 })); // nose pad
 
-  // ---- lower jaw: deep, giving the head real height ------------------------------
-  f.add(capsule([0, 1.6115, 0.052], [0, 1.6075, 0.1885], 0.0585, 0.0268,
-    { k: 0.038, scale: [1, 0.68, 1] }));
-  f.add(ellipsoid([0, 1.6125, 0.171], [0.0275, 0.0215, 0.032], { k: 0.024 }));   // chin
+  // ---- lower jaw: deep and straight, turning up at a visible hinge --------------
+  f.add(roundBox([0, 1.6035, 0.106], [0.034, 0.018, 0.060], 0.016, { k: 0.042 }));
+  f.add(roundBox([0, 1.6055, 0.178], [0.025, 0.014, 0.022], 0.013, { k: 0.028 }));
+  f.add(ellipsoid([0, 1.6105, 0.196], [0.024, 0.019, 0.020], { k: 0.016 }));   // chin
   for (const s of [1, -1]) {
-    f.add(ellipsoid([s * 0.0625, 1.6385, 0.036], [0.031, 0.05, 0.061], { k: 0.038 })); // cheek / masseter
-    f.add(ellipsoid([s * 0.0715, 1.6485, -0.012], [0.028, 0.05, 0.047], { k: 0.042 })); // jaw hinge
+    f.add(ellipsoid([s * 0.0575, 1.6425, 0.048], [0.033, 0.048, 0.068], { k: 0.048 })); // cheek / masseter
+    f.add(ellipsoid([s * 0.0725, 1.6445, -0.008], [0.029, 0.054, 0.044], { k: 0.032 })); // jaw hinge
   }
 
   // ---- throat / neck (overlaps the body bake) ------------------------------------
   f.add(ellipsoid([0, 1.5955, 0.05], [0.062, 0.045, 0.058], { k: 0.05 }));
-  f.add(capsule([0, 1.43, -0.012], [0, 1.578, 0.012], 0.086, 0.074, { k: 0.055 }));
+  f.add(capsule([0, 1.472, -0.012], [0, 1.578, 0.012], 0.088, 0.078, { k: 0.05 }));
 
   // ---- cuts ------------------------------------------------------------------
   for (const s of [1, -1]) {
-    f.sub(ellipsoid([s * EYE.c[0], EYE.c[1], EYE.c[2] + 0.005], [0.0295, 0.0268, 0.031], { k: 0.011 }));
+        // A LENS-shaped cut, not a round crater: the skin left above and below forms
+    // the upper and lower lids, so the eyeball is clipped the way a real eye is.
+    f.sub(ellipsoid([s * EYE.c[0], EYE.c[1] + 0.0015, EYE.c[2] + 0.010],
+      [0.0335, 0.0182, 0.032], { k: 0.006 }));
+    // a lid rim above and below, so the opening reads as lidded rather than as a crater
+    f.add(ellipsoid([s * 0.0575, 1.7155, 0.0625], [0.0300, 0.0072, 0.0250], { k: 0.007 }));
+    f.add(ellipsoid([s * 0.0565, 1.6795, 0.0635], [0.0280, 0.0060, 0.0230], { k: 0.007 }));
   }
   // mouth crease — rises toward the jaw hinge like a real reptile jaw line
-  f.sub(creaseSlot((z) => 1.6118 + (0.205 - z) * 0.082, 0.0011, [0.036, 0.206], 0.083,
+  f.sub(creaseSlot((z) => 1.6215 + (0.200 - z) * 0.062, 0.0016, [0.032, 0.212], 0.084,
     { k: 0.0045, yMin: 1.56, yMax: 1.68 }));
   // nostrils
   for (const s of [1, -1]) {
@@ -140,5 +148,15 @@ export function buildHeadField() {
     f.sub(ellipsoid([s * 0.0885, 1.6665, -0.036], [0.008, 0.014, 0.011], { k: 0.006 }));
   }
 
-  return f.scaleAbout(HEAD_XF.scale, HEAD_XF.pivot);
+  return f;
+}
+
+/**
+ * Apply the head transform. Kept separate from buildHeadField() because features
+ * (horns, spikes) are seated against the field with `raySurface` using
+ * AUTHORING-space coordinates — seating against an already-transformed field
+ * misses the surface and the features end up buried inside the skull.
+ */
+export function transformHeadField(f) {
+  return f.scaleAbout(HEAD_XF.scale, HEAD_XF.pivot, HEAD_XF.offset);
 }

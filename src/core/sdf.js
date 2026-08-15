@@ -191,21 +191,22 @@ export class Field {
    * Uniformly scale everything already added, about a pivot. Lets a whole region
    * (the head) be resized from one number without re-authoring every primitive.
    */
-  scaleAbout(s, pivot) {
+  scaleAbout(s, pivot, offset = [0, 0, 0]) {
     const xf = (prim) => {
       const inner = prim.d;
       const bb = prim.aabb;
+      const map = (i, v) => pivot[i] + (v - pivot[i]) * s + offset[i];
       return {
         k: prim.k * s,
         aabb: [
-          pivot[0] + (bb[0] - pivot[0]) * s, pivot[1] + (bb[1] - pivot[1]) * s, pivot[2] + (bb[2] - pivot[2]) * s,
-          pivot[0] + (bb[3] - pivot[0]) * s, pivot[1] + (bb[4] - pivot[1]) * s, pivot[2] + (bb[5] - pivot[2]) * s,
+          map(0, bb[0]), map(1, bb[1]), map(2, bb[2]),
+          map(0, bb[3]), map(1, bb[4]), map(2, bb[5]),
         ],
         d(px, py, pz) {
           return inner(
-            pivot[0] + (px - pivot[0]) / s,
-            pivot[1] + (py - pivot[1]) / s,
-            pivot[2] + (pz - pivot[2]) / s,
+            pivot[0] + (px - offset[0] - pivot[0]) / s,
+            pivot[1] + (py - offset[1] - pivot[1]) / s,
+            pivot[2] + (pz - offset[2] - pivot[2]) / s,
           ) * s;
         },
       };

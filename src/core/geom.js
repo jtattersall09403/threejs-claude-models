@@ -151,12 +151,12 @@ export function spike(base, dir, length, radius, opts = {}) {
 }
 
 /** Uniformly scale a generated part about a pivot (normals are scale-invariant). */
-export function scalePartAbout(part, s, pivot) {
+export function scalePartAbout(part, s, pivot, offset = [0, 0, 0]) {
   const q = part.positions;
   for (let i = 0; i < q.length; i += 3) {
-    q[i] = pivot[0] + (q[i] - pivot[0]) * s;
-    q[i + 1] = pivot[1] + (q[i + 1] - pivot[1]) * s;
-    q[i + 2] = pivot[2] + (q[i + 2] - pivot[2]) * s;
+    q[i] = pivot[0] + (q[i] - pivot[0]) * s + offset[0];
+    q[i + 1] = pivot[1] + (q[i + 1] - pivot[1]) * s + offset[1];
+    q[i + 2] = pivot[2] + (q[i + 2] - pivot[2]) * s + offset[2];
   }
   return part;
 }

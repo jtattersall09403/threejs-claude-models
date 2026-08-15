@@ -6,7 +6,7 @@ import { computeSkinning } from './core/skin.js';
 import { MeshBuilder, scalePartAbout } from './core/geom.js';
 import { createSkeleton, buildSegments } from './rig/skeleton.js';
 import {
-  buildBodyField, buildHeadField, BODY_BOUNDS, HEAD_BOUNDS, HEAD_XF,
+  buildBodyField, buildHeadField, transformHeadField, BODY_BOUNDS, HEAD_BOUNDS, HEAD_XF,
 } from './parts/anatomy.js';
 import {
   buildHorn, buildCrownSpikes, buildJawSpikes, buildTeeth, buildFingers, buildEyes,
@@ -93,9 +93,14 @@ export function buildArgonian(opts = {}) {
   // ---- hide -----------------------------------------------------------------
   log('baking body');
   const bodyField = buildBodyField();
-  const headField = buildHeadField();
+  // seatField is in head-AUTHORING space; features are seated against it and then
+  // pushed through the same transform as the field itself
+  const seatField = buildHeadField();
   const body = smoothPositions(bakeField(bodyField, BODY_BOUNDS, 0.0062), 2);
   log('baking head');
+  const headParts = [buildHorn(1, seatField), buildHorn(-1, seatField),
+                     ...buildCrownSpikes(seatField), ...buildJawSpikes(seatField)];
+  const headField = transformHeadField(seatField);
   const head = smoothPositions(bakeField(headField, HEAD_BOUNDS, 0.0031), 1);
 
   const skinB = new MeshBuilder();
@@ -108,16 +113,12 @@ export function buildArgonian(opts = {}) {
 
   // ---- horns, spikes, teeth, claws --------------------------------------------
   log('horns and spikes');
-  const toHead = (p) => scalePartAbout(p, HEAD_XF.scale, HEAD_XF.pivot);
+  const toHead = (p) => scalePartAbout(p, HEAD_XF.scale, HEAD_XF.pivot, HEAD_XF.offset);
   const hornB = new MeshBuilder();
-  for (const s of [1, -1]) {
-    const h = toHead(buildHorn(s, headField));
-    hornB.add(h, skinPart(h), 1);           // region 1 => banded ring in the shader
-  }
-  for (const p of [...buildCrownSpikes(headField), ...buildJawSpikes(headField), ...buildTeeth()]) {
-    const q = toHead(p);
-    hornB.add(q, skinPart(q), 0);
-  }
+  headParts.forEach((part, i) => {
+    const q = toHead(part);
+    hornB.add(q, skinPart(q), i < 2 ? 1 : 0);  // region 1 => banded ring on the horns
+  });
   for (const f of buildFingers(rig)) {
     if (f.region === 'horn') hornB.add(f.geom, skinPart(f.geom), 0);
   }

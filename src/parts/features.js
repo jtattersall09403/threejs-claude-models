@@ -17,17 +17,17 @@ export function fromGeometry(geo) {
 export function buildHorn(side, field) {
   const s = side;
   const pts = [
-    [s * 0.0555, 1.7285, 0.006],
-    [s * 0.0745, 1.7565, -0.036],
-    [s * 0.0885, 1.7715, -0.092],
-    [s * 0.0955, 1.7795, -0.15],
-    [s * 0.0935, 1.7815, -0.201],
+    [s * 0.0555, 1.7255, 0.004],
+    [s * 0.0765, 1.7695, -0.03],
+    [s * 0.0905, 1.8005, -0.082],
+    [s * 0.0975, 1.8235, -0.141],
+    [s * 0.0955, 1.8425, -0.194],
   ];
   const root = seat(field, pts[0], [s * 0.55, 0.72, 0.2], 0.024);
   pts[0] = root;
   const rings = curveRings(pts, (t) => {
     const base = 0.0298 * Math.pow(1 - t, 0.6) + 0.0018;
-    const ridge = 1 + 0.062 * Math.sin(t * 40) * Math.min(1, t * 5) * (1 - t);
+    const ridge = 1 + 0.105 * Math.sin(t * 26) * Math.min(1, t * 4) * (1 - t);
     return base * ridge;
   }, 34, {
     tension: 0.5,
@@ -73,45 +73,28 @@ export function buildJawSpikes(field) {
   const out = [];
   for (const s of [1, -1]) {
     const jaw = [
-      [s * 0.0635, 1.6155, 0.05, 0.031, 0.0098],
-      [s * 0.058, 1.6095, 0.1, 0.027, 0.0086],
-      [s * 0.0485, 1.6065, 0.146, 0.022, 0.007],
+      [s * 0.0605, 1.6005, 0.048, 0.024, 0.0082],
+      [s * 0.0545, 1.5955, 0.096, 0.021, 0.0072],
+      [s * 0.0455, 1.5935, 0.139, 0.017, 0.0058],
     ];
     for (const [x, y, z, len, r] of jaw) {
-      const dir = [s * 0.45, -0.42, -0.79];
+      const dir = [s * 0.42, -0.62, -0.66];
       out.push(spike(seat(field, [x, y, z], dir), dir, len, r, { taper: 0.7, sides: 8, steps: 6 }));
     }
     // cheek / jaw-hinge spikes
     for (const [p, dir, len, r] of [
-      [[s * 0.0805, 1.6555, -0.015], [s * 0.62, 0.05, -0.78], 0.038, 0.0115],
-      [[s * 0.076, 1.6265, 0.008], [s * 0.6, -0.35, -0.72], 0.031, 0.0098],
+      [[s * 0.0805, 1.6435, -0.016], [s * 0.62, -0.1, -0.78], 0.026, 0.0092],
+      [[s * 0.076, 1.6165, 0.008], [s * 0.6, -0.4, -0.7], 0.021, 0.0078],
     ]) {
       out.push(spike(seat(field, p, dir), dir, len, r, { taper: 0.7, sides: 8, steps: 6 }));
     }
   }
-  // dorsal neck ridge
-  const neck = [
-    [0, 1.6015, -0.081, 0.022, 0.0092],
-    [0, 1.5595, -0.092, 0.02, 0.0084],
-    [0, 1.5165, -0.095, 0.017, 0.0074],
-    [0, 1.4735, -0.091, 0.014, 0.0064],
-  ];
-  for (const [x, y, z, len, r] of neck) {
-    const dir = [0, 0.35, -0.94];
-    out.push(spike(seat(field, [x, y, z], dir), dir, len, r, { taper: 0.75, sides: 8, steps: 6 }));
-  }
   return out;
 }
 
-/** Teeth along the closed mouth line, plus two lower tusks. */
+/** No teeth protrude in the references — the jaw is closed and shows only a crease. */
 export function buildTeeth() {
-  const out = [];
-  for (const s of [1, -1]) {
-    // lower tusk poking up outside the lip
-    out.push(spike([s * 0.0345, 1.6095, 0.1585], [s * 0.15, 0.96, 0.22], 0.0072, 0.0030,
-      { taper: 0.62, sides: 7, steps: 5 }));
-  }
-  return out;
+  return [];
 }
 
 const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
