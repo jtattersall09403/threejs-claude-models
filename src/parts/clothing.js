@@ -54,18 +54,21 @@ export function clothingFields(body) {
 
   // ---- undershirt: thin, only visible at the collar and the V of the tunic ----
   {
-    const bounds = [-0.26, 1.12, -0.24, 0.26, 1.56, 0.24];
+    const bounds = [-0.26, 1.12, -0.24, 0.26, 1.66, 0.24];
     // coverage only bounds the EXTENT of the garment; it must be generously wider
     // than the offset body surface or the intersection lands inside the skin
     const cover = coverage([
       roundBox([0, 1.352, 0.005], [0.30, 0.156, 0.28], 0.02),
     ]);
     const f = garment(body, 0.010, cover, bounds, 0.020, folds(0.0032, 22));
-    // a wrapped cloth cowl at the throat, sitting proud of the collar
-    f.add(capsule([0, 1.432, -0.008], [0, 1.478, 0.004], 0.104, 0.100, { k: 0.022 }));
-    f.add(ellipsoid([0, 1.470, 0.030], [0.086, 0.030, 0.062], { k: 0.020 }));  // knotted front
-    f.add(ellipsoid([0.030, 1.452, 0.062], [0.036, 0.026, 0.030], { k: 0.018 }));
-    f.sub(capsule([0, 1.43, -0.016], [0, 1.62, 0.012], 0.082, 0.080, { k: 0.018 })); // neck hole
+    // A wrapped cloth cowl that rises to just under the jaw. It used to stop ~6 cm
+    // short, leaving a bare column of neck almost as wide as the skull — head and
+    // neck then fused into one box and the jaw line disappeared. In the references
+    // the neck is not visible at all.
+    f.add(capsule([0, 1.436, -0.008], [0, 1.560, 0.006], 0.102, 0.084, { k: 0.024 }));
+    f.add(ellipsoid([0, 1.496, 0.038], [0.084, 0.042, 0.062], { k: 0.020 }));  // knotted front
+    f.add(ellipsoid([0.030, 1.466, 0.066], [0.036, 0.026, 0.030], { k: 0.018 }));
+    f.sub(capsule([0, 1.43, -0.016], [0, 1.70, 0.014], 0.068, 0.078, { k: 0.018 })); // neck hole
     out.push({ field: f, bounds, cell: 0.0055, region: REGION.UNDERSHIRT });
   }
 

@@ -163,6 +163,11 @@ const SKIN_FRAG = /* glsl */`
   // dark scaled band around the eye socket and temple
   float eyeD = length((J - vec3(EYE_X, EYE_Y + 0.004, EYE_Z + 0.018)) * vec3(0.60, 1.05, 0.46));
   float socket = ss(0.132, 0.048, eyeD) * ss(1.628, 1.650, H.y);
+  // ...continuing back from the eye to the jaw hinge as a dark mask stripe. This is
+  // the strongest value break on the reference face and without it the cheek reads
+  // as one flat panel between brow and jaw.
+  float maskD = length((J - vec3(0.052, 1.6725, -0.006)) * vec3(0.42, 2.05, 0.86));
+  socket = max(socket, ss(0.098, 0.030, maskD) * 0.82);
 
   // maroon plate over the brow ridges and between the eyes. This is a NARROW band
   // just above the eyes in the reference; at its old extent it flooded the whole
@@ -196,6 +201,12 @@ const SKIN_FRAG = /* glsl */`
   vec3 col = mix(dorsal2, dorsal, ss(0.30, 0.72, mottle * 0.6 + blotch * 0.7));
   col = mix(col, warmOl, ss(0.45, 0.88, blotch));
   col = mix(col, col * 0.46, ss(0.42, 0.72, macro) * 0.55);
+  // Head-only macro blotching. Killing the pale ventral wash left the face one even
+  // panel of green; the reference muzzle is mottled dark-on-dark, with the top of
+  // the snout markedly darker than the flanks.
+  float snoutTop = ss(1.638, 1.668, H.y) * ss(0.030, 0.075, H.z) * ss(0.30, 0.72, Nr.y);
+  col = mix(col, col * 0.62, headMask * snoutTop * 0.80);
+  col = mix(col, col * mix(0.70, 1.16, ss(0.34, 0.70, fbm(P * 8.5 + 61.0))), headMask * 0.55);
   col = mix(col, belly, ventral * 0.66);
   col = mix(col, belly * vec3(1.06, 1.00, 0.80), bandZone * bands * 0.55);
   col = mix(col, mix(dorsal2, plate, 0.5), tailTop * (0.35 + 0.5 * tailScute));
@@ -208,8 +219,10 @@ const SKIN_FRAG = /* glsl */`
 
   // dark closed lip line along the mouth crease
   float lipY = LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE;
-  float lip = ss(0.0135, 0.0035, abs(H.y - lipY))
-            * ss(0.198, 0.186, H.z) * ss(0.006, 0.028, H.z);
+  // thin. At 2x this width it stopped reading as a closed mouth and became a
+  // letterbox slot painted across the face.
+  float lip = ss(0.0072, 0.0020, abs(H.y - lipY))
+            * ss(0.186, 0.174, H.z) * ss(0.006, 0.028, H.z);
   col = mix(col, vec3(0.0032, 0.0028, 0.0026), lip * 0.99);
 
   // crevices between scales go dark
