@@ -51,7 +51,10 @@ function folds(amp, freq = 13, drape = 0.42) {
     const b = fbm3(x * freq * 2.7 + 17, y * freq * drape * 2.7, z * freq * 2.7, 2);
     const ridge = 1 - Math.abs(a * 2 - 1);
     const fine = 1 - Math.abs(b * 2 - 1);
-    return amp * (ridge * 0.78 + fine * 0.30 - 0.52);
+    // STRICTLY NON-NEGATIVE. This displaces the garment's offset from the skin, so a
+    // zero-mean version drives the offset negative in every valley and the body
+    // erupts through the cloth in patches. Folds may only ever push outwards.
+    return amp * (ridge * 0.78 + fine * 0.30);
   };
 }
 
