@@ -122,19 +122,37 @@ export function buildHeadField() {
 
   // ---- brow / eye ridges -------------------------------------------------------
   for (const s of [1, -1]) {
-    f.add(ellipsoid([s * 0.0455, 1.7225, 0.052], [0.029, 0.017, 0.038], { k: 0.022 }));  // brow shelf, outer
-    f.add(ellipsoid([s * 0.0248, 1.7145, 0.070], [0.021, 0.015, 0.032], { k: 0.020 })); // ...dipping inboard
+    f.add(ellipsoid([s * 0.0455, 1.7130, 0.050], [0.029, 0.0145, 0.040], { k: 0.026 }));  // brow shelf, outer
+    f.add(ellipsoid([s * 0.0248, 1.7045, 0.066], [0.021, 0.0130, 0.034], { k: 0.024 })); // ...dipping inboard
     f.add(ellipsoid([s * 0.0575, 1.686, 0.022], [0.016, 0.052, 0.057], { k: 0.035 }));  // temple
   }
 
-  // ---- muzzle: squared blocks, not tubes. The reference snout is a box with a
-  // level top and near-parallel sides; capsules give a drooping bulb instead. -----
-  f.add(roundBox([0, 1.6555, 0.070], [0.0315, 0.0255, 0.030], 0.017, { k: 0.048 }));
-  f.add(roundBox([0, 1.6552, 0.114], [0.0248, 0.0205, 0.022], 0.0145, { k: 0.032 }));
-  f.add(roundBox([0, 1.6545, 0.146], [0.0170, 0.0142, 0.016], 0.0118, { k: 0.024 }));
-  f.add(capsule([0, 1.6935, 0.024], [0, 1.6795, 0.146], 0.024, 0.014,
-    { k: 0.024, scale: [1, 0.72, 1] }));                                      // nasal bridge ridge
-  f.add(ellipsoid([0, 1.6545, 0.1585], [0.0180, 0.0162, 0.0130], { k: 0.014 })); // nose pad
+  // ---- snout ------------------------------------------------------------------
+  // ONE CONTINUOUS TAPERING FORM flowing out of the braincase, not a stack of blocks.
+  // The reference profile (corpus/character/face-left-profile.jpg) is a single
+  // unbroken curve from crown, over the brow, down to the nose tip. Built as squared
+  // blocks the snout reads as a DOG MUZZLE bolted onto a skull, which was the most
+  // persistent likeness error in this project.
+  //
+  // Each station's TOP descends smoothly and its BOTTOM sits on the LIP line, so the
+  // upper lip is continuous with the mouth cut and the section stays SHALLOW — the
+  // reference snout is thin in vertical section, not a deep box.
+  const snout = [
+    // [z,     centre y, half-height, half-width]
+    [0.046, 1.6724, 0.0337, 0.0400],
+    [0.100, 1.6572, 0.0274, 0.0316],
+    [0.144, 1.6440, 0.0215, 0.0232],
+    [0.174, 1.6348, 0.0172, 0.0168],
+  ];
+  for (let i = 0; i < snout.length; i++) {
+    const [z, cy, hy, hx] = snout[i];
+    f.add(ellipsoid([0, cy, z], [hx, hy, i === 0 ? 0.062 : 0.046],
+      { k: i === 0 ? 0.055 : 0.038 }));
+  }
+  // a low dorsal ridge riding the same curve — a crest, not a separate bridge
+  f.add(capsule([0, 1.6990, 0.020], [0, 1.6470, 0.156], 0.0130, 0.0072,
+    { k: 0.026, scale: [1, 0.62, 1] }));
+  f.add(ellipsoid([0, 1.6348, 0.1830], [0.0150, 0.0140, 0.0125], { k: 0.014 })); // nose pad
 
   // ---- lower jaw: deep and straight, turning up at a visible hinge --------------
   // Narrower than the upper muzzle at every station, so the jaw tucks under the lip

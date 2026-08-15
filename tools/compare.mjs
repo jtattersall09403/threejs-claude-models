@@ -35,7 +35,7 @@ const PAIRS = [
   {
     name: 'head_side',
     ref: 'face-left-profile.jpg',
-    crop: [140, 40, 520, 690],   // named refs are already close crops, not full screenshots
+    crop: [0, 0, 827, 921],   // the named refs ARE already close crops — use them whole
     render: 'head_side.png',
     note: 'profile — muzzle top line, jaw depth, occiput',
   },
