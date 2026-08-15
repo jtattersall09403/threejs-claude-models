@@ -49,6 +49,37 @@ This environment can be reclaimed at any moment and **anything uncommitted is lo
 **Never skip step 5.** Reading the capture PNGs with the Read tool *is* the
 quality gate. Text-only reasoning about the model is not a substitute.
 
+**Judge the framing before you judge the model.** A capture can lie: too close,
+clipped, camera inside the mesh, subject a speck in the corner. Ask "did this shot
+actually capture what I aimed at?" before drawing conclusions from it. `npm run
+capture` prints `window.__frameStats()` coverage for the full-body shots and fails
+if the subject is clipped or tiny — but ad-hoc `npm run shot` framings are
+unchecked, so eyeball them. If a shot is badly framed, re-frame and re-shoot
+rather than reasoning from a bad image.
+
+## Known traps (each of these cost a full iteration — do not re-learn them)
+
+1. **Triangle winding.** Marching cubes and swept tubes must emit CCW-from-outside
+   triangles. Inverted winding culls front faces and you see the *inside* of the far
+   surface — it reads as an eerie translucency (you can "see through" clothes to the
+   shoulder), NOT as an obvious error. `npm run capture` audits signed volume and
+   outward-face agreement and fails the run if it regresses.
+2. **Garments must be offsets of the baked body surface** (`offsetSurface` + `isect`
+   with a coverage volume), never authored from primitive radii. Smooth-min blending
+   inflates the body several cm past its primitives and swallows anything else.
+   Coverage volumes bound the garment's *extent* only — make them generously wider
+   than the body, or the intersection lands inside the skin.
+3. **`THREE.Skeleton` snapshots `bone.matrixWorld`** at construction. Call
+   `root.updateMatrixWorld(true)` first or every vertex gets its rest transform
+   applied twice (character renders ~2x scale and distorted).
+4. **GLSL `smoothstep` is undefined when `edge0 >= edge1`.** Use the `ss()` helper in
+   materials.js for descending ranges; raw descending smoothstep returns garbage and
+   flattens the whole palette to one colour.
+5. **Custom uniforms need GLSL declarations.** `onBeforeCompile` supplies values only;
+   `declare()` in materials.js emits the `uniform` lines.
+6. **Horns/spikes must be seated with `raySurface`**, not placed at authored
+   coordinates — the blend-inflated skull swallows them otherwise.
+
 ## Commands
 
 | command | what it does |
