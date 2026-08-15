@@ -273,7 +273,11 @@ const SKIN_FRAG = /* glsl */`
   // neck rather than continuing into it. NOT gated by headMask — headMask fades out
   // across 1.535..1.585, which is precisely the band this is trying to darken, so
   // multiplying by it cancels the effect exactly where it is wanted.
-  float jawShadow = ss(1.612, 1.558, H.y) * ss(1.468, 1.514, H.y) * ss(-0.05, 0.01, H.z);
+  // A soft UNDERCUT, not a hard horizontal line: widen the falloff and weight it by
+  // downward-facing normals so it behaves like occlusion under the jaw rather than
+  // a painted band across it.
+  float jawShadow = ss(1.626, 1.548, H.y) * ss(1.454, 1.506, H.y) * ss(-0.06, 0.02, H.z);
+  jawShadow *= 0.45 + 0.55 * ss(0.30, -0.55, Nr.y);
   col *= mix(1.0, 0.26, jawShadow);
   // ...and a lit edge right along the jawline itself, so the boundary reads as an
   // edge the light catches rather than only as a gradient

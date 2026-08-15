@@ -166,7 +166,10 @@ export function buildHeadField() {
   // eyes, so the muzzle — not the jaw — is what you see from the front.
   for (const s of [1, -1]) {
     // cheekbone: a distinct ridge running back from under the eye to the hinge
-    f.add(ellipsoid([s * 0.0468, 1.6705, 0.030], [0.0125, 0.0125, 0.036], { k: 0.014 }));
+    // Cheekbone: a pronounced ridge from under the eye back to the hinge. In the
+    // references this catches light and is one of the head's clearest structures.
+    f.add(ellipsoid([s * 0.0492, 1.6720, 0.036], [0.0150, 0.0135, 0.040], { k: 0.011 }));
+    f.add(ellipsoid([s * 0.0530, 1.6660, -0.004], [0.0135, 0.0120, 0.030], { k: 0.011 }));
     f.add(ellipsoid([s * 0.0305, 1.6335, 0.014], [0.0140, 0.044, 0.046], { k: 0.048 })); // cheek / masseter
     f.add(ellipsoid([s * 0.0430, 1.6405, -0.022], [0.0155, 0.050, 0.038], { k: 0.032 })); // jaw hinge
   }
