@@ -371,7 +371,7 @@ const EYE_FRAG = /* glsl */`
 
 const CLOTH_FRAG = /* glsl */`
   vec3 Nr = normalize(vRestN);
-  vec4 det = triDetail(vRest, Nr, uWeave, 2.0);
+  vec4 det = triDetail(vRest, Nr, uWeave, 1.6);
   gNormal = det.xyz;
   float h = det.w;
   float dirt = fbm(vRest * 7.5);
@@ -455,7 +455,7 @@ function finishRoughness(material) {
 
 export function createMaterials() {
   const scale = makeScaleTexture(512, 15, 7);
-  const cloth = makeClothTexture(512, 16, 19);
+  const cloth = makeClothTexture(512, 22, 19);
   const leather = makeLeatherTexture(512, 22, 41);
 
   const mk = (name, opts, frag, uniforms, fragNormal = true) => {
@@ -493,9 +493,9 @@ export function createMaterials() {
     // — the reference reads as separate garments before you resolve any detail.
     // warm dark brown with a maroon undertone, per the full-body reference — not the
     // neutral tan it was, which read as canvas rather than as a dyed woollen tunic
-    tunic: clothMat('tunic', [0.0232, 0.0190, 0.0162], 0.95, 7.0, cloth),
+    tunic: clothMat('tunic', [0.0232, 0.0190, 0.0162], 0.95, 9.0, cloth),
     undershirt: clothMat('undershirt', [0.0330, 0.0345, 0.0315], 0.95, 12.0, cloth),
-    trousers: clothMat('trousers', [0.0196, 0.0184, 0.0172], 0.95, 7.0, cloth),
+    trousers: clothMat('trousers', [0.0196, 0.0184, 0.0172], 0.95, 9.0, cloth),
     wrap: clothMat('wrap', [0.0455, 0.0458, 0.0420], 0.96, 14.0, cloth),
     leather: clothMat('leather', [0.030, 0.020, 0.013], 0.68, 22.0, leather),
     // sash and belt sit only a little above the tunic. Pushed further apart they

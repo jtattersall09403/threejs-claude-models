@@ -299,7 +299,11 @@ export function buildBelt() {
   const N = 72;
   for (let i = 0; i <= N; i++) {
     const a = (i / N) * Math.PI * 2 - Math.PI / 2;
-    const rx = 0.186, rz = 0.152;
+    // Clear of the tunic. The tunic's own surface at the waist reaches ~0.175 once
+    // the offset and folds are added, so at 0.186 the belt was almost entirely buried
+    // and only a sliver of its top edge showed — which read as a knife blade stuck
+    // through the coat rather than as a belt.
+    const rx = 0.205, rz = 0.172;
     ring.push({
       p: [Math.cos(a) * rx, 0.972 + Math.sin(a * 2) * 0.004, Math.sin(a) * rz + 0.004],
       r: [0.043, 0.0125],
@@ -314,14 +318,14 @@ export function buildBelt() {
   // Knot and hanging ends. Kept small and narrow: oversized they read as a mushroom
   // with two flat blades bolted to the hip rather than as tied cloth.
   const knot = curveRings(
-    [[0.026, 0.974, 0.156], [0.004, 0.964, 0.170], [-0.020, 0.955, 0.159]],
-    (t) => 0.0155 - 0.004 * Math.abs(t - 0.5), 12, { tension: 0.4 },
+    [[0.028, 0.974, 0.176], [0.004, 0.964, 0.191], [-0.022, 0.955, 0.179]],
+    (t) => 0.0185 - 0.005 * Math.abs(t - 0.5), 12, { tension: 0.4 },
   );
   parts.push(sweep(knot, { sides: 12 }));
   for (const dx of [-0.024, 0.012]) {
     const tail = curveRings(
-      [[dx, 0.958, 0.164], [dx * 1.4 - 0.006, 0.892, 0.166], [dx * 1.8 - 0.012, 0.824, 0.142]],
-      (t) => [0.0115 * (1 - 0.35 * t), 0.0052 * (1 - 0.25 * t)], 18,
+      [[dx, 0.958, 0.184], [dx * 1.4 - 0.006, 0.892, 0.184], [dx * 1.8 - 0.012, 0.824, 0.158]],
+      (t) => [0.0155 * (1 - 0.30 * t), 0.0072 * (1 - 0.22 * t)], 18,
       { tension: 0.4, profile: (a, u) => 1 + 0.10 * Math.sin(a * 2.0 + u * 12.0) },
     );
     parts.push(sweep(tail, { sides: 12 }));
