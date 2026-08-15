@@ -196,6 +196,33 @@ immediately — both of these were obvious in one frame.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
 
+### Iteration 23b — where the head stands, and what is NOT working
+
+Architecture from the blueprint is now largely in: compact skull, short muzzle, convex
+profile with no notch, brow overhanging but CLEARING the eye aperture, steep rear skull,
+two horns a side, four backward jawline blades, taller crest.
+
+**What is still clearly short of the reference, in priority order:**
+1. **The head reads as one flat dark olive mass.** The reference has strong internal
+   value structure: near-black crown plates, dark-red brow shields, a bright pale
+   reticulated net over the whole face, and a paler jaw. Ours has the pieces but they
+   are all too weak to read at head-shot distance.
+2. **The maroon brow shields do not appear at all.** `debugMasks(1)` (green = brow) is
+   the tool — it showed the mask had drifted onto the crown, and that `cap` was
+   evaluating to 1 over the ENTIRE cranium and painting near-black over everything
+   applied after it. `cap` has been narrowed and the brow mask lowered; the brow still
+   does not read, so something else is suppressing it. Check what `brow` is multiplied
+   by before re-tuning its colour (trap 16).
+3. **The pale reticulation is present but sub-pixel at head-shot distance** — verified
+   in `dist/` that the constants are live (trap 19 check), and the net is visible in a
+   close ad-hoc shot. It needs to be COARSER, not stronger.
+4. The front horn barely reads in profile; the crest is too dark to see from the side.
+5. The muzzle front/chin is still a smooth pale-green area with weak scale relief.
+
+**Two shader changes in a row produced no visible change.** When that happens: grep
+`dist/argonian.html` for the new constant first (trap 19), then check what the mask is
+multiplied by (trap 16), then use `debugMasks` rather than tuning further.
+
 ### Iteration 23 — the user annotated the profile, and I had the head architecture wrong
 
 **Read `corpus/character/face-left-profile~2.jpg` and the blueprint section in

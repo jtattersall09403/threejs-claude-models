@@ -183,7 +183,11 @@ const SKIN_FRAG = /* glsl */`
   float cap = ss(1.648, 1.672, J.y) * ss(0.198, 0.122, J.z);
   cap = max(cap, ss(1.612, 1.658, J.y) * ss(-0.005, -0.075, J.z));  // occiput
   cap *= ss(0.132, 0.104, abs(J.x));                                 // not the very flanks
-  cap = max(cap, ss(1.682, 1.702, J.y) * ss(0.140, 0.106, J.z));     // crown, full width
+  // NARROW. debugMasks(1) showed this term evaluating to 1 across the ENTIRE cranium
+  // once the skull was made taller — so near-black plate was painted over the whole
+  // head and nothing else applied on top of it could read, least of all the brow's
+  // maroon. It is meant to be the dark crown cap, not the head.
+  cap = max(cap, ss(1.706, 1.732, J.y) * ss(0.096, 0.056, J.z));     // crown, full width
 
   // dark scaled band around the eye socket and temple
   // BOTH of these are CHEEK marks and neither may cross the muzzle. Their per-axis
@@ -212,8 +216,8 @@ const SKIN_FRAG = /* glsl */`
   // over the entire skull and the head read mauve-grey above a green muzzle: a hard
   // two-tone split the references do not have. In them the red is dark plates on the
   // brow shelf and the crest, with olive showing between them and over the occiput.
-  float browD = length((J - vec3(0.0432, 1.7325, 0.048)) * vec3(0.62, 1.42, 1.16));
-  float brow = ss(0.082, 0.018, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.652, 1.678, H.y)
+  float browD = length((J - vec3(0.0432, 1.7205, 0.054)) * vec3(0.62, 1.72, 1.10));
+  float brow = ss(0.074, 0.016, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.646, 1.672, H.y)
              * ss(-0.020, 0.014, J.z);
   // broken into plates rather than one even wash of colour
   brow *= 0.62 + 0.55 * ss(0.30, 0.74, fbm(J * 52.0 + 5.0));
@@ -373,7 +377,7 @@ const SKIN_FRAG = /* glsl */`
   // reticulated net dividing large flat plates. Generic crevice darkening is the
   // exact opposite, so on the head it is damped hard and this runs on top of it.
   // suppressed along the mouth: the bright net was filling the crease back in
-  float mortar = (1.0 - ss(0.10, 0.40, h)) * headMask * (1.0 - cap * 0.92)
+  float mortar = (1.0 - ss(0.02, 0.62, h)) * headMask * (1.0 - cap * 0.55)
                * (1.0 - ss(0.012, 0.004, abs(H.y - (LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE))));
   // The reticulation is a PALE OLIVE net, not a cream one. Painted with boneCol it
   // covered most of the head in warm bone at 80% and was the main reason the head
