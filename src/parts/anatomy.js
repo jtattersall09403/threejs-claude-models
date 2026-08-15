@@ -156,10 +156,13 @@ export function buildHeadField() {
   // reference snout is thin in vertical section, not a deep box.
   const snout = [
     // [z,     centre y, half-height, half-width]
+    // Measured on the front reference the muzzle is HALF the skull's width at the
+    // nostrils; ours tapered to 0.27 of it and the face read narrow and pointed where
+    // the reference's is broad and blunt.
     [0.046, 1.6724, 0.0337, 0.0400],
-    [0.104, 1.6560, 0.0280, 0.0320],
-    [0.152, 1.6408, 0.0216, 0.0244],
-    [0.192, 1.6300, 0.0170, 0.0182],   // blunt, not pointed: the reference nose is round
+    [0.104, 1.6560, 0.0284, 0.0352],
+    [0.152, 1.6408, 0.0222, 0.0292],
+    [0.192, 1.6300, 0.0174, 0.0242],   // blunt, not pointed: the reference nose is round
   ];
   for (let i = 0; i < snout.length; i++) {
     const [z, cy, hy, hx] = snout[i];
@@ -172,14 +175,14 @@ export function buildHeadField() {
   // again over the nose — an S where the reference is one straight ramp.
   f.add(capsule([0, 1.7095, 0.032], [0, 1.6410, 0.166], 0.0172, 0.0078,
     { k: 0.030, scale: [1, 0.66, 1] }));
-  f.add(ellipsoid([0, 1.6310, 0.1980], [0.0148, 0.0130, 0.0126], { k: 0.016 })); // nose pad
+  f.add(ellipsoid([0, 1.6310, 0.1980], [0.0196, 0.0136, 0.0126], { k: 0.016 })); // nose pad
 
   // ---- lower jaw: deep and straight, turning up at a visible hinge --------------
   // Narrower than the upper muzzle at every station, so the jaw tucks under the lip
   // instead of squaring off flush with it.
   f.add(roundBox([0, 1.5960, 0.070], [0.0290, 0.0245, 0.032], 0.016, { k: 0.046 }));
-  f.add(roundBox([0, 1.5985, 0.116], [0.0234, 0.0215, 0.024], 0.0140, { k: 0.032 }));
-  f.add(roundBox([0, 1.6010, 0.156], [0.0168, 0.0165, 0.018], 0.0118, { k: 0.024 }));
+  f.add(roundBox([0, 1.5985, 0.116], [0.0268, 0.0215, 0.024], 0.0140, { k: 0.032 }));
+  f.add(roundBox([0, 1.6010, 0.156], [0.0206, 0.0165, 0.018], 0.0118, { k: 0.024 }));
   f.add(ellipsoid([0, 1.6055, 0.166], [0.0206, 0.0170, 0.017], { k: 0.014 }));   // chin
   // The cheeks are the whole reason the head reads as a box or as a snouted skull.
   // Kept narrow and swept BACK: in the reference the face steps in hard below the

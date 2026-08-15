@@ -213,7 +213,7 @@ const SKIN_FRAG = /* glsl */`
   // two-tone split the references do not have. In them the red is dark plates on the
   // brow shelf and the crest, with olive showing between them and over the occiput.
   float browD = length((J - vec3(0.0430, 1.7150, 0.032)) * vec3(0.62, 1.55, 1.30));
-  float brow = ss(0.068, 0.016, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.638, 1.664, H.y)
+  float brow = ss(0.078, 0.018, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.638, 1.664, H.y)
              * ss(-0.020, 0.014, J.z);
   // broken into plates rather than one even wash of colour
   brow *= 0.62 + 0.55 * ss(0.30, 0.74, fbm(J * 52.0 + 5.0));
@@ -270,7 +270,7 @@ const SKIN_FRAG = /* glsl */`
   col = mix(col, plate * vec3(1.15, 1.20, 1.55), socket * 0.98);
   // partial mix, so the olive hide shows through and the band lands near the
   // reference's 1.74 rather than at the paint's own ratio
-  col = mix(col, maroon, brow * 0.70);
+  col = mix(col, maroon, brow * 0.84);
   // three cream claw-mark streaks across the maroon brow band
   float streak = ss(0.72, 0.97, abs(sin((J.x - 0.010) * 150.0)));
   col = mix(col, boneCol * 0.78, brow * streak * ss(0.012, 0.052, abs(J.x)) * 0.95);
@@ -289,7 +289,7 @@ const SKIN_FRAG = /* glsl */`
   // cheek and temple with orange.
   float rimD = length((J - vec3(EYE_X, EYE_Y - 0.001, EYE_Z + 0.003)) * vec3(0.90, 1.10, 0.78));
   float eyeRim = ss(0.0158, 0.0208, rimD) * ss(0.0300, 0.0238, rimD);
-  col = mix(col, vec3(0.0475, 0.0222, 0.0080), eyeRim * 0.72);
+  col = mix(col, vec3(0.0620, 0.0272, 0.0086), eyeRim * 0.88);
 
   // A shadowed band under the jawline, so the jaw reads as a mass sitting above the
   // neck rather than continuing into it. NOT gated by headMask — headMask fades out
@@ -361,12 +361,12 @@ const SKIN_FRAG = /* glsl */`
   // reticulated net dividing large flat plates. Generic crevice darkening is the
   // exact opposite, so on the head it is damped hard and this runs on top of it.
   // suppressed along the mouth: the bright net was filling the crease back in
-  float mortar = (1.0 - ss(0.14, 0.34, h)) * headMask * (1.0 - cap * 0.92)
+  float mortar = (1.0 - ss(0.10, 0.40, h)) * headMask * (1.0 - cap * 0.92)
                * (1.0 - ss(0.012, 0.004, abs(H.y - (LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE))));
   // The reticulation is a PALE OLIVE net, not a cream one. Painted with boneCol it
   // covered most of the head in warm bone at 80% and was the main reason the head
   // still read brown next to a green tail after the base hide had been corrected.
-  col = mix(col, vec3(0.0540, 0.0605, 0.0362), mortar * 0.80);
+  col = mix(col, vec3(0.0585, 0.0655, 0.0392), mortar * 0.92);
   // darker AND warmer: the jaw was not merely bright, it was the greenest thing on
   // the head, where the reference jaw is its most neutral, most shadowed area
   col = mix(col, col * vec3(0.74, 0.70, 0.66), chinZone * 0.60);
@@ -486,7 +486,7 @@ const EYE_FRAG = /* glsl */`
   // Deep amber-orange, not the near-white yellow it was: in the references the eye
   // is a dark jewel set in a black socket, and it must not out-glow the horns.
   vec3 amber = vec3(0.330, 0.176, 0.030);
-  vec3 amberHot = vec3(0.640, 0.402, 0.098);
+  vec3 amberHot = vec3(0.520, 0.312, 0.070);
   float fibers = fbm(vec3(atan(y, x) * 5.0, r * 26.0, 0.0));
   vec3 iris = mix(amber, amberHot, fibers * 0.85);
   iris *= 0.86 + 0.42 * ss(0.05, 0.55, r);
@@ -503,7 +503,11 @@ const EYE_FRAG = /* glsl */`
   diffuseColor.rgb = col;
   gRoughOut = mix(0.26, 0.62, ss(0.55, 0.80, r));
   // confine the glow to the iris ring, and kill it inside the pupil
-  gEmissive = col * (1.0 - ss(0.60, 0.86, r)) * ss(0.92, 1.02, slit);
+  // A THIRD of the iris colour. At full strength the emissive doubled the iris's
+  // brightness, which flattened the slit and the limbal ring out of existence and left
+  // a pale yellow lozenge — the reference eye is a dark amber jewel with an obvious
+  // black slit, and it must not out-glow the horns.
+  gEmissive = col * 0.34 * (1.0 - ss(0.60, 0.86, r)) * ss(0.92, 1.02, slit);
 `;
 
 const CLOTH_FRAG = /* glsl */`
@@ -643,11 +647,11 @@ export function createMaterials() {
     // — the reference reads as separate garments before you resolve any detail.
     // warm dark brown with a maroon undertone, per the full-body reference — not the
     // neutral tan it was, which read as canvas rather than as a dyed woollen tunic
-    tunic: clothMat('tunic', [0.0232, 0.0190, 0.0162], 0.95, 9.0, cloth),
+    tunic: clothMat('tunic', [0.0178, 0.0147, 0.0126], 0.95, 9.0, cloth),
     // Clearly above the coat, but a muted grey-GREEN, not cream. Polarity was the
     // defect the critic measured; overshooting into cream trades one error for another.
     undershirt: clothMat('undershirt', [0.0402, 0.0442, 0.0396], 0.95, 12.0, cloth),
-    trousers: clothMat('trousers', [0.0242, 0.0226, 0.0208], 0.95, 9.0, cloth),
+    trousers: clothMat('trousers', [0.0196, 0.0183, 0.0168], 0.95, 9.0, cloth),
     wrap: clothMat('wrap', [0.0745, 0.0778, 0.0708], 0.96, 14.0, cloth),
     leather: clothMat('leather', [0.0162, 0.0114, 0.0082], 0.91, 22.0, leather),
     // sash and belt sit only a little above the tunic. Pushed further apart they
