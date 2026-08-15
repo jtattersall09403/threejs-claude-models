@@ -6,47 +6,63 @@ https://claude.ai/code/artifact/14637ddd-070e-40ea-926e-df6f773c0d92
 **Branch:** `claude/argonian-threejs-character-j1wpzp` · **Rule 0: commit + push after
 every step.** · **Rule 1: the only exit is a critic PASS.**
 
+An hourly watchdog Routine ("Argonian loop watchdog",
+`trig_01LKYqwcGrZeTRZsj1g55xdg`) fires into the session to resume this loop if it is
+cut off. Ignore it if mid-iteration. Delete it once the critic signs off.
+
 ---
 
 ## Where the loop is
 
-**Critic round 3 returned FAIL** (report text is in the git log / the round-3 agent
-result; evidence PNGs are in `critic/latest/`). Iteration 8 worked most of its list.
-Next: keep running the INNER loop (`npm run build && npm run capture && npm run compare`,
-then LOOK) until you believe the bar is met, then hand off for critic round 4.
+**Critic round 3 returned FAIL.** Iterations 8 and 9 worked its list. **We are in the
+INNER loop now** — iterate `npm run build && npm run capture && npm run compare` and
+LOOK, until *nothing* looks wrong to you. Only then hand off for critic round 4.
 
-**Read `CLAUDE.md` "The loop" first — there are TWO loops and the critic is the audit,
-not the feedback loop.** Several inner-loop iterations per critic round is correct.
+**Read `CLAUDE.md` "The loop" first.** You hand off only when your own defect list is
+EMPTY, not when you have run out of patience.
 
 ## State of the build
 
-~635k tris, ~11 s build, ~3 min capture. `npm run capture` is green (winding audit,
-framing assert). `npm run compare` builds reference/render side-by-side sheets — this
-is by far the most useful diagnostic in the project; use it every iteration.
+~634k tris, ~10 s build, ~3 min capture. `npm run capture` green (winding + framing
+asserts). `npm run compare` is the most valuable diagnostic in the project — use it
+every single iteration.
 
-## What round 3 measured (the numbers to converge)
+## My open list (must be empty before hand-off)
 
-Normalised to muzzle-top so exposure cancels. **Reference: every head point except the
-crown spike is DARKER than the muzzle top (0.14–0.86).** Before iteration 8 ours were
-mostly brighter (0.60–1.90) — the value hierarchy was inverted. Also: render median was
-+0.85 stop hot and 1.6× oversaturated; reference belt saturation is 0.07 (near-grey),
-ours was 0.71; reference head hues run 41–71°, ours never left 19–37°.
+1. **Tunic has no seams or structure.** The reference shows a clear sleeve seam at the
+   shoulder, a front opening, and cuffs. Ours is one smooth mass. A shoulder-yoke roll
+   and cuff bands exist in `clothing.js` but barely read — strengthen them.
+2. **Pale blotches on the tunic** — the macro dirt/wear term is producing irregular
+   light patches that read as stains rather than wear. Reduce or tighten it.
+3. **Throat cowl** was just added; verify it reads at normal distance and does not
+   collide with the jaw.
+4. Reference has a small **chest medallion/brooch** on the sash — not modelled.
+5. Head: re-check horn length in profile after the last shortening.
+6. Hands: fingers still fairly uniform; claws could seat 1-2 mm deeper.
 
-Iteration 8 addressed all of that. **Re-measure before assuming it converged.**
+## Reference numbers to converge (from critic round 3)
 
-## Next actions
-
-1. **Horns are still too long in profile** — the reference tip sits about over the
-   occiput; ours projects well past it. Shorten again in `parts/features.js buildHorn()`.
-2. **Clothing is still the weakest area** and round 3 barely moved it: no collar
-   structure, no shoulder yoke seam, no front opening slot, no cuffs. See round 3
-   defect 4 for the concrete plan.
-3. **The sash floats off the body** — round 3 defect 5. It must be projected onto the
-   built tunic surface with `raySurface`, not authored in world space.
-4. Hands: fingers still too uniform; claws need seating 1–2 mm inside the fingertip.
-5. Tail/feet/legs — plausibility only, lowest priority.
+Normalised to muzzle-top so exposure cancels. **In the reference every head point
+except the crown spike is DARKER than the muzzle top (0.14–0.86).** Render median was
++0.85 stop hot and 1.6× oversaturated; reference belt saturation is 0.07 (near-grey);
+reference head hues run 41–71°. Iterations 8–9 addressed these — **re-measure, do not
+assume.**
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
+
+### Iteration 9 — the floating sash, and cloth value
+- **The sash was two stacked bugs.** It was authored in world space, so it drifted in
+  and out of the coat and from the side detached and hung in mid-air. Projecting it
+  onto the *body* was not enough either — the tunic's fold displacement puts the coat
+  surface 28–60 mm out from the skin — so it now marches out to the **tunic field**
+  itself and lifts by half its thickness.
+- Separately, `sweep({frameFn})`'s radial basis was **not orthogonalised against the
+  tangent**, which sheared the ring and rendered the ribbon as a fin standing edge-on
+  to the chest. Fixed on both sash and belt. Worth remembering: a swept ribbon that
+  looks like a blade is usually a frame bug, not a width problem.
+- Cloth darkened and cooled substantially toward the reference's grey-brown; belt
+  widened into a cloth wrap; throat cowl added.
+- Added an hourly watchdog Routine so the loop resumes itself if the session is cut off.
 
 ### Iteration 8 — critic round 3 + a proper inner loop
 - Added **`npm run compare`** (reference/render side-by-side sheets). Looking at these
