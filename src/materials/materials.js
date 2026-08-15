@@ -302,8 +302,8 @@ const SKIN_FRAG = /* glsl */`
   // scales are LIGHTER than the scales, giving a pale reticulated mesh — the exact
   // opposite of a generic crevice darkening. Previously applied to the cranial
   // plates only, which left the muzzle looking like plain pebbled rubber.
-  float mortar = (1.0 - ss(0.06, 0.34, h)) * headMask * (1.0 - cap * 0.7);
-  col = mix(col, boneCol * 0.24, mortar * 0.30);
+  float mortar = (1.0 - ss(0.10, 0.30, h)) * headMask * (1.0 - cap * 0.7);
+  col = mix(col, boneCol * 0.30, mortar * 0.42);
   // darker AND warmer: the jaw was not merely bright, it was the greenest thing on
   // the head, where the reference jaw is its most neutral, most shadowed area
   col = mix(col, col * vec3(0.60, 0.53, 0.52), chinZone * 0.88);
@@ -360,8 +360,13 @@ const HORN_FRAG = /* glsl */`
   col = mix(col, dark, ss(0.34, 0.02, t));
 
   float grime = fbm(vRest * 60.0);
-  col *= 0.76 + 0.40 * grime;
-  col *= mix(0.62, 1.05, ss(0.1, 0.7, h));
+  // longitudinal streaking along the run, plus dirt settling in the ridges: the
+  // reference horn is a worn, stained thing, not turned ivory
+  float streakH = fbm(vec3(vRun.x * 26.0, t * 7.0, 0.0));
+  col *= 0.70 + 0.46 * grime;
+  col *= mix(0.80, 1.10, streakH);
+  col = mix(col, dark * 1.6, ss(0.42, 0.86, fbm(vec3(vRun.x * 9.0, t * 20.0, 3.0))) * 0.30);
+  col *= mix(0.56, 1.06, ss(0.1, 0.7, h));
   gRoughOut = clamp(0.48 + (1.0 - h) * 0.28 + grime * 0.12, 0.3, 0.95);
 
   // region 3 is the claws: dark horn, not the pale bone of the head spikes. Left the
