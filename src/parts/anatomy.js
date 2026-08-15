@@ -113,7 +113,7 @@ export function buildHeadField() {
   f.add(roundBox([0, 1.6545, 0.186], [0.028, 0.018, 0.024], 0.014, { k: 0.030 }));
   f.add(capsule([0, 1.6845, 0.07], [0, 1.6805, 0.196], 0.030, 0.019,
     { k: 0.020, scale: [1, 0.72, 1] }));                                      // nasal bridge ridge
-  f.add(ellipsoid([0, 1.6535, 0.2165], [0.0225, 0.0162, 0.0125], { k: 0.011 })); // nose pad
+  f.add(ellipsoid([0, 1.6545, 0.2145], [0.0245, 0.0175, 0.0155], { k: 0.016 })); // nose pad
 
   // ---- lower jaw: deep and straight, turning up at a visible hinge --------------
   f.add(roundBox([0, 1.6035, 0.106], [0.034, 0.018, 0.060], 0.016, { k: 0.042 }));
@@ -143,7 +143,7 @@ export function buildHeadField() {
     { k: 0.0045, yMin: 1.56, yMax: 1.68 }));
   // nostrils
   for (const s of [1, -1]) {
-    f.sub(ellipsoid([s * 0.0145, 1.6605, 0.2295], [0.0055, 0.004, 0.007], { k: 0.004 }));
+    f.sub(ellipsoid([s * 0.0125, 1.6635, 0.2225], [0.0068, 0.0052, 0.0088], { k: 0.0045 }));
   }
   // ear depression
   for (const s of [1, -1]) {

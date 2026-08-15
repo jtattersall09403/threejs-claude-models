@@ -164,6 +164,11 @@ const SKIN_FRAG = /* glsl */`
   float browD = length((J - vec3(0.042, 1.7185, 0.042)) * vec3(0.80, 2.6, 1.05));
   float brow = ss(0.066, 0.016, browD) * ss(-0.25, 0.25, Nr.y) * step(1.645, H.y);
 
+  // dorsal scute ridge down the tail — a plain taper reads as a rubber tube
+  float tailZone = ss(-0.10, -0.16, P.z) * ss(1.02, 0.94, P.y);
+  float tailTop = tailZone * ss(0.15, 0.62, Nr.y) * ss(0.030, 0.012, abs(P.x));
+  float tailScute = ss(0.30, 0.85, abs(sin(P.z * 62.0 + P.y * 26.0)));
+
   // banded scutes on throat and belly
   float bands = ss(0.22, 0.95, abs(sin(P.y * 78.0 + P.z * 9.0)));
   float bandZone = ventral * ss(1.44, 1.585, H.y) * ss(1.685, 1.60, H.y);
@@ -187,6 +192,7 @@ const SKIN_FRAG = /* glsl */`
   col = mix(col, col * 0.46, ss(0.42, 0.72, macro) * 0.55);
   col = mix(col, belly, ventral * 0.88);
   col = mix(col, belly * vec3(1.22, 1.10, 0.86), bandZone * bands * 0.75);
+  col = mix(col, mix(dorsal2, plate, 0.5), tailTop * (0.35 + 0.5 * tailScute));
   col = mix(col, plate, cap * 0.97);
   col = mix(col, plate * 1.35, socket * 0.95);
   col = mix(col, maroon, brow * 0.95);
@@ -290,6 +296,12 @@ const CLOTH_FRAG = /* glsl */`
   col *= 0.9 + 0.2 * wear;
   // grime settles low on the garment
   col *= mix(0.72, 1.0, ss(0.75, 1.15, vRest.y));
+  // stitched seams: shoulder line and side seam, so the tunic reads as made, not moulded
+  float shoulderSeam = ss(0.010, 0.002, abs(abs(vRest.x) - 0.163)) * ss(1.28, 1.44, vRest.y);
+  float sideSeam = ss(0.009, 0.002, abs(abs(vRest.x) - 0.183)) * ss(1.30, 1.10, vRest.y);
+  float hemSeam = ss(0.009, 0.002, abs(vRest.y - 0.805)) * ss(0.86, 0.80, vRest.y);
+  float seam = max(shoulderSeam, max(sideSeam, hemSeam));
+  col *= 1.0 - 0.45 * seam;
   diffuseColor.rgb = col;
   gRoughOut = clamp(uRough + (1.0 - h) * 0.16 - wear * 0.08, 0.35, 1.0);
 `;
