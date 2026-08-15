@@ -16,7 +16,7 @@ const SPEC = [
   ['neck', 'neckBase', [0, 1.487, 0.004]],
   ['head', 'neck', [0, 1.578, 0.018]],
   ['headTop', 'head', [0, 1.702, 0.022]],
-  ['jaw', 'head', [0, 1.604, 0.058]],
+  ['jaw', 'head', [0, 1.606, 0.022]],   // hinge, at the back of the lower jaw
   ['jawTip', 'jaw', [0, 1.576, 0.247]],
 
   ['tail1', 'hips', [0, 0.985, -0.085]],
@@ -112,6 +112,16 @@ export function createSkeleton() {
   };
 }
 
+// Bones whose auto-generated span sits in the wrong flesh get hand-authored spans
+// instead. Without these the upper muzzle binds to the jaw and opens with it.
+const EXTRA_SEGMENTS = [
+  { bone: 'head', a: [0, 1.641, 0.072], b: [0, 1.630, 0.234] },   // upper muzzle
+  { bone: 'head', a: [-0.055, 1.655, 0.012], b: [0.055, 1.655, 0.012] }, // temples
+  { bone: 'head', a: [0, 1.578, 0.018], b: [0, 1.702, 0.022] },   // braincase
+  { bone: 'jaw', a: [0, 1.5975, 0.098], b: [0, 1.5895, 0.216] },  // lower jaw only
+];
+const SUPPRESS_AUTO = new Set(['jaw', 'jawTip', 'headTop']);
+
 /**
  * Skinning segments. Each bone owns the span from itself to its first child
  * (leaves get a short stub along the parent direction).
@@ -120,6 +130,7 @@ export function createSkeleton() {
 export function buildSegments(rig, tweaks = {}) {
   const segs = [];
   for (const s of rig.spec) {
+    if (SUPPRESS_AUTO.has(s.name)) continue;
     const kids = rig.childrenOf(s.name);
     const a = rig.restPos.get(s.name);
     let b;
@@ -136,6 +147,16 @@ export function buildSegments(rig, tweaks = {}) {
       a, b,
       bias: t.bias !== undefined ? t.bias : 1,
       reach: t.reach,
+    });
+  }
+  for (const e of EXTRA_SEGMENTS) {
+    const t = tweaks[e.bone] || {};
+    segs.push({
+      name: e.bone + ':extra',
+      boneIndex: rig.index.get(e.bone),
+      a: e.a, b: e.b,
+      bias: e.bias !== undefined ? e.bias : (t.bias !== undefined ? t.bias : 1),
+      reach: e.reach,
     });
   }
   return segs;

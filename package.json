@@ -2,9 +2,10 @@
   "name": "threejs-claude-models",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "node tools/build.mjs",
+    "capture": "node tools/capture.mjs",
+    "shot": "node tools/shot.mjs"
   },
   "repository": {
     "type": "git",
@@ -19,7 +20,11 @@
   "homepage": "https://github.com/jtattersall09403/threejs-claude-models#readme",
   "dependencies": {
     "esbuild": "^0.25.9",
-    "playwright": "^1.55.0",
     "three": "^0.180.0"
+  },
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "playwright": "^1.56.0"
   }
 }

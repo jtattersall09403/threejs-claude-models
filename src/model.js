@@ -1,0 +1,164 @@
+// Assembles the character: bakes the SDF anatomy, sweeps the hard parts and the
+// clothing, auto-skins everything to the shared skeleton and returns one group.
+import * as THREE from 'three';
+import { polygonise } from './core/mc.js';
+import { computeSkinning } from './core/skin.js';
+import { MeshBuilder } from './core/geom.js';
+import { createSkeleton, buildSegments } from './rig/skeleton.js';
+import {
+  buildBodyField, buildHeadField, BODY_BOUNDS, HEAD_BOUNDS,
+} from './parts/anatomy.js';
+import {
+  buildHorn, buildCrownSpikes, buildJawSpikes, buildTeeth, buildFingers, buildEyes,
+} from './parts/features.js';
+import {
+  clothingFields, buildStrap, buildBelt, buildWristWraps,
+} from './parts/clothing.js';
+import { createMaterials } from './materials/materials.js';
+import { REGION } from './parts/regions.js';
+
+/** Bake an SDF to a mesh part with exact gradient normals. */
+function bakeField(field, bounds, cell) {
+  const { field: grid, grid: g } = field.bake(bounds, cell);
+  const { positions, indices } = polygonise(grid, g, 0);
+  const normals = new Float32Array(positions.length);
+  const tmp = [0, 0, 0];
+  const h = cell * 0.42;
+  for (let i = 0; i < positions.length; i += 3) {
+    field.normalAt(positions[i], positions[i + 1], positions[i + 2], h, tmp);
+    normals[i] = tmp[0]; normals[i + 1] = tmp[1]; normals[i + 2] = tmp[2];
+  }
+  return { positions, indices: Array.from(indices), normals };
+}
+
+/** Light Taubin smoothing removes marching-cubes ripple without shrinking the form. */
+function smoothPositions(part, iterations = 2, lambda = 0.42, mu = -0.44) {
+  const { positions, indices } = part;
+  const n = positions.length / 3;
+  const adj = new Array(n);
+  for (let i = 0; i < n; i++) adj[i] = [];
+  const seen = new Set();
+  for (let i = 0; i < indices.length; i += 3) {
+    for (let e = 0; e < 3; e++) {
+      const a = indices[i + e], b = indices[i + ((e + 1) % 3)];
+      const key = a < b ? a * 4194304 + b : b * 4194304 + a;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      adj[a].push(b); adj[b].push(a);
+    }
+  }
+  const tmp = new Float32Array(positions.length);
+  const pass = (factor) => {
+    for (let i = 0; i < n; i++) {
+      const nb = adj[i];
+      if (!nb.length) {
+        tmp[i * 3] = positions[i * 3]; tmp[i * 3 + 1] = positions[i * 3 + 1]; tmp[i * 3 + 2] = positions[i * 3 + 2];
+        continue;
+      }
+      let sx = 0, sy = 0, sz = 0;
+      for (const j of nb) { sx += positions[j * 3]; sy += positions[j * 3 + 1]; sz += positions[j * 3 + 2]; }
+      sx /= nb.length; sy /= nb.length; sz /= nb.length;
+      tmp[i * 3] = positions[i * 3] + factor * (sx - positions[i * 3]);
+      tmp[i * 3 + 1] = positions[i * 3 + 1] + factor * (sy - positions[i * 3 + 1]);
+      tmp[i * 3 + 2] = positions[i * 3 + 2] + factor * (sz - positions[i * 3 + 2]);
+    }
+    positions.set(tmp);
+  };
+  for (let it = 0; it < iterations; it++) { pass(lambda); pass(mu); }
+  return part;
+}
+
+function skinnedMesh(builder, material, rig, name) {
+  const geo = builder.build();
+  const mesh = new THREE.SkinnedMesh(geo, material);
+  mesh.name = name;
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  mesh.frustumCulled = false;
+  // geometry is authored in the same space as the bone rest poses, so the bind
+  // matrix is identity; the root bone lives on the group, not on any one mesh.
+  mesh.bind(rig.skeleton, new THREE.Matrix4());
+  return mesh;
+}
+
+export function buildArgonian(opts = {}) {
+  const log = opts.log || (() => {});
+  const rig = createSkeleton();
+  const segments = buildSegments(rig);
+  const materials = createMaterials();
+  const meshes = {};
+
+  const skinPart = (part) => computeSkinning(part.positions, segments);
+
+  // ---- hide -----------------------------------------------------------------
+  log('baking body');
+  const body = smoothPositions(bakeField(buildBodyField(), BODY_BOUNDS, 0.0062), 2);
+  log('baking head');
+  const head = smoothPositions(bakeField(buildHeadField(), HEAD_BOUNDS, 0.0031), 1);
+
+  const skinB = new MeshBuilder();
+  skinB.add(body, skinPart(body), REGION.SKIN);
+  skinB.add(head, skinPart(head), REGION.SKIN);
+  for (const f of buildFingers(rig)) {
+    if (f.region === 'skin') skinB.add(f.geom, skinPart(f.geom), REGION.SKIN);
+  }
+  meshes.skin = skinnedMesh(skinB, materials.skin, rig, 'skin');
+
+  // ---- horns, spikes, teeth, claws --------------------------------------------
+  log('horns and spikes');
+  const hornB = new MeshBuilder();
+  for (const s of [1, -1]) {
+    const h = buildHorn(s);
+    hornB.add(h, skinPart(h), 1);           // region 1 => banded ring in the shader
+  }
+  for (const p of [...buildCrownSpikes(), ...buildJawSpikes(), ...buildTeeth()]) {
+    hornB.add(p, skinPart(p), 0);
+  }
+  for (const f of buildFingers(rig)) {
+    if (f.region === 'horn') hornB.add(f.geom, skinPart(f.geom), 0);
+  }
+  meshes.horn = skinnedMesh(hornB, materials.horn, rig, 'horn');
+
+  // ---- eyes --------------------------------------------------------------------
+  const eyeB = new MeshBuilder();
+  for (const e of buildEyes()) eyeB.add(e, skinPart(e), REGION.EYE);
+  meshes.eye = skinnedMesh(eyeB, materials.eye, rig, 'eye');
+  meshes.eye.castShadow = false;
+
+  // ---- clothing -----------------------------------------------------------------
+  log('clothing');
+  const byRegion = new Map();
+  const push = (region, part) => {
+    if (!byRegion.has(region)) byRegion.set(region, new MeshBuilder());
+    byRegion.get(region).add(part, skinPart(part), region);
+  };
+  for (const g of clothingFields()) {
+    push(g.region, smoothPositions(bakeField(g.field, g.bounds, g.cell), 2));
+  }
+  push(REGION.LEATHER, buildStrap());
+  for (const p of buildBelt()) push(REGION.LEATHER, p);
+  for (const p of buildWristWraps(rig)) push(REGION.WRAP, p);
+
+  const matForRegion = {
+    [REGION.TUNIC]: materials.tunic,
+    [REGION.UNDERSHIRT]: materials.undershirt,
+    [REGION.TROUSERS]: materials.trousers,
+    [REGION.LEATHER]: materials.leather,
+    [REGION.WRAP]: materials.wrap,
+  };
+  for (const [region, builder] of byRegion) {
+    const key = 'cloth' + region;
+    meshes[key] = skinnedMesh(builder, matForRegion[region], rig, key);
+  }
+
+  // ---- assemble -------------------------------------------------------------------
+  const group = new THREE.Group();
+  group.name = 'argonian';
+  group.add(rig.root);
+  for (const m of Object.values(meshes)) group.add(m);
+
+  let tris = 0;
+  for (const m of Object.values(meshes)) tris += m.geometry.index.count / 3;
+
+  return { group, rig, meshes, materials, segments, stats: { triangles: tris } };
+}
