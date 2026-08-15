@@ -123,6 +123,24 @@ These came from the user looking at the live artifact, and they were all correct
   slit through the jaw instead of grazing a groove. Now tapers closed in x as well as
   z, and its x-extent follows the muzzle's own half-width.
 
+## Iteration 20 — the snout is no longer a dog muzzle
+
+`buildHeadField` now builds the snout as **one continuous tapering form flowing out of
+the braincase** (a chain of ellipsoids whose tops descend on a smooth curve and whose
+bottoms sit on the `LIP` line), replacing the stack of `roundBox` blocks. The blocks
+were originally chosen to avoid a "drooping bulb", but they are precisely what produced
+the dog-muzzle read the user flagged. The section is also much SHALLOWER now, per the
+profile reference. Brow shelf lowered so it rides the curve instead of stepping above it.
+
+**Still to do on the user's iteration-19 list:** jawline spike count/size/placement
+(reference has a few LARGE flat blade-like spikes, ours is a row of small cones),
+cheekbone definition, the neck, stance naturalness, shoulder proportions.
+
+**Tooling note:** `tools/compare.mjs` crop rectangles were authored against the 2172px
+original screenshots and do NOT transfer to the ~800px named refs. The profile sheet is
+back on the original screenshot until they are re-derived. **Read the named references
+directly with the Read tool** — they are much more informative.
+
 ## Measuring rather than eyeballing
 
 `npm run measure` samples matched points on a reference crop and the render,

@@ -34,8 +34,11 @@ const PAIRS = [
   },
   {
     name: 'head_side',
-    ref: 'face-left-profile.jpg',
-    crop: [0, 0, 827, 921],   // the named refs ARE already close crops — use them whole
+    // NOTE: the named refs are ~800px close crops, not 2172px screenshots, so the
+    // crop rectangles below do not transfer. Until they are re-derived, read the
+    // named refs DIRECTLY with the Read tool — face-left-profile.jpg in particular.
+    ref: 'Screenshot_20260815_081025_com_google_android_youtube_MainActivity.jpg',
+    crop: [1020, 700, 760, 820],
     render: 'head_side.png',
     note: 'profile — muzzle top line, jaw depth, occiput',
   },
