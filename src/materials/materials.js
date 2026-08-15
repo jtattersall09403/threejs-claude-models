@@ -197,8 +197,8 @@ const SKIN_FRAG = /* glsl */`
   // maroon plate over the brow ridges and between the eyes. This is a NARROW band
   // just above the eyes in the reference; at its old extent it flooded the whole
   // cranium and the skull read red-brown instead of near-black olive.
-  float browD = length((J - vec3(0.040, 1.7175, 0.046)) * vec3(0.62, 3.6, 1.35));
-  float brow = ss(0.070, 0.014, browD) * ss(-0.55, 0.10, Nr.y) * step(1.646, H.y);
+  float browD = length((J - vec3(0.038, 1.7235, 0.044)) * vec3(0.60, 3.1, 1.25));
+  float brow = ss(0.076, 0.016, browD) * ss(-0.55, 0.10, Nr.y) * step(1.652, H.y);
 
   // dorsal scute ridge down the tail — a plain taper reads as a rubber tube
   float tailZone = ss(-0.10, -0.16, P.z) * ss(1.02, 0.94, P.y);
@@ -303,7 +303,7 @@ const SKIN_FRAG = /* glsl */`
   // opposite of a generic crevice darkening. Previously applied to the cranial
   // plates only, which left the muzzle looking like plain pebbled rubber.
   float mortar = (1.0 - ss(0.06, 0.34, h)) * headMask * (1.0 - cap * 0.7);
-  col = mix(col, boneCol * 0.26, mortar * 0.40);
+  col = mix(col, boneCol * 0.24, mortar * 0.30);
   // darker AND warmer: the jaw was not merely bright, it was the greenest thing on
   // the head, where the reference jaw is its most neutral, most shadowed area
   col = mix(col, col * vec3(0.60, 0.53, 0.52), chinZone * 0.88);
@@ -357,7 +357,7 @@ const HORN_FRAG = /* glsl */`
 
   vec3 col = mix(bone, tip, ss(0.45, 1.0, t));
   // dark root where the horn leaves the hide
-  col = mix(col, dark, ss(0.19, 0.02, t));
+  col = mix(col, dark, ss(0.34, 0.02, t));
 
   float grime = fbm(vRest * 60.0);
   col *= 0.76 + 0.40 * grime;
@@ -545,7 +545,7 @@ export function createMaterials() {
     // warm dark brown with a maroon undertone, per the full-body reference — not the
     // neutral tan it was, which read as canvas rather than as a dyed woollen tunic
     tunic: clothMat('tunic', [0.0232, 0.0190, 0.0162], 0.95, 9.0, cloth),
-    undershirt: clothMat('undershirt', [0.0330, 0.0345, 0.0315], 0.95, 12.0, cloth),
+    undershirt: clothMat('undershirt', [0.0258, 0.0274, 0.0246], 0.95, 12.0, cloth),
     trousers: clothMat('trousers', [0.0242, 0.0226, 0.0208], 0.95, 9.0, cloth),
     wrap: clothMat('wrap', [0.0455, 0.0458, 0.0420], 0.96, 14.0, cloth),
     leather: clothMat('leather', [0.030, 0.020, 0.013], 0.68, 22.0, leather),
