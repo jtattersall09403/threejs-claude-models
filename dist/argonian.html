@@ -4286,6 +4286,12 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
   float hemSeam      = ss(0.011, 0.003, abs(vRest.y - 0.812)) * ss(0.88, 0.80, vRest.y);
   float seam = max(max(shoulderSeam, sleeveSeam), max(sideSeam, hemSeam));
   col *= 1.0 - 0.62 * seam;
+  // Contact occlusion between the legs. With a narrow stance and no shadowing
+  // between them the two limbs merge into a single dark column from the front.
+  float innerLeg = ss(0.185, 0.045, abs(vRest.x))
+                 * ss(1.00, 0.90, vRest.y) * ss(0.06, 0.20, vRest.y);
+  col *= mix(1.0, 0.58, innerLeg);
+
   // Boot welt and toe-cap seams. Gated low so only the shoes get them \u2014 without any
   // seams the boots bake out as smooth featureless blocks.
   float welt   = ss(0.0060, 0.0014, abs(vRest.y - 0.0345)) * ss(0.20, 0.16, vRest.y);
