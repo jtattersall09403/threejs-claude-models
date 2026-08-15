@@ -462,7 +462,14 @@ const CLOTH_FRAG = /* glsl */`
   float hemSeam      = ss(0.011, 0.003, abs(vRest.y - 0.812)) * ss(0.88, 0.80, vRest.y);
   float seam = max(max(shoulderSeam, sleeveSeam), max(sideSeam, hemSeam));
   col *= 1.0 - 0.62 * seam;
-  gRoughOut = clamp(uRough + (1.0 - h) * 0.16 - wear * 0.08 + seam * 0.10, 0.35, 1.0);
+  // Boot welt and toe-cap seams. Gated low so only the shoes get them — without any
+  // seams the boots bake out as smooth featureless blocks.
+  float welt   = ss(0.0060, 0.0014, abs(vRest.y - 0.0345)) * ss(0.20, 0.16, vRest.y);
+  float toeCap = ss(0.0110, 0.0022, abs(vRest.z - 0.074)) * ss(0.15, 0.11, vRest.y);
+  float bootSeam = max(welt, toeCap);
+  col *= 1.0 - 0.52 * bootSeam;
+  gRoughOut = clamp(uRough + (1.0 - h) * 0.16 - wear * 0.08 + seam * 0.10
+                    + bootSeam * 0.12, 0.35, 1.0);
   diffuseColor.rgb = col;
 `;
 
@@ -553,7 +560,7 @@ export function createMaterials() {
     undershirt: clothMat('undershirt', [0.0258, 0.0274, 0.0246], 0.95, 12.0, cloth),
     trousers: clothMat('trousers', [0.0242, 0.0226, 0.0208], 0.95, 9.0, cloth),
     wrap: clothMat('wrap', [0.0455, 0.0458, 0.0420], 0.96, 14.0, cloth),
-    leather: clothMat('leather', [0.030, 0.020, 0.013], 0.68, 22.0, leather),
+    leather: clothMat('leather', [0.0208, 0.0146, 0.0104], 0.84, 22.0, leather),
     // sash and belt sit only a little above the tunic. Pushed further apart they
     // stopped reading as cloth and became bright metal blades laid across the chest.
     sash: clothMat('sash', [0.0625, 0.0578, 0.0498], 0.90, 18.0, leather),
