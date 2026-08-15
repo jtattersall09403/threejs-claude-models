@@ -41,6 +41,10 @@ function boot() {
     THREE,
     bone: (name) => model.rig.byName.get(name),
     boneNames: model.rig.bones.map((b) => b.name),
+    debugMasks: (n) => {
+      const u = model.materials.skin.userData.shader.uniforms.uDebug;
+      u.value = n;
+    },
   };
   window.__setCamera = viewer.setCamera;
   window.__frameStats = () => viewer.frameStats(model.meshes.skin);

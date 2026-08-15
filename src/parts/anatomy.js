@@ -8,8 +8,8 @@
 import { Field, capsule, ellipsoid, roundBox } from '../core/sdf.js';
 
 export const EYE = {
-  c: [0.0585, 1.6975, 0.0755],   // mirrored on x
-  r: 0.0208,
+  c: [0.0578, 1.6975, 0.0715],   // mirrored on x
+  r: 0.0192,
   gaze: [0.34, 0.05, 0.939],     // outward/forward gaze axis for the left(+x) eye
 };
 
@@ -102,8 +102,9 @@ export function buildHeadField() {
   }
 
   // ---- muzzle ------------------------------------------------------------------
-  f.add(capsule([0, 1.6705, 0.058], [0, 1.6525, 0.2075], 0.0635, 0.0335,
-    { k: 0.038, scale: [1, 0.76, 1] }));
+  f.add(capsule([0, 1.6705, 0.058], [0, 1.6525, 0.2075], 0.0635, 0.0345,
+    { k: 0.034, scale: [1, 0.74, 1] }));
+  f.add(roundBox([0, 1.6745, 0.135], [0.045, 0.012, 0.062], 0.014, { k: 0.026 })); // flat snout top
   f.add(capsule([0, 1.6885, 0.07], [0, 1.6665, 0.196], 0.031, 0.018,
     { k: 0.028, scale: [1, 0.8, 1] }));                                       // nasal bridge ridge
   f.add(ellipsoid([0, 1.6555, 0.2155], [0.0355, 0.0245, 0.0205], { k: 0.022 })); // nose pad
@@ -123,7 +124,7 @@ export function buildHeadField() {
 
   // ---- cuts ------------------------------------------------------------------
   for (const s of [1, -1]) {
-    f.sub(ellipsoid([s * EYE.c[0], EYE.c[1], EYE.c[2]], [0.027, 0.025, 0.026], { k: 0.014 }));
+    f.sub(ellipsoid([s * EYE.c[0], EYE.c[1], EYE.c[2] + 0.006], [0.0285, 0.0255, 0.030], { k: 0.012 }));
   }
   // mouth crease — a thin slot, just enough to read as a closed lip line
   f.sub(roundBox([0, 1.6155, 0.15], [0.082, 0.001, 0.096], 0.002, { k: 0.005 }));

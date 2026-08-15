@@ -17,21 +17,21 @@ export function fromGeometry(geo) {
 export function buildHorn(side, field) {
   const s = side;
   const pts = [
-    [s * 0.0645, 1.7255, 0.008],
-    [s * 0.0925, 1.7555, -0.03],
-    [s * 0.1125, 1.7735, -0.083],
-    [s * 0.1195, 1.7845, -0.139],
-    [s * 0.1135, 1.7955, -0.182],
+    [s * 0.0625, 1.7215, 0.012],
+    [s * 0.0855, 1.7625, -0.018],
+    [s * 0.1005, 1.7925, -0.066],
+    [s * 0.1065, 1.8095, -0.122],
+    [s * 0.1015, 1.8155, -0.172],
   ];
   const root = seat(field, pts[0], [s * 0.55, 0.72, 0.2], 0.024);
   pts[0] = root;
   const rings = curveRings(pts, (t) => {
-    const base = 0.0365 * Math.pow(1 - t, 0.72) + 0.0024;
-    const ridge = 1 + 0.045 * Math.sin(t * 34) * Math.min(1, t * 4) * (1 - t);
+    const base = 0.0298 * Math.pow(1 - t, 0.6) + 0.0018;
+    const ridge = 1 + 0.062 * Math.sin(t * 40) * Math.min(1, t * 5) * (1 - t);
     return base * ridge;
   }, 34, {
     tension: 0.5,
-    profile: (a) => 1 + 0.1 * Math.cos(2 * a) - 0.04 * Math.cos(a),
+    profile: (a) => 1 + 0.13 * Math.cos(2 * a) - 0.05 * Math.cos(a),
   });
   return sweep(rings, { sides: 18, capEnd: false });
 }
@@ -52,17 +52,17 @@ function seat(field, p, dir, inset = 0.008) {
 export function buildCrownSpikes(field) {
   const out = [];
   const defs = [
-    [-0.0525, 1.7495, -0.02, 0.036, 0.0125],
-    [-0.0215, 1.7595, -0.026, 0.05, 0.0145],
-    [0.0215, 1.7595, -0.026, 0.05, 0.0145],
-    [0.0525, 1.7495, -0.02, 0.036, 0.0125],
-    [-0.033, 1.7305, -0.072, 0.033, 0.011],
-    [0.033, 1.7305, -0.072, 0.033, 0.011],
+    [-0.0525, 1.7495, -0.02, 0.032, 0.0155],
+    [-0.0215, 1.7595, -0.026, 0.044, 0.0178],
+    [0.0215, 1.7595, -0.026, 0.044, 0.0178],
+    [0.0525, 1.7495, -0.02, 0.032, 0.0155],
+    [-0.033, 1.7305, -0.072, 0.03, 0.0135],
+    [0.033, 1.7305, -0.072, 0.03, 0.0135],
   ];
   for (const [x, y, z, len, r] of defs) {
     const dir = [x * 5.5, 0.86, -0.5];
     out.push(spike(seat(field, [x, y, z], dir, 0.01), dir, len, r, {
-      taper: 0.72, bend: [0, 0.004, -0.012], sides: 9, steps: 8,
+      taper: 0.55, bend: [0, 0.004, -0.014], sides: 10, steps: 8,
     }));
   }
   return out;
@@ -107,13 +107,6 @@ export function buildJawSpikes(field) {
 export function buildTeeth() {
   const out = [];
   for (const s of [1, -1]) {
-    for (let i = 0; i < 4; i++) {
-      const t = i / 3;
-      const z = 0.088 + t * 0.098;
-      const x = s * (0.0475 - t * 0.0165);
-      out.push(spike([x, 1.6165, z], [s * 0.16, -1, 0.05], 0.005 - t * 0.0012, 0.0026,
-        { taper: 0.6, sides: 6, steps: 4 }));
-    }
     // lower tusk poking up outside the lip
     out.push(spike([s * 0.0375, 1.6085, 0.166], [s * 0.15, 0.96, 0.22], 0.0115, 0.0042,
       { taper: 0.62, sides: 7, steps: 5 }));

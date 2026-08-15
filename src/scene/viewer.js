@@ -106,7 +106,7 @@ export function createViewer(container) {
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x07070a, 0.055);
   scene.environment = environmentMap(renderer);
-  scene.environmentIntensity = 0.42;
+  scene.environmentIntensity = 0.34;
   scene.add(backdrop());
   scene.add(ground());
 
@@ -123,7 +123,7 @@ export function createViewer(container) {
   controls.update();
 
   // ---- lights ---------------------------------------------------------------
-  const key = new THREE.SpotLight(0xffe2bd, 34, 14, 0.62, 0.7, 2);
+  const key = new THREE.SpotLight(0xffddb2, 30, 14, 0.6, 0.66, 2);
   key.position.set(2.0, 3.0, 2.5);
   key.target.position.set(0, 1.15, 0);
   key.castShadow = true;
@@ -147,7 +147,7 @@ export function createViewer(container) {
   rimCool.position.set(2.2, 1.7, -2.4);
   scene.add(rimCool);
 
-  const bounce = new THREE.HemisphereLight(0x33384a, 0x120e08, 0.22);
+  const bounce = new THREE.HemisphereLight(0x2b3042, 0x0f0c07, 0.16);
   scene.add(bounce);
 
   // a small warm practical near the face, like a candle just off-frame

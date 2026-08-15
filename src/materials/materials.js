@@ -127,8 +127,8 @@ const SKIN_FRAG = /* glsl */`
   vec3 A = vec3(abs(H.x), H.y, H.z);
 
   float headMask = ss(1.53, 1.61, P.y);
-  float freq = mix(25.0, 46.0, headMask);
-  vec4 det = triDetail(P, Nr, freq, mix(1.2, 1.0, headMask));
+  float freq = mix(23.0, 38.0, headMask);
+  vec4 det = triDetail(P, Nr, freq, mix(1.35, 1.25, headMask));
   gNormal = det.xyz;
   float h = det.w;
 
@@ -137,23 +137,27 @@ const SKIN_FRAG = /* glsl */`
   vec3 J = A + (vec3(fbm(P * 44.0), fbm(P * 44.0 + 9.0), fbm(P * 44.0 + 21.0)) - 0.5) * 0.016;
 
   // --- masks -------------------------------------------------------------
-  float ventral = ss(0.10, -0.55, dot(Nr, normalize(vec3(0.0, -0.80, 0.60))));
+  float ventral = ss(0.05, 0.62, dot(Nr, normalize(vec3(0.0, -0.80, 0.60))));
   ventral = max(ventral, ss(0.15, -0.5, Nr.y) * ss(1.70, 1.58, H.y));
 
   // armoured skull cap: top of the braincase, wrapping down over the temples
-  float cap = ss(1.672, 1.716, J.y) * ss(-0.25, 0.35, Nr.y) * ss(0.15, 0.05, J.z);
-  cap = max(cap, ss(1.638, 1.692, J.y) * ss(-0.02, -0.09, J.z) * ss(-0.35, 0.15, Nr.y));
+  // covers the whole cranium from the brow back, wrapping down behind the eyes —
+  // driven by position, not by normal, so it does not fade out on the flanks
+  float cap = ss(1.655, 1.692, J.y) * ss(0.175, 0.095, J.z);
+  cap = max(cap, ss(1.612, 1.658, J.y) * ss(-0.005, -0.075, J.z));  // occiput
+  cap *= ss(0.115, 0.085, abs(J.x));                                 // not the very flanks
+  cap = max(cap, ss(1.690, 1.720, J.y) * ss(0.135, 0.075, J.z));     // crown, full width
 
   // dark scaled band around the eye socket and temple
   float eyeD = length((J - vec3(EYE_X, EYE_Y, EYE_Z)) * vec3(0.85, 1.5, 1.0));
-  float socket = ss(0.056, 0.026, eyeD) * step(1.60, H.y);
+  float socket = ss(0.062, 0.028, eyeD) * step(1.60, H.y);
 
   // maroon plate over the brow ridges and between the eyes
   float browD = length((J - vec3(0.042, 1.7185, 0.042)) * vec3(0.80, 2.6, 1.05));
-  float brow = ss(0.064, 0.016, browD) * ss(-0.15, 0.30, Nr.y) * step(1.645, H.y);
+  float brow = ss(0.075, 0.018, browD) * ss(-0.25, 0.25, Nr.y) * step(1.645, H.y);
 
   // banded scutes on throat and belly
-  float bands = ss(0.30, 0.92, abs(sin(P.y * 92.0 + P.z * 10.0)));
+  float bands = ss(0.22, 0.95, abs(sin(P.y * 78.0 + P.z * 9.0)));
   float bandZone = ventral * ss(1.50, 1.57, H.y) * ss(1.68, 1.61, H.y);
   bandZone = max(bandZone, ventral * ss(1.35, 1.25, P.y) * ss(0.80, 0.95, P.y));
 
@@ -161,29 +165,45 @@ const SKIN_FRAG = /* glsl */`
   float mottle = fbm(P * 19.0);
   float blotch = fbm(P * 5.6 + 11.0);
 
-  vec3 dorsal   = vec3(0.055, 0.079, 0.028);
-  vec3 dorsal2  = vec3(0.026, 0.039, 0.014);
-  vec3 warmOl   = vec3(0.104, 0.113, 0.040);
-  vec3 belly    = vec3(0.163, 0.166, 0.078);
-  vec3 plate    = vec3(0.016, 0.017, 0.016);
-  vec3 maroon   = vec3(0.108, 0.026, 0.021);
+  vec3 dorsal   = vec3(0.039, 0.052, 0.020);
+  vec3 dorsal2  = vec3(0.017, 0.024, 0.009);
+  vec3 warmOl   = vec3(0.072, 0.076, 0.028);
+  vec3 belly    = vec3(0.119, 0.118, 0.055);
+  vec3 plate    = vec3(0.0075, 0.0080, 0.0078);
+  vec3 maroon   = vec3(0.086, 0.019, 0.015);
 
   vec3 col = mix(dorsal2, dorsal, ss(0.30, 0.72, mottle * 0.6 + blotch * 0.7));
   col = mix(col, warmOl, ss(0.45, 0.88, blotch));
   col = mix(col, belly, ventral * 0.88);
-  col = mix(col, belly * vec3(1.10, 1.04, 0.90), bandZone * bands * 0.55);
-  col = mix(col, plate, cap * 0.92);
-  col = mix(col, plate * 1.5, socket * 0.85);
-  col = mix(col, maroon, brow * 0.88);
+  col = mix(col, belly * vec3(1.22, 1.10, 0.86), bandZone * bands * 0.75);
+  col = mix(col, plate, cap * 0.97);
+  col = mix(col, plate * 1.35, socket * 0.95);
+  col = mix(col, maroon, brow * 0.92);
+
+  // dark closed lip line along the mouth crease
+  float lip = ss(0.0115, 0.0025, abs(H.y - 1.6155))
+            * ss(0.235, 0.205, H.z) * ss(0.030, 0.060, H.z);
+  col = mix(col, vec3(0.006, 0.005, 0.005), lip * 0.92);
 
   // crevices between scales go dark
-  col *= mix(0.44, 1.06, ss(0.05, 0.62, h));
+  col *= mix(0.30, 1.10, ss(0.04, 0.60, h));
 
   diffuseColor.rgb = col;
   float rough = mix(0.88, 0.60, ss(0.2, 0.8, h));
-  rough *= mix(1.0, 0.80, ventral);
-  rough *= mix(1.0, 0.70, cap);
+  rough *= mix(1.0, 0.86, ventral);
+  rough = mix(rough, 0.94, cap * 0.85);
   gRoughOut = clamp(rough + (mottle - 0.5) * 0.12, 0.28, 0.98);
+
+  // uDebug: 1 = cap/brow/socket as R/G/B, 2 = ventral/bands, 3 = rest-space normal.
+  // Set via window.argonian.debugMasks(n). Invaluable when a mask silently reads 0.
+  if (uDebug > 0.5) {
+    vec3 dbg = vec3(0.0);
+    if (uDebug < 1.5) dbg = vec3(cap, brow, socket);
+    else if (uDebug < 2.5) dbg = vec3(ventral, bandZone, bands);
+    else dbg = Nr * 0.5 + 0.5;
+    diffuseColor.rgb = dbg;
+    gRoughOut = 1.0;
+  }
 `;
 
 // ---------------------------------------------------------------------------
@@ -194,16 +214,16 @@ const HORN_FRAG = /* glsl */`
   float h = det.w;
 
   float t = vRun.y;
-  vec3 bone  = vec3(0.324, 0.287, 0.196);
-  vec3 tip   = vec3(0.212, 0.183, 0.126);
-  vec3 dark  = vec3(0.043, 0.036, 0.030);
+  vec3 bone  = vec3(0.205, 0.180, 0.121);
+  vec3 tip   = vec3(0.126, 0.106, 0.072);
+  vec3 dark  = vec3(0.022, 0.018, 0.015);
 
   vec3 col = mix(bone, tip, ss(0.45, 1.0, t));
   // dark root where the horn leaves the hide
   col = mix(col, dark, ss(0.22, 0.02, t));
   // banded ring on the big horns only
-  float ring = step(0.5, vRegion) * ss(0.055, 0.02, abs(t - 0.175));
-  col = mix(col, dark * 1.6, ring * 0.85);
+  float ring = step(0.5, vRegion) * ss(0.075, 0.025, abs(t - 0.16));
+  col = mix(col, dark * 1.3, ring * 0.95);
 
   float grime = fbm(vRest * 60.0);
   col *= 0.80 + 0.34 * grime;
@@ -221,13 +241,13 @@ const EYE_FRAG = /* glsl */`
   float x = dot(d, rt), y = dot(d, up);
   float r = length(vec2(x, y));
 
-  vec3 amber = vec3(0.560, 0.288, 0.026);
-  vec3 amberHot = vec3(0.780, 0.470, 0.070);
+  vec3 amber = vec3(0.420, 0.208, 0.018);
+  vec3 amberHot = vec3(0.640, 0.372, 0.052);
   float fibers = fbm(vec3(atan(y, x) * 5.0, r * 26.0, 0.0));
   vec3 iris = mix(amber, amberHot, fibers * 0.85);
   iris *= 0.72 + 0.55 * ss(0.05, 0.5, r);
 
-  vec3 col = mix(iris, vec3(0.020, 0.014, 0.008), ss(0.46, 0.60, r));
+  vec3 col = mix(iris, vec3(0.009, 0.007, 0.005), ss(0.42, 0.54, r));
   // vertical slit pupil
   float slit = length(vec2(x / 0.115, y / 0.40));
   col = mix(vec3(0.006, 0.005, 0.004), col, ss(0.86, 1.06, slit));
@@ -235,7 +255,7 @@ const EYE_FRAG = /* glsl */`
   col *= 1.0 - 0.6 * ss(0.36, 0.47, r) * (1.0 - ss(0.47, 0.56, r));
 
   diffuseColor.rgb = col;
-  gRoughOut = 0.14;
+  gRoughOut = mix(0.16, 0.55, ss(0.40, 0.62, r));
 `;
 
 const CLOTH_FRAG = /* glsl */`
@@ -305,7 +325,7 @@ export function createMaterials() {
   };
 
   const skin = mk('argonianSkin', { roughness: 0.8, metalness: 0.0 }, SKIN_FRAG,
-    { uDetail: { value: scale } });
+    { uDetail: { value: scale }, uDebug: { value: 0 } });
 
   const horn = mk('argonianHorn', { roughness: 0.55, metalness: 0.0 }, HORN_FRAG,
     { uDetail: { value: scale } });
