@@ -153,7 +153,7 @@ export function buildArgonian(opts = {}) {
   const tunicShell = (garments.find((g) => g.tunic) || {}).shell;
   push(REGION.SASH, buildStrap(tunicShell));
   push(REGION.LEATHER, buildMedallion(tunicShell));
-  for (const p of buildBelt()) push(REGION.BELT, p);
+  for (const p of buildBelt(tunicShell)) push(REGION.BELT, p);
   for (const p of buildWristWraps(rig)) push(REGION.WRAP, p);
 
   const matForRegion = {

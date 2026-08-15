@@ -292,21 +292,32 @@ export function buildMedallion(tunicField) {
   return sweep(rings, { sides: 26 });
 }
 
-/** Wide cloth belt with a knotted, hanging end at the front. */
-export function buildBelt() {
+/**
+ * Wide cloth belt with a knotted, hanging end at the front.
+ *
+ * Like the sash, the ring is PROJECTED onto the tunic surface rather than placed at
+ * an authored radius. Guessing the radius does not converge: the tunic's own surface
+ * at the waist depends on its offset plus its fold displacement, so a hand-picked
+ * value is either just inside it — leaving only a sliver of the belt's top edge
+ * showing, which reads as a blade stuck through the coat — or just outside it, where
+ * the belt becomes a hoop floating clear of the body with a hard flat underside.
+ */
+export function buildBelt(tunicField, lift = 0.011) {
   const parts = [];
   const ring = [];
   const N = 72;
   for (let i = 0; i <= N; i++) {
     const a = (i / N) * Math.PI * 2 - Math.PI / 2;
-    // The tunic's own surface at the waist reaches ~0.175 once offset and folds are
-    // added. Inside that the belt is buried and only a sliver of its top edge shows,
-    // reading as a blade stuck through the coat; far outside it becomes a hoop
-    // floating around the waist with a hard flat underside. It wants to sit ON the
-    // cloth: inner edge just touching, not clear of it.
-    const rx = 0.192, rz = 0.162;
+    let p = [Math.cos(a) * 0.20, 0.972 + Math.sin(a * 2) * 0.004, Math.sin(a) * 0.17 + 0.004];
+    if (tunicField) {
+      const out = [p[0], 0, p[2] - 0.004];
+      const l = Math.hypot(out[0], out[2]) || 1;
+      const dir = [out[0] / l, 0, out[2] / l];
+      const hit = raySurface(tunicField, p, dir, { start: -0.16, max: 0.14 });
+      p = [hit[0] + dir[0] * lift, p[1], hit[2] + dir[2] * lift];
+    }
     ring.push({
-      p: [Math.cos(a) * rx, 0.972 + Math.sin(a * 2) * 0.004, Math.sin(a) * rz + 0.004],
+      p,
       r: [0.040, 0.0160],
       profile: (t) => 1 + 0.10 * Math.sin(t * 5) + 0.05 * Math.sin(t * 11),
     });
