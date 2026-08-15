@@ -616,7 +616,7 @@ export function createMaterials() {
     undershirt: clothMat('undershirt', [0.0402, 0.0442, 0.0396], 0.95, 12.0, cloth),
     trousers: clothMat('trousers', [0.0242, 0.0226, 0.0208], 0.95, 9.0, cloth),
     wrap: clothMat('wrap', [0.0745, 0.0778, 0.0708], 0.96, 14.0, cloth),
-    leather: clothMat('leather', [0.0208, 0.0146, 0.0104], 0.84, 22.0, leather),
+    leather: clothMat('leather', [0.0162, 0.0114, 0.0082], 0.91, 22.0, leather),
     // sash and belt sit only a little above the tunic. Pushed further apart they
     // stopped reading as cloth and became bright metal blades laid across the chest.
     sash: clothMat('sash', [0.0812, 0.0768, 0.0678], 0.90, 18.0, leather),

@@ -71,21 +71,24 @@ export function clothingFields(body) {
       roundBox([0, 1.452, -0.078], [0.13, 0.075, 0.09], 0.03),   // rolled-down cowl
     ]);
     const f = garment(body, 0.010, cover, bounds, 0.020, folds(0.0038, 24));
-    // A wrapped cloth cowl that rises to just under the jaw. It used to stop ~6 cm
-    // short, leaving a bare column of neck almost as wide as the skull — head and
-    // neck then fused into one box and the jaw line disappeared. In the references
-    // the neck is not visible at all.
-    f.add(capsule([0, 1.402, -0.008], [0, 1.444, 0.006], 0.106, 0.088, { k: 0.024 }));
-    f.add(ellipsoid([0, 1.408, 0.038], [0.088, 0.040, 0.062], { k: 0.020 }));  // knotted front
+    // A wrapped cloth cowl sitting at the base of the throat. Height here is delicate
+    // in BOTH directions (trap 17): too low and the head and a bare neck fuse into one
+    // vertical box, too high and it swallows the jaw. The references show a definite
+    // throat column — a jawline with a shadowed neck and clavicle underneath it — so
+    // the collar must clear the jaw by roughly a quarter of a head height. After any
+    // change to HEAD_XF.scale this needs re-checking: scaling the head moves the jaw
+    // but leaves the collar where it was.
+    f.add(capsule([0, 1.348, -0.008], [0, 1.390, 0.006], 0.108, 0.092, { k: 0.024 }));
+    f.add(ellipsoid([0, 1.354, 0.038], [0.090, 0.040, 0.064], { k: 0.020 }));  // knotted front
     // a rolled rim right around the opening, so the collar reads as a hemmed edge
     // the head sits down into, rather than as a smooth funnel
-    f.add(capsule([0, 1.424, 0.010], [0, 1.428, -0.006], 0.094, 0.092, { k: 0.012 }));
-    f.add(ellipsoid([0.030, 1.430, 0.066], [0.036, 0.026, 0.030], { k: 0.018 }));
+    f.add(capsule([0, 1.370, 0.010], [0, 1.374, -0.006], 0.098, 0.096, { k: 0.012 }));
+    f.add(ellipsoid([0.030, 1.376, 0.066], [0.036, 0.026, 0.030], { k: 0.018 }));
     // The cowl rolled down at the nape. Kept LOW and small — built up as a full hood
     // it read as a backpack strapped between the shoulder blades.
-    f.add(ellipsoid([0, 1.404, -0.074], [0.090, 0.044, 0.044], { k: 0.030 }));
-    f.add(ellipsoid([0, 1.436, -0.086], [0.070, 0.032, 0.032], { k: 0.028 }));
-    f.sub(capsule([0, 1.43, -0.016], [0, 1.70, 0.014], 0.066, 0.074, { k: 0.018 })); // neck hole
+    f.add(ellipsoid([0, 1.350, -0.074], [0.092, 0.044, 0.044], { k: 0.030 }));
+    f.add(ellipsoid([0, 1.382, -0.086], [0.070, 0.032, 0.032], { k: 0.028 }));
+    f.sub(capsule([0, 1.376, -0.016], [0, 1.70, 0.014], 0.068, 0.078, { k: 0.018 })); // neck hole
     out.push({ field: f, bounds, cell: 0.0055, region: REGION.UNDERSHIRT });
   }
 
@@ -110,27 +113,35 @@ export function clothingFields(body) {
       capsule([0.110, 1.425, 0], [0.222, 1.128, -0.006], 0.115, 0.086),
     ]);
     const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0105, 16));
-    // a cut-free copy of the same shell, used only as a projection target for the
-    // sash and medallion
+    // The projection target for the sash, the medallion and the belt. It has to carry
+    // EVERY ADDITIVE part of the coat and none of the cuts.
+    //
+    // It used to be the bare offset shell, which is the coat only over the ribcage. At
+    // the waist and hip the coat is the SKIRT, standing over a centimetre proud of the
+    // shell in z — so the strap and the belt were projected onto a surface that is
+    // *inside* the visible coat, and they surfaced only where a fold happened to poke
+    // through. That reads as torn geometry: a diagonal row of hard-edged slivers across
+    // the chest and a belt reduced to a blade stuck through the cloth.
     const shell = garment(body, 0.026, cover, bounds, 0.016, folds(0.0105, 16));
+    const addBoth = (prim) => { f.add(prim); shell.add(prim); };
     // the skirt hangs clear of the body, so it is added rather than offset
     // A coat skirt, not a peplum: it reaches mid-thigh and FLARES, so the figure gets a
     // waist. Stopping it just under the belt left the hips as the widest thing in the
     // silhouette and the whole figure read pear-shaped.
-    f.add(capsule([0, 1.0, 0.0], [0, 0.700, -0.016], 0.148, 0.170, { k: 0.055, scale: [1, 1, 0.9] }));
+    addBoth(capsule([0, 1.0, 0.0], [0, 0.700, -0.016], 0.148, 0.170, { k: 0.055, scale: [1, 1, 0.9] }));
     // hem roll, waved so the border is not a dead-level line
     for (let i = 0; i < 16; i++) {
       const a = (i / 16) * Math.PI * 2;
-      f.add(ellipsoid([Math.cos(a) * 0.146, 0.706 + Math.sin(a * 3) * 0.010, Math.sin(a) * 0.126 - 0.016],
+      addBoth(ellipsoid([Math.cos(a) * 0.146, 0.706 + Math.sin(a * 3) * 0.010, Math.sin(a) * 0.126 - 0.016],
         [0.038, 0.013, 0.036], { k: 0.038 }));
     }
     for (const s of [1, -1]) {
-      f.add(ellipsoid([s * 0.2205, 1.098, -0.008], [0.0560, 0.024, 0.0560], { k: 0.010 })); // rolled cuff
-      f.add(ellipsoid([s * 0.2203, 1.127, -0.008], [0.0530, 0.0085, 0.0530], { k: 0.008 })); // cuff seam
+      addBoth(ellipsoid([s * 0.2205, 1.098, -0.008], [0.0560, 0.024, 0.0560], { k: 0.010 })); // rolled cuff
+      addBoth(ellipsoid([s * 0.2203, 1.127, -0.008], [0.0530, 0.0085, 0.0530], { k: 0.008 })); // cuff seam
       // shoulder yoke: a raised rolled seam over the deltoid, so sleeve and torso
       // read as separate pieces instead of one continuous moulded mass
-      f.add(capsule([s * 0.080, 1.420, 0.058], [s * 0.180, 1.384, -0.054], 0.0215, 0.0185, { k: 0.0075 }));
-      f.add(capsule([s * 0.180, 1.384, -0.054], [s * 0.207, 1.336, -0.030], 0.0185, 0.0155, { k: 0.0075 }));
+      addBoth(capsule([s * 0.080, 1.420, 0.058], [s * 0.180, 1.384, -0.054], 0.0215, 0.0185, { k: 0.0075 }));
+      addBoth(capsule([s * 0.180, 1.384, -0.054], [s * 0.207, 1.336, -0.030], 0.0185, 0.0155, { k: 0.0075 }));
     }
     // front opening: a narrow vertical slot down the chest centre, with a raised hem
     // roll either side, so the undershirt shows through a placket rather than a hole
@@ -141,10 +152,10 @@ export function clothingFields(body) {
     }
     // Neckline: one tilted opening that dips at the front. Cutting a separate hole
     // for the undershirt reads as a disc stuck on the chest — don't.
-    f.sub(capsule([0, 1.398, 0.048], [0, 1.60, 0.022], 0.068, 0.098, { k: 0.028 }));
+    f.sub(capsule([0, 1.344, 0.060], [0, 1.60, 0.010], 0.066, 0.104, { k: 0.028 }));
     // rolled collar band around the opening, so the edge reads as a hem
-    f.add(capsule([0, 1.408, 0.034], [0, 1.438, 0.026], 0.082, 0.080, { k: 0.018 }));
-    f.sub(capsule([0, 1.39, 0.05], [0, 1.62, 0.020], 0.064, 0.092, { k: 0.020 }));
+    f.add(capsule([0, 1.352, 0.040], [0, 1.382, 0.030], 0.082, 0.080, { k: 0.018 }));
+    f.sub(capsule([0, 1.336, 0.062], [0, 1.62, 0.008], 0.062, 0.098, { k: 0.020 }));
     // The hem. A garment edge is a real edge — cloth stops. Cut it flat and let the
     // ring of hem ellipsoids above roll over the cut, so it reads as a hemmed border
     // rather than as a sawn plane or as a closed dome.
@@ -274,7 +285,7 @@ export function buildStrap(tunicField, lift = 0.013) {
       // cross-section is a wide thin ribbon. Nearer to round it reads as a rope.
       // Tapered at both ends, or a flat band terminates in a hard cap that catches
       // the light edge-on and reads as a knife blade laid across the hip.
-      r: [0.0198 * (0.30 + 0.70 * Math.min(1, Math.min(t, 1 - t) / 0.07)), 0.0050],
+      r: [0.0198 * (0.62 + 0.38 * Math.min(1, Math.min(t, 1 - t) / 0.05)), 0.0050],
       profile: (a) => 1 + 0.10 * Math.sin(a * 3.0 + t * 40.0)
                     + 0.05 * Math.sin(a * 6.0 - t * 62.0),  // braid relief
     };

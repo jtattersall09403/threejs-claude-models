@@ -65,8 +65,8 @@ export function buildBodyField() {
   f.add(ellipsoid([0, 1.245, 0.012], [0.158, 0.135, 0.122], { k: K }));    // ribcage
   f.add(ellipsoid([0, 1.330, 0.030], [0.130, 0.072, 0.098], { k: 0.05 })); // pectoral shelf
   f.add(ellipsoid([0, 1.345, 0.0], [0.152, 0.09, 0.112], { k: K }));       // upper chest
-  f.add(capsule([-0.168, 1.400, -0.004], [0.168, 1.400, -0.004], 0.078, 0.078, { k: 0.045 }));
-  f.add(ellipsoid([0, 1.386, -0.055], [0.140, 0.086, 0.070], { k: 0.06 })); // trapezius mass
+  f.add(capsule([-0.166, 1.390, -0.004], [0.166, 1.390, -0.004], 0.074, 0.074, { k: 0.045 }));
+  f.add(ellipsoid([0, 1.376, -0.055], [0.140, 0.082, 0.070], { k: 0.06 })); // trapezius mass
   f.add(ellipsoid([0, 0.95, -0.062], [0.146, 0.09, 0.07], { k: K }));      // glutes
 
   // ---- neck (continues up into the head bake) --------------------------------
@@ -74,10 +74,14 @@ export function buildBodyField() {
 
   // ---- arms ------------------------------------------------------------------
   for (const s of [1, -1]) {
-    // The deltoid is the shoulder CORNER: it has to sit outboard of and slightly above
-    // the joint, so the top line runs out flat from the neck and then turns down.
-    f.add(ellipsoid([s * 0.198, 1.402, -0.004], [0.066, 0.070, 0.068], { k: 0.03 })); // deltoid
-    f.add(capsule([s * 0.203, 1.396, 0], [s * 0.222, 1.145, -0.014], 0.05, 0.039, { k: 0.026 }));
+    // The deltoid is the shoulder CORNER: it has to sit outboard of the joint, so the
+    // top line runs out flat from the neck and then turns down. FLAT in section, not a
+    // ball — a near-spherical deltoid puts a hemispherical cap on top of the sleeve and
+    // the coat renders a leg-of-mutton puff over it. The mass it loses in height is put
+    // back below as a tail running down into the biceps.
+    f.add(ellipsoid([s * 0.194, 1.386, -0.004], [0.072, 0.052, 0.070], { k: 0.03 })); // deltoid
+    f.add(ellipsoid([s * 0.186, 1.330, -0.004], [0.055, 0.052, 0.058], { k: 0.03 })); // deltoid tail
+    f.add(capsule([s * 0.203, 1.388, 0], [s * 0.222, 1.145, -0.014], 0.05, 0.039, { k: 0.026 }));
     f.add(ellipsoid([s * 0.210, 1.275, -0.005], [0.047, 0.068, 0.048], { k: 0.03 }));  // biceps
     f.add(capsule([s * 0.222, 1.145, -0.014], [s * 0.239, 0.892, 0.012], 0.044, 0.029, { k: 0.026 }));
     f.add(ellipsoid([s * 0.227, 1.074, -0.008], [0.041, 0.06, 0.043], { k: 0.03 }));   // forearm swell

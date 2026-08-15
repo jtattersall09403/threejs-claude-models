@@ -51,15 +51,15 @@ const MIRROR = [
   // the coat carries out to a distinct corner over the deltoid and the arm drops from
   // there. Ours sloped continuously from the neck to the elbow, which reads as a cone
   // with no shoulder in it at all, and left the arm inside the torso silhouette.
-  ['clavicle', 'upperChest', [0.055, 1.406, 0.015]],
-  ['shoulder', 'clavicle', [0.203, 1.412, 0]],
+  ['clavicle', 'upperChest', [0.055, 1.398, 0.015]],
+  ['shoulder', 'clavicle', [0.203, 1.404, 0]],
   ['elbow', 'shoulder', [0.222, 1.145, -0.014]],
   ['wrist', 'elbow', [0.239, 0.892, 0.012]],
   ['hand', 'wrist', [0.239, 0.828, 0.008]],
 
-  ['thumb1', 'hand', [0.233, 0.828, 0.04]],
-  ['thumb2', 'thumb1', [0.224, 0.796, 0.074]],
-  ['thumb3', 'thumb2', [0.219, 0.774, 0.1]],
+  ['thumb1', 'hand', [0.233, 0.826, 0.036]],
+  ['thumb2', 'thumb1', [0.226, 0.786, 0.062]],
+  ['thumb3', 'thumb2', [0.222, 0.752, 0.082]],
   ['index1', 'hand', [0.243, 0.792, 0.038]],
   ['index2', 'index1', [0.247, 0.735, 0.047]],
   ['index3', 'index2', [0.248, 0.6965, 0.058]],
