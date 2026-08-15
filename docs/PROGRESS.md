@@ -42,11 +42,16 @@ brow spines, eye angle, orange eye rim, dark ocular mask. Still open:
    texture and grime along its length, not just at the root.
 3. **The muzzle's reticulation is fainter than the reference's**, whose pale mesh
    between scales is crisp and continuous over the whole snout.
-4. Legs and feet are still simple and the feet are plain blocks (plausibility only —
-   the references never show below the waist, but the artifact is orbitable).
+4. Legs still read as a fairly featureless column from the front — no knee or calf
+   break (plausibility only; the references never show below the waist).
 5. Hands: fingers still fairly uniform in length.
 6. The tail is plausible but exits fairly horizontally and its tip kink reads oddly.
 7. The tunic weave is much improved but still slightly regular at close range.
+
+Boots were closed in iteration 15: darker leather, welt and toe-cap seams, and a sole
+that is **wider than the upper** — at its old width it sat inside the shoe's own
+offset surface and contributed nothing, which is the same burial failure as the belt
+and is worth checking first whenever an added detail "does not appear".
 
 ## Direct feedback from the user on the head (iteration 13) — keep checking these
 
