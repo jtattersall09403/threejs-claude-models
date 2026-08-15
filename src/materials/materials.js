@@ -241,6 +241,7 @@ const SKIN_FRAG = /* glsl */`
   col = mix(col, plate, cap * 0.97);
   col = mix(col, plate * vec3(1.15, 1.20, 1.55), socket * 0.98);
   col = mix(col, maroon, brow * 0.98);
+  col = mix(col, maroon * 0.62, brow * 0.55);  // deepen the oxblood band
   // three cream claw-mark streaks across the maroon brow band
   float streak = ss(0.72, 0.97, abs(sin((J.x - 0.010) * 150.0)));
   col = mix(col, boneCol * 0.72, brow * streak * ss(0.014, 0.048, abs(J.x)) * 0.85);
@@ -265,10 +266,19 @@ const SKIN_FRAG = /* glsl */`
             * ss(0.186, 0.174, H.z) * ss(0.006, 0.028, H.z);
   col = mix(col, vec3(0.0032, 0.0028, 0.0026), lip * 0.99);
 
-  // crevices between scales go dark. Range kept narrow: at 0.42..1.06 the detail
-  // height alone swung local brightness 2.5x, so wherever the scale texture happened
-  // to sit high the hide jumped to a pale wash that read as a lighting error.
-  col *= mix(0.52, 1.04, ss(0.02, 0.55, h));
+  // Crevices between scales go dark on the BODY. Range kept narrow: at 0.42..1.06 the
+  // detail height alone swung local brightness 2.5x, so wherever the scale texture
+  // happened to sit high the hide jumped to a pale wash that read as a lighting error.
+  // On the head the darkening is damped, because the head gets the opposite
+  // treatment immediately below.
+  col *= mix(mix(0.52, 1.04, ss(0.02, 0.55, h)),
+             mix(0.82, 1.04, ss(0.02, 0.55, h)), headMask);
+  // The reference hide's signature marking: over the whole head the gaps between
+  // scales are LIGHTER than the scales, giving a pale reticulated mesh — the exact
+  // opposite of a generic crevice darkening. Previously applied to the cranial
+  // plates only, which left the muzzle looking like plain pebbled rubber.
+  float mortar = (1.0 - ss(0.06, 0.34, h)) * headMask * (1.0 - cap * 0.7);
+  col = mix(col, boneCol * 0.26, mortar * 0.40);
   // darker AND warmer: the jaw was not merely bright, it was the greenest thing on
   // the head, where the reference jaw is its most neutral, most shadowed area
   col = mix(col, col * vec3(0.60, 0.53, 0.52), chinZone * 0.88);

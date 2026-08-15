@@ -113,14 +113,14 @@ export function buildHeadField() {
   const f = new Field();
 
   // ---- braincase: tall and domed, widest at the temples -----------------------
-  f.add(ellipsoid([0, 1.684, -0.010], [0.0605, 0.072, 0.101], { k: 0.055 }));
+  f.add(ellipsoid([0, 1.684, -0.010], [0.0638, 0.072, 0.101], { k: 0.055 }));
   f.add(ellipsoid([0, 1.668, -0.052], [0.047, 0.054, 0.052], { k: 0.05 }));  // domed occiput
   f.add(ellipsoid([0, 1.742, -0.014], [0.043, 0.023, 0.066], { k: 0.030 })); // raised crown plate
 
   // ---- brow / eye ridges -------------------------------------------------------
   for (const s of [1, -1]) {
     f.add(ellipsoid([s * 0.0455, 1.7195, 0.058], [0.028, 0.018, 0.040], { k: 0.022 })); // brow shelf
-    f.add(ellipsoid([s * 0.0545, 1.686, 0.022], [0.016, 0.052, 0.057], { k: 0.035 }));  // temple
+    f.add(ellipsoid([s * 0.0575, 1.686, 0.022], [0.016, 0.052, 0.057], { k: 0.035 }));  // temple
   }
 
   // ---- muzzle: squared blocks, not tubes. The reference snout is a box with a
