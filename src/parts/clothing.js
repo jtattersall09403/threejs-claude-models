@@ -65,10 +65,10 @@ export function clothingFields(body) {
     // short, leaving a bare column of neck almost as wide as the skull — head and
     // neck then fused into one box and the jaw line disappeared. In the references
     // the neck is not visible at all.
-    f.add(capsule([0, 1.436, -0.008], [0, 1.560, 0.006], 0.102, 0.084, { k: 0.024 }));
-    f.add(ellipsoid([0, 1.496, 0.038], [0.084, 0.042, 0.062], { k: 0.020 }));  // knotted front
-    f.add(ellipsoid([0.030, 1.466, 0.066], [0.036, 0.026, 0.030], { k: 0.018 }));
-    f.sub(capsule([0, 1.43, -0.016], [0, 1.70, 0.014], 0.068, 0.078, { k: 0.018 })); // neck hole
+    f.add(capsule([0, 1.432, -0.008], [0, 1.550, 0.006], 0.102, 0.082, { k: 0.024 }));
+    f.add(ellipsoid([0, 1.490, 0.038], [0.084, 0.042, 0.062], { k: 0.020 }));  // knotted front
+    f.add(ellipsoid([0.030, 1.462, 0.066], [0.036, 0.026, 0.030], { k: 0.018 }));
+    f.sub(capsule([0, 1.43, -0.016], [0, 1.70, 0.014], 0.066, 0.074, { k: 0.018 })); // neck hole
     out.push({ field: f, bounds, cell: 0.0055, region: REGION.UNDERSHIRT });
   }
 

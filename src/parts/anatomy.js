@@ -5,10 +5,15 @@
 //
 // Head proportions target the references: length : height : width ≈ 1.6 : 1 : 0.9,
 // i.e. long-snouted but with a tall braincase and a deep jaw — NOT a flat plank.
+//
+// Measured off the front reference: skull width is 0.69 of skull height (crown to
+// chin), and the width at the mouth line is 0.58 of the width at the eyes. Getting
+// EITHER of those wrong makes the head read as a rectangular box no matter how much
+// detail is painted on it — that is the failure mode this file keeps falling into.
 import { Field, capsule, ellipsoid, roundBox, creaseSlot } from '../core/sdf.js';
 
 export const EYE = {
-  c: [0.0492, 1.6975, 0.0705],   // mirrored on x
+  c: [0.0468, 1.6975, 0.0705],   // mirrored on x
   r: 0.0196,
   gaze: [0.16, 0.0, 0.987],      // outward/forward gaze axis for the left(+x) eye
 };
@@ -31,7 +36,7 @@ export const EYE_WORLD = headPoint(EYE.c);
 
 // The mouth line. The geometry cut and the shader's lip paint MUST share this or
 // the dark line drifts off the groove and smears onto the cheek.
-export const LIP = { y0: 1.6205, z0: 0.166, slope: 0.115 };
+export const LIP = { y0: 1.6145, z0: 0.166, slope: 0.115 };
 
 export const BODY_BOUNDS = [-0.35, -0.03, -0.62, 0.35, 1.55, 0.24];
 const HEAD_BOX = [-0.15, 1.40, -0.16, 0.15, 1.82, 0.28];
@@ -103,14 +108,14 @@ export function buildHeadField() {
   const f = new Field();
 
   // ---- braincase: tall and domed, widest at the temples -----------------------
-  f.add(ellipsoid([0, 1.684, -0.010], [0.0705, 0.070, 0.101], { k: 0.055 }));
-  f.add(ellipsoid([0, 1.668, -0.052], [0.052, 0.053, 0.052], { k: 0.05 }));  // domed occiput
-  f.add(ellipsoid([0, 1.740, -0.014], [0.048, 0.022, 0.066], { k: 0.030 })); // raised crown plate
+  f.add(ellipsoid([0, 1.684, -0.010], [0.0605, 0.072, 0.101], { k: 0.055 }));
+  f.add(ellipsoid([0, 1.668, -0.052], [0.047, 0.054, 0.052], { k: 0.05 }));  // domed occiput
+  f.add(ellipsoid([0, 1.742, -0.014], [0.043, 0.023, 0.066], { k: 0.030 })); // raised crown plate
 
   // ---- brow / eye ridges -------------------------------------------------------
   for (const s of [1, -1]) {
-    f.add(ellipsoid([s * 0.0505, 1.7195, 0.058], [0.030, 0.018, 0.040], { k: 0.022 })); // brow shelf
-    f.add(ellipsoid([s * 0.0625, 1.686, 0.022], [0.018, 0.051, 0.057], { k: 0.035 }));  // temple
+    f.add(ellipsoid([s * 0.0455, 1.7195, 0.058], [0.028, 0.018, 0.040], { k: 0.022 })); // brow shelf
+    f.add(ellipsoid([s * 0.0545, 1.686, 0.022], [0.016, 0.052, 0.057], { k: 0.035 }));  // temple
   }
 
   // ---- muzzle: squared blocks, not tubes. The reference snout is a box with a
@@ -125,22 +130,22 @@ export function buildHeadField() {
   // ---- lower jaw: deep and straight, turning up at a visible hinge --------------
   // Narrower than the upper muzzle at every station, so the jaw tucks under the lip
   // instead of squaring off flush with it.
-  f.add(roundBox([0, 1.6035, 0.076], [0.0225, 0.019, 0.032], 0.014, { k: 0.046 }));
-  f.add(roundBox([0, 1.6045, 0.124], [0.0175, 0.017, 0.024], 0.0118, { k: 0.032 }));
-  f.add(roundBox([0, 1.6055, 0.158], [0.0122, 0.013, 0.017], 0.0098, { k: 0.024 }));
-  f.add(ellipsoid([0, 1.6105, 0.160], [0.016, 0.016, 0.017], { k: 0.014 }));   // chin
+  f.add(roundBox([0, 1.5935, 0.076], [0.0225, 0.020, 0.032], 0.014, { k: 0.046 }));
+  f.add(roundBox([0, 1.5950, 0.124], [0.0175, 0.018, 0.024], 0.0118, { k: 0.032 }));
+  f.add(roundBox([0, 1.5960, 0.158], [0.0122, 0.014, 0.017], 0.0098, { k: 0.024 }));
+  f.add(ellipsoid([0, 1.6010, 0.160], [0.016, 0.016, 0.017], { k: 0.014 }));   // chin
   // The cheeks are the whole reason the head reads as a box or as a snouted skull.
   // Kept narrow and swept BACK: in the reference the face steps in hard below the
   // eyes, so the muzzle — not the jaw — is what you see from the front.
   for (const s of [1, -1]) {
-    f.add(ellipsoid([s * 0.0325, 1.6395, 0.014], [0.0145, 0.040, 0.046], { k: 0.048 })); // cheek / masseter
-    f.add(ellipsoid([s * 0.0470, 1.6465, -0.022], [0.0165, 0.046, 0.038], { k: 0.032 })); // jaw hinge
+    f.add(ellipsoid([s * 0.0305, 1.6335, 0.014], [0.0140, 0.044, 0.046], { k: 0.048 })); // cheek / masseter
+    f.add(ellipsoid([s * 0.0430, 1.6405, -0.022], [0.0155, 0.050, 0.038], { k: 0.032 })); // jaw hinge
   }
 
   // ---- throat / neck (overlaps the body bake) ------------------------------------
   // Kept narrower than the jaw. When the neck matched the skull for width the head
   // and neck fused into one vertical box and the jaw line vanished.
-  f.add(ellipsoid([0, 1.5955, 0.046], [0.055, 0.042, 0.053], { k: 0.05 }));
+  f.add(ellipsoid([0, 1.5855, 0.046], [0.052, 0.042, 0.053], { k: 0.05 }));
   f.add(capsule([0, 1.462, -0.012], [0, 1.578, 0.012], 0.070, 0.056, { k: 0.05 }));
 
   // ---- cuts ------------------------------------------------------------------

@@ -150,7 +150,7 @@ const SKIN_FRAG = /* glsl */`
   // The reference face is one uniform dark olive from brow to chin — it has NO pale
   // belly tone. Kill ventral outright above the jaw line rather than merely damping
   // it, or the lower muzzle washes out to a light yellow-green.
-  ventral *= 1.0 - 0.94 * ss(1.545, 1.600, H.y);
+  ventral *= 1.0 - 0.94 * ss(1.515, 1.568, H.y);
 
   // armoured skull cap: top of the braincase, wrapping down over the temples
   // covers the whole cranium from the brow back, wrapping down behind the eyes —
@@ -204,8 +204,8 @@ const SKIN_FRAG = /* glsl */`
   // Head-only macro blotching. Killing the pale ventral wash left the face one even
   // panel of green; the reference muzzle is mottled dark-on-dark, with the top of
   // the snout markedly darker than the flanks.
-  float snoutTop = ss(1.638, 1.668, H.y) * ss(0.030, 0.075, H.z) * ss(0.30, 0.72, Nr.y);
-  col = mix(col, col * 0.62, headMask * snoutTop * 0.80);
+  float snoutTop = ss(1.630, 1.676, H.y) * ss(0.020, 0.090, H.z) * ss(0.20, 0.78, Nr.y);
+  col = mix(col, col * 0.70, headMask * snoutTop * 0.62);
   col = mix(col, col * mix(0.70, 1.16, ss(0.34, 0.70, fbm(P * 8.5 + 61.0))), headMask * 0.55);
   col = mix(col, belly, ventral * 0.66);
   col = mix(col, belly * vec3(1.06, 1.00, 0.80), bandZone * bands * 0.55);
@@ -274,10 +274,12 @@ const HORN_FRAG = /* glsl */`
   // region 2 is the metal cuff: tarnished dark bronze, and actually metallic, so it
   // catches the rim lights differently from the keratin it is clamped to
   if (vRegion > 1.5) {
-    vec3 metal = vec3(0.126, 0.103, 0.071);
-    col = metal * (0.62 + 0.52 * grime) * mix(0.70, 1.10, ss(0.15, 0.8, h));
-    gRoughOut = clamp(0.38 + grime * 0.26, 0.24, 0.78);
-    gMetalOut = 0.92;
+    // dull, tarnished and DARKER than the keratin it clamps — a bright band reads as
+    // jewellery and pulls the eye off the face
+    vec3 metal = vec3(0.062, 0.052, 0.038);
+    col = metal * (0.58 + 0.55 * grime) * mix(0.66, 1.08, ss(0.15, 0.8, h));
+    gRoughOut = clamp(0.52 + grime * 0.30, 0.34, 0.88);
+    gMetalOut = 0.88;
   }
   diffuseColor.rgb = col;
 `;
