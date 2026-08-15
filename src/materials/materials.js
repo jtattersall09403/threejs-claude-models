@@ -301,7 +301,8 @@ const CLOTH_FRAG = /* glsl */`
   // grime settles low on the garment
   col *= mix(0.72, 1.0, ss(0.75, 1.15, vRest.y));
   // stitched seams: shoulder line and side seam, so the tunic reads as made, not moulded
-  float shoulderSeam = ss(0.013, 0.003, abs(abs(vRest.x) - 0.150)) * ss(1.30, 1.42, vRest.y);
+  float shoulderSeam = ss(0.016, 0.004, abs(vRest.y - (1.412 - (abs(vRest.x) - 0.076) * 0.375)))
+                     * ss(0.070, 0.092, abs(vRest.x)) * ss(0.205, 0.180, abs(vRest.x));
   float sleeveSeam   = ss(0.011, 0.003, abs(vRest.y - 1.078)) * ss(0.14, 0.19, abs(vRest.x));
   float sideSeam     = ss(0.011, 0.003, abs(abs(vRest.x) - 0.176)) * ss(1.34, 1.12, vRest.y);
   float hemSeam      = ss(0.011, 0.003, abs(vRest.y - 0.812)) * ss(0.88, 0.80, vRest.y);

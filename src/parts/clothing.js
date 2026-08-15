@@ -54,11 +54,11 @@ export function clothingFields(body) {
 
   // ---- undershirt: thin, only visible at the collar and the V of the tunic ----
   {
-    const bounds = [-0.26, 1.16, -0.24, 0.26, 1.56, 0.24];
+    const bounds = [-0.26, 1.12, -0.24, 0.26, 1.56, 0.24];
     // coverage only bounds the EXTENT of the garment; it must be generously wider
     // than the offset body surface or the intersection lands inside the skin
     const cover = coverage([
-      roundBox([0, 1.398, 0.005], [0.30, 0.108, 0.28], 0.02),
+      roundBox([0, 1.352, 0.005], [0.30, 0.156, 0.28], 0.02),
     ]);
     const f = garment(body, 0.010, cover, bounds, 0.020, folds(0.0032, 22));
     // a wrapped cloth cowl at the throat, sitting proud of the collar
@@ -81,6 +81,9 @@ export function clothingFields(body) {
       capsule([0.188, 1.40, 0], [0.211, 1.128, -0.006], 0.15, 0.079),
     ]);
     const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0145, 11));
+    // a cut-free copy of the same shell, used only as a projection target for the
+    // sash and medallion
+    const shell = garment(body, 0.026, cover, bounds, 0.016, folds(0.0145, 11));
     // the skirt hangs clear of the body, so it is added rather than offset
     f.add(capsule([0, 1.0, 0.0], [0, 0.788, -0.012], 0.15, 0.149, { k: 0.055, scale: [1, 1, 0.9] }));
         // hem broken up so it does not end in a hard horizontal CSG cut
@@ -90,11 +93,19 @@ export function clothingFields(body) {
         [0.036, 0.011, 0.034], { k: 0.038 }));
     }
     for (const s of [1, -1]) {
-      f.add(ellipsoid([s * 0.2115, 1.052, -0.008], [0.056, 0.019, 0.056], { k: 0.013 })); // cuff band
-      f.add(ellipsoid([s * 0.2115, 1.076, -0.008], [0.053, 0.010, 0.053], { k: 0.010 })); // cuff seam
+      f.add(ellipsoid([s * 0.2115, 1.056, -0.008], [0.0555, 0.024, 0.0555], { k: 0.010 })); // rolled cuff
+      f.add(ellipsoid([s * 0.2113, 1.085, -0.008], [0.0525, 0.0085, 0.0525], { k: 0.008 })); // cuff seam
       // shoulder yoke: a raised rolled seam over the deltoid, so sleeve and torso
       // read as separate pieces instead of one continuous moulded mass
-      f.add(capsule([s * 0.108, 1.406, 0.028], [s * 0.176, 1.372, -0.030], 0.016, 0.014, { k: 0.012 }));
+      f.add(capsule([s * 0.076, 1.412, 0.056], [s * 0.172, 1.376, -0.052], 0.0215, 0.0185, { k: 0.0075 }));
+      f.add(capsule([s * 0.172, 1.376, -0.052], [s * 0.196, 1.330, -0.030], 0.0185, 0.0155, { k: 0.0075 }));
+    }
+    // front opening: a narrow vertical slot down the chest centre, with a raised hem
+    // roll either side, so the undershirt shows through a placket rather than a hole
+    f.sub(capsule([0, 1.352, 0.150], [0, 1.268, 0.156], 0.0135, 0.0115, { k: 0.014 }));
+    for (const s2 of [1, -1]) {
+      f.add(capsule([s2 * 0.0205, 1.360, 0.149], [s2 * 0.0205, 1.262, 0.155], 0.0088, 0.0072,
+        { k: 0.011 }));
     }
     // Neckline: one tilted opening that dips at the front. Cutting a separate hole
     // for the undershirt reads as a disc stuck on the chest — don't.
@@ -102,7 +113,7 @@ export function clothingFields(body) {
     // rolled collar band around the opening, so the edge reads as a hem
     f.add(capsule([0, 1.408, 0.034], [0, 1.442, 0.026], 0.092, 0.090, { k: 0.018 }));
     f.sub(capsule([0, 1.39, 0.05], [0, 1.62, 0.020], 0.064, 0.092, { k: 0.020 }));
-    out.push({ field: f, bounds, cell: 0.004, region: REGION.TUNIC, tunic: true });
+    out.push({ field: f, bounds, cell: 0.004, region: REGION.TUNIC, tunic: true, shell });
   }
 
   // ---- trousers ---------------------------------------------------------------

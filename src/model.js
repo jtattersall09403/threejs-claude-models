@@ -141,9 +141,9 @@ export function buildArgonian(opts = {}) {
   for (const g of garments) {
     push(g.region, smoothPositions(bakeField(g.field, g.bounds, g.cell), 2));
   }
-  const tunicField = (garments.find((g) => g.tunic) || {}).field;
-  push(REGION.SASH, buildStrap(tunicField));
-  push(REGION.LEATHER, buildMedallion(tunicField));
+  const tunicShell = (garments.find((g) => g.tunic) || {}).shell;
+  push(REGION.SASH, buildStrap(tunicShell));
+  push(REGION.LEATHER, buildMedallion(tunicShell));
   for (const p of buildBelt()) push(REGION.BELT, p);
   for (const p of buildWristWraps(rig)) push(REGION.WRAP, p);
 
