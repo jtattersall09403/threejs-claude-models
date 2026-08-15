@@ -135,7 +135,7 @@ export function createViewer(container) {
   key.shadow.radius = 2.5;
   scene.add(key, key.target);
 
-  const fill = new THREE.DirectionalLight(0x6c86ad, 0.28);
+  const fill = new THREE.DirectionalLight(0x7f96bb, 0.44);
   fill.position.set(-2.8, 1.6, 1.4);
   scene.add(fill);
 
@@ -143,7 +143,7 @@ export function createViewer(container) {
   rimWarm.position.set(-1.5, 2.0, -2.8);
   scene.add(rimWarm);
 
-  const rimCool = new THREE.DirectionalLight(0x9dbbe4, 0.72);
+  const rimCool = new THREE.DirectionalLight(0x9dbbe4, 0.92);
   rimCool.position.set(2.2, 1.7, -2.4);
   scene.add(rimCool);
 
