@@ -299,14 +299,15 @@ export function buildBelt() {
   const N = 72;
   for (let i = 0; i <= N; i++) {
     const a = (i / N) * Math.PI * 2 - Math.PI / 2;
-    // Clear of the tunic. The tunic's own surface at the waist reaches ~0.175 once
-    // the offset and folds are added, so at 0.186 the belt was almost entirely buried
-    // and only a sliver of its top edge showed — which read as a knife blade stuck
-    // through the coat rather than as a belt.
-    const rx = 0.205, rz = 0.172;
+    // The tunic's own surface at the waist reaches ~0.175 once offset and folds are
+    // added. Inside that the belt is buried and only a sliver of its top edge shows,
+    // reading as a blade stuck through the coat; far outside it becomes a hoop
+    // floating around the waist with a hard flat underside. It wants to sit ON the
+    // cloth: inner edge just touching, not clear of it.
+    const rx = 0.192, rz = 0.162;
     ring.push({
       p: [Math.cos(a) * rx, 0.972 + Math.sin(a * 2) * 0.004, Math.sin(a) * rz + 0.004],
-      r: [0.043, 0.0125],
+      r: [0.040, 0.0160],
       profile: (t) => 1 + 0.10 * Math.sin(t * 5) + 0.05 * Math.sin(t * 11),
     });
   }
@@ -318,13 +319,13 @@ export function buildBelt() {
   // Knot and hanging ends. Kept small and narrow: oversized they read as a mushroom
   // with two flat blades bolted to the hip rather than as tied cloth.
   const knot = curveRings(
-    [[0.028, 0.974, 0.176], [0.004, 0.964, 0.191], [-0.022, 0.955, 0.179]],
+    [[0.028, 0.974, 0.166], [0.004, 0.964, 0.180], [-0.022, 0.955, 0.169]],
     (t) => 0.0185 - 0.005 * Math.abs(t - 0.5), 12, { tension: 0.4 },
   );
   parts.push(sweep(knot, { sides: 12 }));
   for (const dx of [-0.024, 0.012]) {
     const tail = curveRings(
-      [[dx, 0.958, 0.184], [dx * 1.4 - 0.006, 0.892, 0.184], [dx * 1.8 - 0.012, 0.824, 0.158]],
+      [[dx, 0.958, 0.173], [dx * 1.4 - 0.006, 0.892, 0.173], [dx * 1.8 - 0.012, 0.824, 0.148]],
       (t) => [0.0155 * (1 - 0.30 * t), 0.0072 * (1 - 0.22 * t)], 18,
       { tension: 0.4, profile: (a, u) => 1 + 0.10 * Math.sin(a * 2.0 + u * 12.0) },
     );
