@@ -40,7 +40,7 @@ export const EYE_WORLD = headPoint(EYE.c);
 
 // The mouth line. The geometry cut and the shader's lip paint MUST share this or
 // the dark line drifts off the groove and smears onto the cheek.
-export const LIP = { y0: 1.6145, z0: 0.166, slope: 0.115 };
+export const LIP = { y0: 1.6145, z0: 0.166, slope: 0.165 };
 
 export const BODY_BOUNDS = [-0.35, -0.03, -0.62, 0.35, 1.55, 0.24];
 const HEAD_BOX = [-0.15, 1.40, -0.16, 0.15, 1.82, 0.28];

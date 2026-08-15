@@ -262,7 +262,10 @@ const SKIN_FRAG = /* glsl */`
   float lipY = LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE;
   // thin. At 2x this width it stopped reading as a closed mouth and became a
   // letterbox slot painted across the face.
-  float lip = ss(0.0072, 0.0020, abs(H.y - lipY))
+  // Scalloped along its length: the reference mouth is broken by lip scutes, and a
+  // single clean line of constant thickness reads as a painted-on dash.
+  float scute = 0.72 + 0.28 * abs(sin(H.z * 118.0));
+  float lip = ss(0.0072 * scute, 0.0018, abs(H.y - lipY))
             * ss(0.186, 0.174, H.z) * ss(0.006, 0.028, H.z);
   col = mix(col, vec3(0.0032, 0.0028, 0.0026), lip * 0.99);
 
@@ -527,7 +530,7 @@ export function createMaterials() {
     // sash and belt sit only a little above the tunic. Pushed further apart they
     // stopped reading as cloth and became bright metal blades laid across the chest.
     sash: clothMat('sash', [0.0625, 0.0578, 0.0498], 0.90, 18.0, leather),
-    belt: clothMat('belt', [0.0402, 0.0392, 0.0364], 0.94, 9.0, cloth),
+    belt: clothMat('belt', [0.0575, 0.0558, 0.0512], 0.92, 9.0, cloth),
     textures: { scale, cloth, leather },
   };
 }

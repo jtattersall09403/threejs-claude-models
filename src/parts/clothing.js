@@ -77,6 +77,9 @@ export function clothingFields(body) {
     // the neck is not visible at all.
     f.add(capsule([0, 1.432, -0.008], [0, 1.550, 0.006], 0.102, 0.082, { k: 0.024 }));
     f.add(ellipsoid([0, 1.490, 0.038], [0.084, 0.042, 0.062], { k: 0.020 }));  // knotted front
+    // a rolled rim right around the opening, so the collar reads as a hemmed edge
+    // the head sits down into, rather than as a smooth funnel
+    f.add(capsule([0, 1.556, 0.010], [0, 1.560, -0.006], 0.082, 0.080, { k: 0.012 }));
     f.add(ellipsoid([0.030, 1.462, 0.066], [0.036, 0.026, 0.030], { k: 0.018 }));
     // The cowl rolled down at the nape. Kept LOW and small — built up as a full hood
     // it read as a backpack strapped between the shoulder blades.
