@@ -675,7 +675,23 @@ export function createMaterials() {
     emissive: new THREE.Color(0x8a7a24), emissiveIntensity: 0.62,
   }, EYE_FRAG, { uDetail: { value: scale } }, false);
 
-  const clothMat = (name, base, rough, weave, tex) => mk(name, { roughness: rough }, CLOTH_FRAG, {
+  // GARMENTS ARE DOUBLE-SIDED. Two reasons, one physical and one practical.
+  //
+  // Physically, cloth has two faces: a hem, a sleeve opening and the neckline all show
+  // their inside, and single-sided they render as holes.
+  //
+  // Practically, the garment bakes produce thin near-coincident sheets wherever the
+  // offset shell and an added volume (the skirt, a cuff, the collar band) run close
+  // together, and marching cubes gives those slivers whatever orientation the field
+  // gradient happens to have. Single-sided they were culled, leaving hard-edged gaps
+  // that read as TORN GEOMETRY across the hip and around the hands — an artefact I
+  // chased through the fold noise, the projection code and the shadow bias before an
+  // ablation and a double-sided test located it. The winding audit does not catch it:
+  // the mesh's overall volume and its outward-face agreement both stay correct.
+  //
+  // The audit in main.js reports `doubleSided` per mesh, so this stays visible rather
+  // than becoming a silent blanket over trap 1.
+  const clothMat = (name, base, rough, weave, tex) => mk(name, { roughness: rough, side: THREE.DoubleSide }, CLOTH_FRAG, {
     uDetail: { value: tex },
     uBase: { value: new THREE.Color(...base) },
     uRough: { value: rough },

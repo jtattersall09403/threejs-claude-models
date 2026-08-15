@@ -66,7 +66,13 @@ if (pageErrors.length || consoleErrors.length) {
 // Winding/solidity audit: catches the inverted-triangle bug that makes surfaces
 // look see-through instead of solid.
 const audit = await tab.evaluate('window.__meshAudit()');
-const bad = audit.filter((m) => m.agree < 0.9 || m.doubleSided);
+// GARMENTS are legitimately double-sided (see the note on clothMat in materials.js):
+// cloth has two faces, and the garment bakes produce thin near-coincident sheets whose
+// orientation marching cubes cannot be relied on to get right. The SKIN, HORN and EYE
+// meshes must stay single-sided, because double-siding them would hide exactly the
+// inverted-winding failure this audit exists to catch (trap 1).
+const SOLID = new Set(['skin', 'horn', 'eye']);
+const bad = audit.filter((m) => m.agree < 0.9 || (m.doubleSided && SOLID.has(m.name)));
 for (const m of audit) {
   console.log(`  ${m.name.padEnd(9)} vol=${m.volume.toFixed(5)} outwardFaces=${(m.agree * 100).toFixed(1)}%`);
 }

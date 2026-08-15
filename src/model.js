@@ -150,7 +150,11 @@ export function buildArgonian(opts = {}) {
   };
   const garments = clothingFields(bodyField);
   for (const g of garments) {
-    push(g.region, smoothPositions(bakeField(g.field, g.bounds, g.cell), 2));
+    // Three passes, not two. Cloth is baked at 4-5 mm against a 9 mm fold amplitude, and
+    // at grazing angles the residual marching-cubes stepping reads as a staircase of
+    // hard-edged strips along the garment's edge — which is easy to mistake for torn
+    // geometry or a print-through.
+    push(g.region, smoothPositions(bakeField(g.field, g.bounds, g.cell), 3));
   }
   const tunicShell = (garments.find((g) => g.tunic) || {}).shell;
   push(REGION.SASH, buildStrap(tunicShell));

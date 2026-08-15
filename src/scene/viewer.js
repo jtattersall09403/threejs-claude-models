@@ -127,11 +127,16 @@ export function createViewer(container) {
   key.position.set(2.1, 3.5, 2.2);
   key.target.position.set(0, 1.06, 0);
   key.castShadow = true;
-  key.shadow.mapSize.set(2048, 2048);
-  key.shadow.camera.near = 0.5;
-  key.shadow.camera.far = 12;
-  key.shadow.bias = -0.0009;
-  key.shadow.normalBias = 0.012;
+  // Shadow ACNE was showing as hard-edged angular plates and staircases of thin strips
+  // over the coat and trousers at close range — which looks exactly like torn or
+  // z-fighting geometry and cost several iterations chasing it in the garment SDFs.
+  // Tighter depth range for precision, and a normal bias large enough for a surface
+  // carrying ~9 mm of fold relief.
+  key.shadow.mapSize.set(3072, 3072);
+  key.shadow.camera.near = 1.2;
+  key.shadow.camera.far = 7.0;
+  key.shadow.bias = -0.00025;
+  key.shadow.normalBias = 0.038;
   key.shadow.radius = 2.5;
   scene.add(key, key.target);
 

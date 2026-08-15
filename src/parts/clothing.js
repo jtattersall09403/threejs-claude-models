@@ -123,7 +123,7 @@ export function clothingFields(body) {
       capsule([-0.110, 1.425, 0], [-0.222, 1.128, -0.006], 0.115, 0.086),
       capsule([0.110, 1.425, 0], [0.222, 1.128, -0.006], 0.115, 0.086),
     ]);
-    const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0105, 12));
+    const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0092, 12));
     // The projection target for the sash, the medallion and the belt. It has to carry
     // EVERY ADDITIVE part of the coat and none of the cuts.
     //
@@ -133,7 +133,7 @@ export function clothingFields(body) {
     // *inside* the visible coat, and they surfaced only where a fold happened to poke
     // through. That reads as torn geometry: a diagonal row of hard-edged slivers across
     // the chest and a belt reduced to a blade stuck through the cloth.
-    const shell = garment(body, 0.026, cover, bounds, 0.016, folds(0.0105, 12));
+    const shell = garment(body, 0.026, cover, bounds, 0.016, folds(0.0092, 12));
     const addBoth = (prim) => { f.add(prim); shell.add(prim); };
     // the skirt hangs clear of the body, so it is added rather than offset
     // A coat skirt, not a peplum: it reaches mid-thigh and FLARES, so the figure gets a
@@ -258,7 +258,7 @@ function bandFrame(outwardOf) {
  * side it detaches and hangs in mid-air, and from the front you see its shadowed
  * underside, so it reads as a slash in the cloth rather than a strap lying on it.
  */
-export function buildStrap(tunicField, lift = 0.013) {
+export function buildStrap(tunicField, lift = 0.019) {
   const raw = [
     [-0.160, 1.438, -0.058],
     [-0.190, 1.412, 0.050],
@@ -275,22 +275,36 @@ export function buildStrap(tunicField, lift = 0.013) {
   // renders as a row of disconnected slivers where it happens to surface. The lift
   // must also clear the fold amplitude, or it submerges again.
   const centres = curveRings(raw, () => 0, N, { tension: 0.4 }).map((r) => r.p);
-  const pts = centres.map((p) => {
+  const dirs = [], hits = [];
+  for (const p of centres) {
     const outward = [p[0], (p[1] - 1.16) * 0.25, p[2]];
     const l = Math.hypot(outward[0], outward[1], outward[2]) || 1;
     const dir = [outward[0] / l, outward[1] / l, outward[2] / l];
-    if (!tunicField) return p;
-    const hit = raySurface(tunicField, p, dir, { start: -0.16, max: 0.14 });
-    return [hit[0] + dir[0] * lift, hit[1] + dir[1] * lift, hit[2] + dir[2] * lift];
-  });
-  // light smoothing: raySurface returns a slightly noisy polyline over folded cloth
-  for (let pass = 0; pass < 3; pass++) {
-    for (let i = 1; i < pts.length - 1; i++) {
-      for (let c = 0; c < 3; c++) {
-        pts[i][c] = pts[i][c] * 0.5 + (pts[i - 1][c] + pts[i + 1][c]) * 0.25;
-      }
-    }
+    dirs.push(dir);
+    if (!tunicField) { hits.push(0); continue; }
+    const h = raySurface(tunicField, p, dir, { start: -0.16, max: 0.14 });
+    hits.push((h[0] - p[0]) * dir[0] + (h[1] - p[1]) * dir[1] + (h[2] - p[2]) * dir[2]);
   }
+  // RUNNING MAXIMUM of the projected distance, exactly as buildBelt does. Smoothing the
+  // projected polyline averages the strap THROUGH the folds instead of over them, so it
+  // emerges on the peaks and submerges in the troughs — a diagonal row of hard-edged
+  // slivers across the coat that reads as torn geometry rather than as a half-buried
+  // strap. Confirmed by ablation: removing the strap removed the slivers.
+  const W = 5;
+  const ride = hits.map((_, i) => {
+    let m = -Infinity;
+    for (let j = -W; j <= W; j++) {
+      m = Math.max(m, hits[Math.min(hits.length - 1, Math.max(0, i + j))]);
+    }
+    return m;
+  });
+  for (let pass = 0; pass < 3; pass++) {
+    for (let i = 1; i < ride.length - 1; i++) ride[i] = ride[i] * 0.5 + (ride[i - 1] + ride[i + 1]) * 0.25;
+  }
+  const pts = centres.map((p, i) => {
+    const d = dirs[i], t = ride[i] + lift;
+    return [p[0] + d[0] * t, p[1] + d[1] * t, p[2] + d[2] * t];
+  });
 
   // A broad strap. At half this width it rendered as a dark diagonal scratch across
   // the chest rather than a band of braided cord lying on the coat.
