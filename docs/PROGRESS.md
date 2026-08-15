@@ -29,21 +29,23 @@ every single iteration.
 
 ## My open list (must be empty before hand-off)
 
-Iteration 12 closed a lot (see log). Still open — **fix these before the next
-hand-off**:
+Iterations 12–13 closed a great deal (see log). **Head value, hue and proportion are
+now genuinely close to the reference** — that was the main win. Still open:
 
-1. **No hood/cowl behind the head.** The full-body reference clearly has one sitting
-   at the back of the neck; we have a bare sloping shoulder line there.
-2. **The weave normal still reads as a regular dotted grid** at torso distance rather
-   than as cloth. Coarsening `uWeave` helped but has not eliminated it — the
-   `makeClothTexture` thread count itself is probably still too high.
-3. **The sash reads as a round cord**, not the flat braided band in the reference.
-4. **The collar is a smooth funnel** — the reference has a rolled edge with the head
-   sitting down into it.
-5. **The tunic is slightly light and too even**; the reference has heavier wear
-   mottling and much darker shadow under the arms and at the waist.
-6. Legs/feet still simple (plausibility only — the references never show them).
+1. **The character goes nearly black at rear orbit angles.** The rim lights do little
+   from behind and orbit frames 5–8 are barely readable. The viewer is orbitable, so
+   every angle has to hold up.
+2. **The collar is a smooth funnel** — the reference has a rolled edge with the head
+   sitting down into it, and our neck still reads slightly long.
+3. **The mouth line is a straight dark dash**; the reference curves up toward the jaw
+   hinge and is broken by lip scutes.
+4. **No dark spiky cheek frill** beside the eye — a distinctive reference marking.
+5. **Crown spikes are a small tight mohawk**; the reference crest is larger and more
+   scattered, with darker bases.
+6. Legs and feet are still simple and the feet are plain blocks (plausibility only —
+   the references never show below the waist, but the artifact is orbitable).
 7. Hands: fingers still fairly uniform in length.
+8. The tail is plausible but exits fairly horizontally and its tip kink reads oddly.
 
 ## Measuring rather than eyeballing
 
@@ -55,6 +57,38 @@ reference screenshot), so its numbers are not trustworthy until they are re-plac
 against the crops `tools/compare.mjs` uses.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
+
+### Iteration 13 — the body, and two coordinate-space bugs
+- **`EYE_FRAG` compared world-space `vRest` against authoring-space eye constants.**
+  The head offset alone is 34 mm against an 18 mm eyeball, so the iris centre sat
+  about two radii off the ball. `EYE_WORLD` had been exported for exactly this and
+  never used. Every previous "the eye looks wrong, make it smaller/darker" tweak was
+  compensating for that rather than fixing it. Fixed by undoing the head transform in
+  the shader, as `SKIN_FRAG` already did.
+- **The tail spine was duplicated** in `rig/skeleton.js` and `parts/anatomy.js` and
+  had silently drifted apart — the bones said one thing, the geometry another, which
+  would deform the tail wrongly the moment it is animated. Now exported from the rig
+  and imported by the anatomy.
+- **Head scaled to 1.16.** Measured against the full-body reference, head height over
+  shoulder width was 0.38 where the reference is ~0.6.
+- **The hide was too saturated**, at a green/red ratio of 1.29. Against the oxblood
+  brow band that read as bright leaf green, and was the real cause of the
+  "upper face brown, lower face green" split that several earlier iterations chased
+  through the wrong masks. Desaturated and darkened the base palette.
+- **Pale reticulation extended over the whole head.** The reference's signature is
+  that the gaps between scales are LIGHTER than the scales; that treatment had only
+  been applied to the cranial plates, leaving the muzzle as plain pebbled rubber.
+- **The belt was buried inside the tunic** — the tunic's own surface reaches ~0.175 at
+  the waist once offset and folds are added, and the belt sat at 0.186, so only a
+  sliver of its top edge showed and read as a knife blade stuck through the coat.
+- **Claws were placed off the UNCURLED fingertip** after the finger curl was
+  increased, so they floated a couple of centimetres clear of the hand. Curled joint
+  positions are now computed once and shared.
+- Cloth thread thickness jittered in `makeClothTexture` — a strict over/under grid of
+  identical threads was reading as machine-printed tweed, the most artificial thing in
+  the render at garment scale.
+- Also: rolled cowl at the nape (a full hood read as a backpack), flatter tapered
+  sash, sloped shoulders, rust-red hands, steeper tail droop and horn sweep.
 
 ### Iteration 12 — the head silhouette, and the body I had been neglecting
 - **The head was a rectangular box and I had not registered it**, having spent several
