@@ -80,7 +80,7 @@ export function clothingFields(body) {
       capsule([-0.188, 1.40, 0], [-0.211, 1.128, -0.006], 0.15, 0.079),
       capsule([0.188, 1.40, 0], [0.211, 1.128, -0.006], 0.15, 0.079),
     ]);
-    const f = garment(body, 0.028, cover, bounds, 0.016, folds(0.030, 6));
+    const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0145, 11));
     // the skirt hangs clear of the body, so it is added rather than offset
     f.add(capsule([0, 1.0, 0.0], [0, 0.788, -0.012], 0.15, 0.149, { k: 0.055, scale: [1, 1, 0.9] }));
         // hem broken up so it does not end in a hard horizontal CSG cut
@@ -113,7 +113,7 @@ export function clothingFields(body) {
       capsule([-0.09, 0.96, 0], [-0.1, 0.222, -0.008], 0.19, 0.082),
       capsule([0.09, 0.96, 0], [0.1, 0.222, -0.008], 0.19, 0.082),
     ]);
-    const f = garment(body, 0.015, cover, bounds, 0.014, folds(0.0135, 12));
+    const f = garment(body, 0.015, cover, bounds, 0.014, folds(0.0095, 15));
     for (const s of [1, -1]) {
       f.add(ellipsoid([s * 0.1, 0.152, -0.012], [0.055, 0.016, 0.055], { k: 0.016 })); // cuff
     }
@@ -190,6 +190,27 @@ export function buildStrap(tunicField, lift = 0.006) {
       return [[u[0] / ul, u[1] / ul, u[2] / ul], v];
     },
   });
+}
+
+/** Round medallion where the sash crosses the chest — the reference has one. */
+export function buildMedallion(tunicField) {
+  const anchor = [0.028, 1.238, 0.180];
+  const l = Math.hypot(anchor[0], anchor[2]) || 1;
+  const dir = [anchor[0] / l, 0.10, anchor[2] / l];
+  const dl = Math.hypot(dir[0], dir[1], dir[2]);
+  const d = [dir[0] / dl, dir[1] / dl, dir[2] / dl];
+  const hit = tunicField ? raySurface(tunicField, anchor, d, { start: -0.16, max: 0.14 }) : anchor;
+  const base = [hit[0] + d[0] * 0.004, hit[1] + d[1] * 0.004, hit[2] + d[2] * 0.004];
+  const rings = [];
+  for (let i = 0; i < 7; i++) {
+    const t = i / 6;
+    rings.push({
+      p: [base[0] + d[0] * t * 0.011, base[1] + d[1] * t * 0.011, base[2] + d[2] * t * 0.011],
+      r: 0.0235 * Math.sqrt(Math.max(0.06, 1 - Math.pow(t * 2 - 1, 2) * 0.55)),
+      profile: (a) => 1 + 0.05 * Math.sin(a * 8.0),
+    });
+  }
+  return sweep(rings, { sides: 26 });
 }
 
 /** Wide cloth belt with a knotted, hanging end at the front. */

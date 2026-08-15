@@ -294,20 +294,21 @@ const CLOTH_FRAG = /* glsl */`
   float h = det.w;
   float dirt = fbm(vRest * 7.5);
   float wear = fbm(vRest * 24.0);
-  vec3 col = uBase * (0.72 + 0.55 * dirt);
-  col = mix(col, uBase * 0.42, ss(0.55, 0.9, fbm(vRest * 3.1 + 5.0)));
+  vec3 col = uBase * (0.86 + 0.26 * dirt);
+  col = mix(col, uBase * 0.66, ss(0.58, 0.92, fbm(vRest * 3.1 + 5.0)));
   col *= mix(0.58, 1.08, ss(0.1, 0.75, h));
-  col *= 0.9 + 0.2 * wear;
+  col *= 0.94 + 0.11 * wear;
   // grime settles low on the garment
   col *= mix(0.72, 1.0, ss(0.75, 1.15, vRest.y));
   // stitched seams: shoulder line and side seam, so the tunic reads as made, not moulded
-  float shoulderSeam = ss(0.010, 0.002, abs(abs(vRest.x) - 0.163)) * ss(1.28, 1.44, vRest.y);
-  float sideSeam = ss(0.009, 0.002, abs(abs(vRest.x) - 0.183)) * ss(1.30, 1.10, vRest.y);
-  float hemSeam = ss(0.009, 0.002, abs(vRest.y - 0.805)) * ss(0.86, 0.80, vRest.y);
-  float seam = max(shoulderSeam, max(sideSeam, hemSeam));
-  col *= 1.0 - 0.45 * seam;
+  float shoulderSeam = ss(0.013, 0.003, abs(abs(vRest.x) - 0.150)) * ss(1.30, 1.42, vRest.y);
+  float sleeveSeam   = ss(0.011, 0.003, abs(vRest.y - 1.078)) * ss(0.14, 0.19, abs(vRest.x));
+  float sideSeam     = ss(0.011, 0.003, abs(abs(vRest.x) - 0.176)) * ss(1.34, 1.12, vRest.y);
+  float hemSeam      = ss(0.011, 0.003, abs(vRest.y - 0.812)) * ss(0.88, 0.80, vRest.y);
+  float seam = max(max(shoulderSeam, sleeveSeam), max(sideSeam, hemSeam));
+  col *= 1.0 - 0.62 * seam;
+  gRoughOut = clamp(uRough + (1.0 - h) * 0.16 - wear * 0.08 + seam * 0.10, 0.35, 1.0);
   diffuseColor.rgb = col;
-  gRoughOut = clamp(uRough + (1.0 - h) * 0.16 - wear * 0.08, 0.35, 1.0);
 `;
 
 // ---------------------------------------------------------------------------

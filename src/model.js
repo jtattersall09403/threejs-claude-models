@@ -12,7 +12,7 @@ import {
   buildHorn, buildCrownSpikes, buildJawSpikes, buildTeeth, buildFingers, buildEyes,
 } from './parts/features.js';
 import {
-  clothingFields, buildStrap, buildBelt, buildWristWraps,
+  clothingFields, buildStrap, buildBelt, buildWristWraps, buildMedallion,
 } from './parts/clothing.js';
 import { createMaterials } from './materials/materials.js';
 import { REGION } from './parts/regions.js';
@@ -143,6 +143,7 @@ export function buildArgonian(opts = {}) {
   }
   const tunicField = (garments.find((g) => g.tunic) || {}).field;
   push(REGION.SASH, buildStrap(tunicField));
+  push(REGION.LEATHER, buildMedallion(tunicField));
   for (const p of buildBelt()) push(REGION.BELT, p);
   for (const p of buildWristWraps(rig)) push(REGION.WRAP, p);
 
