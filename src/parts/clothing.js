@@ -121,12 +121,12 @@ export function clothingFields(body) {
     const bounds = [-0.23, 0.11, -0.22, 0.23, 1.04, 0.22];
     const cover = coverage([
       roundBox([0, 0.925, 0.0], [0.26, 0.078, 0.24], 0.02),
-      capsule([-0.09, 0.96, 0], [-0.1, 0.222, -0.008], 0.19, 0.082),
-      capsule([0.09, 0.96, 0], [0.1, 0.222, -0.008], 0.19, 0.082),
+      capsule([-0.08, 0.96, 0], [-0.089, 0.222, -0.008], 0.19, 0.082),
+      capsule([0.08, 0.96, 0], [0.089, 0.222, -0.008], 0.19, 0.082),
     ]);
     const f = garment(body, 0.015, cover, bounds, 0.014, folds(0.0095, 15));
     for (const s of [1, -1]) {
-      f.add(ellipsoid([s * 0.1, 0.152, -0.012], [0.055, 0.016, 0.055], { k: 0.016 })); // cuff
+      f.add(ellipsoid([s * 0.089, 0.152, -0.012], [0.055, 0.016, 0.055], { k: 0.016 })); // cuff
     }
     out.push({ field: f, bounds, cell: 0.0045, region: REGION.TROUSERS });
   }
@@ -135,14 +135,14 @@ export function clothingFields(body) {
   {
     const bounds = [-0.19, -0.02, -0.15, 0.19, 0.175, 0.19];
     const cover = coverage([
-      roundBox([-0.101, 0.045, 0.028], [0.07, 0.052, 0.125], 0.02),
-      roundBox([0.101, 0.045, 0.028], [0.07, 0.052, 0.125], 0.02),
+      roundBox([-0.090, 0.045, 0.028], [0.07, 0.052, 0.125], 0.02),
+      roundBox([0.090, 0.045, 0.028], [0.07, 0.052, 0.125], 0.02),
     ]);
     const f = garment(body, 0.009, cover, bounds, 0.012);
     for (const s of [1, -1]) {
-      f.add(roundBox([s * 0.101, 0.019, 0.022], [0.043, 0.008, 0.104], 0.012, { k: 0.012 })); // sole
-      f.add(roundBox([s * 0.101, 0.026, -0.052], [0.036, 0.014, 0.026], 0.010, { k: 0.012 })); // heel
-      f.add(ellipsoid([s * 0.101, 0.122, -0.026], [0.05, 0.028, 0.056], { k: 0.03 }));     // ankle collar
+      f.add(roundBox([s * 0.090, 0.019, 0.022], [0.043, 0.008, 0.104], 0.012, { k: 0.012 })); // sole
+      f.add(roundBox([s * 0.090, 0.026, -0.052], [0.036, 0.014, 0.026], 0.010, { k: 0.012 })); // heel
+      f.add(ellipsoid([s * 0.090, 0.122, -0.026], [0.05, 0.028, 0.056], { k: 0.03 }));     // ankle collar
     }
     out.push({ field: f, bounds, cell: 0.0045, region: REGION.LEATHER });
   }
