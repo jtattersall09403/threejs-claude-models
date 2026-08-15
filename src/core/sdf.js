@@ -164,7 +164,13 @@ export function creaseSlot(fy, halfT, zRange, xHalf, opts = {}) {
     k: opts.k !== undefined ? opts.k : 0.005,
     aabb: [-xHalf, opts.yMin || 1.5, zRange[0], xHalf, opts.yMax || 1.75, zRange[1]],
     d(px, py, pz) {
-      const dy = Math.abs(py - fy(pz)) - halfT;
+      // taper to nothing at both ends, or the slot stops dead and leaves hard
+      // rectangular corners that read as stamping errors
+      const span = zRange[1] - zRange[0];
+      const u = Math.max(0, Math.min(1, (pz - zRange[0]) / (span || 1)));
+      const fade = Math.min(1, Math.min(u, 1 - u) / 0.15);
+      const t = halfT * (0.15 + 0.85 * fade);
+      const dy = Math.abs(py - fy(pz)) - t;
       const dz = Math.max(pz - zRange[1], zRange[0] - pz);
       const dx = Math.abs(px) - xHalf;
       return Math.max(dy, Math.max(dz, dx));

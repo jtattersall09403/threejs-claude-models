@@ -53,16 +53,16 @@ function seat(field, p, dir, inset = 0.008) {
 export function buildCrownSpikes(field) {
   const out = [];
   const defs = [
-    [-0.0375, 1.7445, -0.022, 0.021, 0.0098],
-    [-0.0135, 1.7515, -0.028, 0.028, 0.0112],
-    [0.0135, 1.7515, -0.028, 0.028, 0.0112],
-    [0.0375, 1.7445, -0.022, 0.021, 0.0098],
-    [-0.0245, 1.7285, -0.070, 0.019, 0.0088],
-    [0.0245, 1.7285, -0.070, 0.019, 0.0088],
+    [-0.0375, 1.7445, -0.022, 0.038, 0.0102],
+    [-0.0135, 1.7515, -0.028, 0.050, 0.0118],
+    [0.0135, 1.7515, -0.028, 0.050, 0.0118],
+    [0.0375, 1.7445, -0.022, 0.038, 0.0102],
+    [-0.0245, 1.7285, -0.070, 0.034, 0.0092],
+    [0.0245, 1.7285, -0.070, 0.034, 0.0092],
   ];
   for (const [x, y, z, len, r] of defs) {
     const dir = [x * 5.5, 0.86, -0.5];
-    out.push(spike(seat(field, [x, y, z], dir, 0.01), dir, len, r, {
+    out.push(spike(seat(field, [x, y, z], dir, 0.004), dir, len, r, {
       taper: 0.55, bend: [0, 0.004, -0.014], sides: 10, steps: 8,
     }));
   }
@@ -74,13 +74,13 @@ export function buildJawSpikes(field) {
   const out = [];
   for (const s of [1, -1]) {
     const jaw = [
-      [s * 0.0485, 1.6005, 0.046, 0.022, 0.0076],
-      [s * 0.0425, 1.5965, 0.092, 0.019, 0.0066],
-      [s * 0.0345, 1.5945, 0.134, 0.015, 0.0054],
+      [s * 0.0485, 1.6005, 0.046, 0.042, 0.0080],
+      [s * 0.0425, 1.5965, 0.092, 0.036, 0.0070],
+      [s * 0.0345, 1.5945, 0.134, 0.030, 0.0058],
     ];
     for (const [x, y, z, len, r] of jaw) {
       const dir = [s * 0.42, -0.62, -0.66];
-      out.push(spike(seat(field, [x, y, z], dir), dir, len, r, { taper: 0.7, sides: 8, steps: 6 }));
+      out.push(spike(seat(field, [x, y, z], dir, 0.004), dir, len, r, { taper: 0.7, sides: 8, steps: 6 }));
     }
     // cheek / jaw-hinge spikes
     for (const [p, dir, len, r] of [

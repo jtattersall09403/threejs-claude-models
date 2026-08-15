@@ -131,7 +131,7 @@ const SKIN_FRAG = /* glsl */`
   // by a spatially varying factor warps the domain and produces contour-line swirls.
   float freq = mix(16.0, 25.0, headMask);
   vec4 fine = triDetail(P, Nr, freq, mix(1.55, 1.45, headMask));
-  vec4 plateD = triDetail(P, Nr, freq * 0.46, 1.35);
+  vec4 plateD = triDetail(P, Nr, freq * 0.19, 1.5);
   float sizeMix = ss(0.38, 0.66, fbm(P * 3.1 + 4.0)) * 0.4;
   // zoned scale size: big armour plates over the cranium, fine pebbling on the
   // muzzle and cheek. One uniform frequency reads as fishnet, not hide.
@@ -157,8 +157,8 @@ const SKIN_FRAG = /* glsl */`
   cap = max(cap, ss(1.682, 1.702, J.y) * ss(0.140, 0.106, J.z));     // crown, full width
 
   // dark scaled band around the eye socket and temple
-  float eyeD = length((J - vec3(EYE_X, EYE_Y, EYE_Z)) * vec3(0.72, 1.35, 0.62));
-  float socket = ss(0.126, 0.042, eyeD) * step(1.588, H.y);
+  float eyeD = length((J - vec3(EYE_X, EYE_Y + 0.004, EYE_Z + 0.018)) * vec3(0.60, 1.05, 0.46));
+  float socket = ss(0.132, 0.048, eyeD) * ss(1.628, 1.650, H.y);
 
   // maroon plate over the brow ridges and between the eyes
   float browD = length((J - vec3(0.042, 1.7185, 0.042)) * vec3(0.80, 2.6, 1.05));
@@ -170,8 +170,8 @@ const SKIN_FRAG = /* glsl */`
   float tailScute = ss(0.30, 0.85, abs(sin(P.z * 62.0 + P.y * 26.0)));
 
   // banded scutes on throat and belly
-  float bands = ss(0.22, 0.95, abs(sin(P.y * 78.0 + P.z * 9.0)));
-  float bandZone = ventral * ss(1.40, 1.47, H.y) * ss(1.66, 1.60, H.y);
+  float bands = ss(0.18, 0.92, abs(sin(P.y * 62.0 + P.z * 8.0)));
+  float bandZone = ventral * ss(1.36, 1.44, H.y) * ss(1.645, 1.575, H.y);
   bandZone = max(bandZone, ventral * ss(1.35, 1.25, P.y) * ss(0.80, 0.95, P.y));
 
   // --- colour ------------------------------------------------------------
@@ -179,13 +179,13 @@ const SKIN_FRAG = /* glsl */`
   float blotch = fbm(P * 5.6 + 11.0);
   float macro  = fbm(P * 1.45 + 31.0);   // large irregular blotching
 
-  vec3 dorsal   = vec3(0.0245, 0.0295, 0.0145);
-  vec3 dorsal2  = vec3(0.0075, 0.0098, 0.0052);
-  vec3 warmOl   = vec3(0.0455, 0.0430, 0.0225);
-  vec3 belly    = vec3(0.0425, 0.0415, 0.0235);
+  vec3 dorsal   = vec3(0.0275, 0.0355, 0.0185);
+  vec3 dorsal2  = vec3(0.0068, 0.0098, 0.0056);
+  vec3 warmOl   = vec3(0.0505, 0.0530, 0.0290);
+  vec3 belly    = vec3(0.0480, 0.0500, 0.0295);
   vec3 plate    = vec3(0.0046, 0.0048, 0.0052);
-  vec3 maroon   = vec3(0.062, 0.017, 0.014);
-  vec3 boneCol  = vec3(0.145, 0.126, 0.084);
+  vec3 maroon   = vec3(0.0305, 0.0098, 0.0078);
+  vec3 boneCol  = vec3(0.088, 0.078, 0.055);
 
   vec3 col = mix(dorsal2, dorsal, ss(0.30, 0.72, mottle * 0.6 + blotch * 0.7));
   col = mix(col, warmOl, ss(0.45, 0.88, blotch));
@@ -207,12 +207,16 @@ const SKIN_FRAG = /* glsl */`
   col = mix(col, vec3(0.0032, 0.0028, 0.0026), lip * 0.99);
 
   // crevices between scales go dark
-  col *= mix(0.12, 1.18, ss(0.02, 0.55, h));
+  col *= mix(0.42, 1.06, ss(0.02, 0.55, h));
+  // cream mortar lines between the cranial plates — in the reference the gaps are
+  // LIGHTER than the plates, the opposite of a generic crevice darkening
+  col = mix(col, boneCol * 0.42, crownZone * (1.0 - ss(0.06, 0.30, h)) * 0.55);
 
   diffuseColor.rgb = col;
   float rough = mix(0.88, 0.60, ss(0.2, 0.8, h));
   rough *= mix(1.0, 0.86, ventral);
   rough = mix(rough, 0.94, cap * 0.85);
+  rough = mix(rough, 0.56, socket * 0.75);   // the orbital mass is glossier, not wet
   gRoughOut = clamp(rough + (mottle - 0.5) * 0.12, 0.28, 0.98);
 
   // uDebug: 1 = cap/brow/socket as R/G/B, 2 = ventral/bands, 3 = rest-space normal.
@@ -235,8 +239,8 @@ const HORN_FRAG = /* glsl */`
   float h = det.w;
 
   float t = vRun.y;
-  vec3 bone  = vec3(0.150, 0.132, 0.092);
-  vec3 tip   = vec3(0.094, 0.079, 0.054);
+  vec3 bone  = vec3(0.086, 0.077, 0.056);
+  vec3 tip   = vec3(0.055, 0.047, 0.033);
   vec3 dark  = vec3(0.022, 0.018, 0.015);
 
   vec3 col = mix(bone, tip, ss(0.45, 1.0, t));
@@ -381,13 +385,13 @@ export function createMaterials() {
     skin,
     horn,
     eye,
-    tunic: clothMat('tunic', [0.048, 0.042, 0.036], 0.94, 30.0, cloth),
-    undershirt: clothMat('undershirt', [0.052, 0.056, 0.046], 0.95, 44.0, cloth),
-    trousers: clothMat('trousers', [0.028, 0.025, 0.022], 0.94, 26.0, cloth),
-    wrap: clothMat('wrap', [0.082, 0.079, 0.066], 0.96, 52.0, cloth),
+    tunic: clothMat('tunic', [0.052, 0.0495, 0.0455], 0.94, 30.0, cloth),
+    undershirt: clothMat('undershirt', [0.058, 0.056, 0.050], 0.95, 44.0, cloth),
+    trousers: clothMat('trousers', [0.030, 0.0285, 0.0265], 0.94, 26.0, cloth),
+    wrap: clothMat('wrap', [0.104, 0.104, 0.094], 0.96, 52.0, cloth),
     leather: clothMat('leather', [0.030, 0.020, 0.013], 0.68, 22.0, leather),
-    sash: clothMat('sash', [0.086, 0.066, 0.043], 0.78, 26.0, leather),
-    belt: clothMat('belt', [0.062, 0.050, 0.038], 0.88, 24.0, cloth),
+    sash: clothMat('sash', [0.090, 0.081, 0.068], 0.78, 26.0, leather),
+    belt: clothMat('belt', [0.052, 0.0515, 0.0495], 0.88, 24.0, cloth),
     textures: { scale, cloth, leather },
   };
 }

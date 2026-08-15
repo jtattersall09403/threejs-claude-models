@@ -54,7 +54,7 @@ export function buildBodyField() {
   f.add(ellipsoid([0, 0.95, -0.062], [0.146, 0.09, 0.07], { k: K }));      // glutes
 
   // ---- neck (continues up into the head bake) --------------------------------
-  f.add(capsule([0, 1.375, -0.02], [0, 1.535, 0.012], 0.108, 0.084, { k: 0.055 }));
+  f.add(capsule([0, 1.375, -0.02], [0, 1.535, 0.012], 0.104, 0.072, { k: 0.055 }));
 
   // ---- arms ------------------------------------------------------------------
   for (const s of [1, -1]) {
@@ -104,20 +104,20 @@ export function buildHeadField() {
 
   // ---- braincase: tall and domed, widest at the temples -----------------------
   f.add(ellipsoid([0, 1.684, -0.010], [0.0705, 0.070, 0.101], { k: 0.055 }));
-  f.add(roundBox([0, 1.664, -0.056], [0.046, 0.047, 0.030], 0.024, { k: 0.05 }));  // squared occiput
+  f.add(ellipsoid([0, 1.668, -0.052], [0.052, 0.053, 0.052], { k: 0.05 }));  // domed occiput
   f.add(ellipsoid([0, 1.740, -0.014], [0.048, 0.022, 0.066], { k: 0.030 })); // raised crown plate
 
   // ---- brow / eye ridges -------------------------------------------------------
   for (const s of [1, -1]) {
-    f.add(ellipsoid([s * 0.0505, 1.7235, 0.044], [0.030, 0.018, 0.038], { k: 0.024 })); // brow shelf
+    f.add(ellipsoid([s * 0.0505, 1.7195, 0.058], [0.030, 0.018, 0.040], { k: 0.022 })); // brow shelf
     f.add(ellipsoid([s * 0.0625, 1.686, 0.022], [0.018, 0.051, 0.057], { k: 0.035 }));  // temple
   }
 
   // ---- muzzle: squared blocks, not tubes. The reference snout is a box with a
   // level top and near-parallel sides; capsules give a drooping bulb instead. -----
   f.add(roundBox([0, 1.6555, 0.084], [0.026, 0.023, 0.040], 0.015, { k: 0.048 }));
-  f.add(roundBox([0, 1.6552, 0.150], [0.021, 0.021, 0.032], 0.014, { k: 0.034 }));
-  f.add(roundBox([0, 1.6545, 0.196], [0.015, 0.017, 0.022], 0.012, { k: 0.026 }));
+  f.add(roundBox([0, 1.6552, 0.150], [0.019, 0.017, 0.032], 0.013, { k: 0.032 }));
+  f.add(roundBox([0, 1.6545, 0.196], [0.012, 0.011, 0.020], 0.010, { k: 0.024 }));
   f.add(capsule([0, 1.6935, 0.026], [0, 1.6805, 0.196], 0.024, 0.015,
     { k: 0.024, scale: [1, 0.72, 1] }));                                      // nasal bridge ridge
   f.add(ellipsoid([0, 1.6545, 0.2135], [0.0185, 0.0155, 0.0145], { k: 0.014 })); // nose pad
@@ -128,13 +128,13 @@ export function buildHeadField() {
   f.add(roundBox([0, 1.6055, 0.190], [0.013, 0.013, 0.020], 0.011, { k: 0.024 }));
   f.add(ellipsoid([0, 1.6105, 0.194], [0.018, 0.017, 0.019], { k: 0.014 }));   // chin
   for (const s of [1, -1]) {
-    f.add(ellipsoid([s * 0.0455, 1.6395, 0.052], [0.028, 0.049, 0.072], { k: 0.052 })); // cheek / masseter
-    f.add(ellipsoid([s * 0.0605, 1.6445, -0.008], [0.025, 0.054, 0.044], { k: 0.032 })); // jaw hinge
+    f.add(ellipsoid([s * 0.0395, 1.6375, 0.030], [0.019, 0.045, 0.052], { k: 0.048 })); // cheek / masseter
+    f.add(ellipsoid([s * 0.0555, 1.6455, -0.010], [0.021, 0.052, 0.042], { k: 0.032 })); // jaw hinge
   }
 
   // ---- throat / neck (overlaps the body bake) ------------------------------------
   f.add(ellipsoid([0, 1.5955, 0.05], [0.062, 0.045, 0.058], { k: 0.05 }));
-  f.add(capsule([0, 1.472, -0.012], [0, 1.578, 0.012], 0.088, 0.078, { k: 0.05 }));
+  f.add(capsule([0, 1.462, -0.012], [0, 1.578, 0.012], 0.072, 0.064, { k: 0.05 }));
 
   // ---- cuts ------------------------------------------------------------------
   for (const s of [1, -1]) {
@@ -147,7 +147,7 @@ export function buildHeadField() {
     f.add(ellipsoid([s * 0.0482, 1.6800, 0.0630], [0.0250, 0.0058, 0.0225], { k: 0.007 }));
   }
   // mouth crease — rises toward the jaw hinge like a real reptile jaw line
-  f.sub(creaseSlot((z) => LIP.y0 + (LIP.z0 - z) * LIP.slope, 0.0024, [0.028, 0.208], 0.062,
+  f.sub(creaseSlot((z) => LIP.y0 + (LIP.z0 - z) * LIP.slope, 0.0024, [-0.005, 0.210], 0.060,
     { k: 0.0045, yMin: 1.56, yMax: 1.68 }));
   // nostrils
   for (const s of [1, -1]) {
