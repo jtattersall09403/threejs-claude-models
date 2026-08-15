@@ -82,10 +82,10 @@ export function clothingFields(body) {
     // the skirt hangs clear of the body, so it is added rather than offset
     f.add(capsule([0, 1.0, 0.0], [0, 0.788, -0.012], 0.15, 0.149, { k: 0.055, scale: [1, 1, 0.9] }));
         // hem broken up so it does not end in a hard horizontal CSG cut
-    for (let i = 0; i < 8; i++) {
-      const a = (i / 8) * Math.PI * 2;
-      f.add(ellipsoid([Math.cos(a) * 0.116, 0.792 + Math.sin(a * 3) * 0.011, Math.sin(a) * 0.100 - 0.012],
-        [0.052, 0.016, 0.048], { k: 0.030 }));
+    for (let i = 0; i < 14; i++) {
+      const a = (i / 14) * Math.PI * 2;
+      f.add(ellipsoid([Math.cos(a) * 0.126, 0.790 + Math.sin(a * 3) * 0.009, Math.sin(a) * 0.109 - 0.012],
+        [0.036, 0.011, 0.034], { k: 0.038 }));
     }
     for (const s of [1, -1]) {
       f.add(ellipsoid([s * 0.2115, 1.052, -0.008], [0.054, 0.017, 0.054], { k: 0.015 })); // cuff
@@ -136,17 +136,17 @@ export function clothingFields(body) {
 /** Braided strap from the left shoulder across the chest to the right hip. */
 export function buildStrap() {
   const pts = [
-    [-0.170, 1.442, -0.062],
-    [-0.201, 1.416, 0.055],
-    [-0.118, 1.326, 0.183],
-    [0.0, 1.224, 0.203],
-    [0.118, 1.114, 0.180],
-    [0.193, 1.008, 0.074],
-    [0.208, 0.962, -0.040],
+    [-0.164, 1.440, -0.060],
+    [-0.194, 1.414, 0.052],
+    [-0.114, 1.324, 0.174],
+    [0.0, 1.223, 0.193],
+    [0.114, 1.113, 0.171],
+    [0.187, 1.007, 0.070],
+    [0.202, 0.963, -0.039],
   ];
-  const rings = curveRings(pts, () => [0.026, 0.011], 120, {
+  const rings = curveRings(pts, () => [0.023, 0.0085], 120, {
     tension: 0.4,
-    profile: (a, t) => 1 + 0.35 * Math.sin(a * 2.0 + t * 92.0),  // braided relief
+    profile: (a, t) => 1 + 0.16 * Math.sin(a * 2.0 + t * 86.0),  // braided relief
   });
   return sweep(rings, {
     sides: 24,

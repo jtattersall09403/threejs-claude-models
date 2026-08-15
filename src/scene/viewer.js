@@ -98,7 +98,7 @@ export function createViewer(container) {
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.08;
+  renderer.toneMappingExposure = 1.14;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
@@ -123,7 +123,7 @@ export function createViewer(container) {
   controls.update();
 
   // ---- lights ---------------------------------------------------------------
-  const key = new THREE.SpotLight(0xffd7a8, 42, 20, 0.78, 0.5, 1.7);
+  const key = new THREE.SpotLight(0xffd7a8, 54, 20, 0.86, 0.5, 1.7);
   key.position.set(2.5, 3.0, 2.9);
   key.target.position.set(0, 0.98, 0);
   key.castShadow = true;
