@@ -5,7 +5,7 @@
 // Authoring them from primitive radii instead does not work: smooth-min blending
 // inflates the body several centimetres past its own primitives, and clothes
 // authored that way end up buried inside the skin.
-import { Field, capsule, ellipsoid, roundBox, offsetSurface, isect } from '../core/sdf.js';
+import { Field, capsule, ellipsoid, roundBox, offsetSurface, isect, raySurface } from '../core/sdf.js';
 import { sweep, curveRings } from '../core/geom.js';
 import { fbm3 } from '../core/noise.js';
 import { REGION } from './regions.js';
@@ -88,7 +88,11 @@ export function clothingFields(body) {
         [0.036, 0.011, 0.034], { k: 0.038 }));
     }
     for (const s of [1, -1]) {
-      f.add(ellipsoid([s * 0.2115, 1.052, -0.008], [0.054, 0.017, 0.054], { k: 0.015 })); // cuff
+      f.add(ellipsoid([s * 0.2115, 1.052, -0.008], [0.056, 0.019, 0.056], { k: 0.013 })); // cuff band
+      f.add(ellipsoid([s * 0.2115, 1.076, -0.008], [0.053, 0.010, 0.053], { k: 0.010 })); // cuff seam
+      // shoulder yoke: a raised rolled seam over the deltoid, so sleeve and torso
+      // read as separate pieces instead of one continuous moulded mass
+      f.add(capsule([s * 0.108, 1.406, 0.028], [s * 0.176, 1.372, -0.030], 0.016, 0.014, { k: 0.012 }));
     }
     // Neckline: one tilted opening that dips at the front. Cutting a separate hole
     // for the undershirt reads as a disc stuck on the chest — don't.
@@ -133,9 +137,15 @@ export function clothingFields(body) {
   return out;
 }
 
-/** Braided strap from the left shoulder across the chest to the right hip. */
-export function buildStrap() {
-  const pts = [
+/**
+ * Braided strap, the character's right shoulder to left hip.
+ * The control points are PROJECTED ONTO THE BODY SURFACE and pushed out past the
+ * tunic. Authored in world space the strap drifts in and out of the coat — from the
+ * side it detaches and hangs in mid-air, and from the front you see its shadowed
+ * underside, so it reads as a slash in the cloth rather than a strap lying on it.
+ */
+export function buildStrap(body, TUNIC_OFFSET = 0.028, lift = 0.0035) {
+  const raw = [
     [-0.160, 1.438, -0.058],
     [-0.190, 1.412, 0.050],
     [-0.111, 1.322, 0.168],
@@ -144,10 +154,20 @@ export function buildStrap() {
     [0.183, 1.006, 0.068],
     [0.198, 0.963, -0.038],
   ];
-  const rings = curveRings(pts, () => [0.019, 0.0072], 150, {
+  // ride on top of the tunic: body surface + tunic offset + half the strap thickness
+  const pts = raw.map((p) => {
+    const outward = [p[0], (p[1] - 1.16) * 0.25, p[2]];
+    const l = Math.hypot(outward[0], outward[1], outward[2]) || 1;
+    const dir = [outward[0] / l, outward[1] / l, outward[2] / l];
+    const hit = body ? raySurface(body, p, dir, { start: -0.14, max: 0.16 }) : p;
+    const push = TUNIC_OFFSET + lift;
+    return [hit[0] + dir[0] * push, hit[1] + dir[1] * push, hit[2] + dir[2] * push];
+  });
+
+  const rings = curveRings(pts, () => [0.0165, 0.0042], 150, {
     tension: 0.4,
-    profile: (a, t) => 1 + 0.085 * Math.sin(a * 3.0 + t * 52.0)
-                     + 0.045 * Math.sin(a * 6.0 - t * 84.0),  // braided relief
+    profile: (a, t) => 1 + 0.13 * Math.sin(a * 3.0 + t * 44.0)
+                     + 0.06 * Math.sin(a * 6.0 - t * 70.0),  // braided relief
   });
   return sweep(rings, {
     sides: 28,

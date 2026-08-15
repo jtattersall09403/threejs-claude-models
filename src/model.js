@@ -140,7 +140,7 @@ export function buildArgonian(opts = {}) {
   for (const g of clothingFields(bodyField)) {
     push(g.region, smoothPositions(bakeField(g.field, g.bounds, g.cell), 2));
   }
-  push(REGION.SASH, buildStrap());
+  push(REGION.SASH, buildStrap(bodyField));
   for (const p of buildBelt()) push(REGION.BELT, p);
   for (const p of buildWristWraps(rig)) push(REGION.WRAP, p);
 

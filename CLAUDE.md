@@ -150,6 +150,14 @@ rather than reasoning from a bad image.
 `npm run capture` fails loudly if the page logs a WebGL/JS error, so a green run
 means the artifact really renders.
 
+## If you get cut off
+
+An hourly watchdog Routine (`trig_01LKYqwcGrZeTRZsj1g55xdg`, "Argonian loop watchdog")
+fires into this session and tells you to resume. If you are mid-iteration, ignore it.
+If you have lost context, bootstrap from `CLAUDE.md` → `docs/PROGRESS.md` →
+`docs/REFERENCE.md` and pick the loop back up. Delete the Routine once the critic
+passes and the work is signed off.
+
 ## Publishing the artifact
 
 `dist/argonian.html` is the deliverable. Publish with the Artifact tool
