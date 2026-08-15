@@ -3897,7 +3897,12 @@ vec3 alignRot(vec3 from, vec3 to, vec3 v) {
 // Triplanar detail sample. Returns tangent-ish perturbed normal in rest space (xyz)
 // and the height in w.
 vec4 triDetail(vec3 p, vec3 n, float freq, float strength) {
-  vec3 w = pow(abs(n), vec3(4.0));
+// Exponent 4 makes the triplanar blend nearly a hard switch: where the normal crosses
+  // a 45 degree diagonal the dominant plane swaps, and on a rippled surface it crosses
+  // back and forth repeatedly, so the three planes' differing samples show up as
+  // alternating hard-edged strips. On cloth, amplified by a 2.5x height-to-value swing,
+  // that reads as torn or peeling geometry at grazing angles.
+  vec3 w = pow(abs(n), vec3(2.2));
   w /= (w.x + w.y + w.z + 1e-5);
   vec4 tx = texture2D(uDetail, p.zy * freq);
   vec4 ty = texture2D(uDetail, p.xz * freq);
@@ -4389,7 +4394,7 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
   col = mix(col, uBase * 0.60, ss(0.58, 0.92, fbm(vRest * 3.1 + 5.0)));
   // wide range: the reference cloth is coarse and strongly self-shadowed, and at a
   // narrow range the garments render as one smooth latex bodysuit
-  col *= mix(0.46, 1.14, ss(0.1, 0.75, h));
+  col *= mix(0.60, 1.12, ss(0.1, 0.75, h));
 
   // drape creases \u2014 shaded, not baked. Bend the normal into the crease as well as
   // darkening it, or the folds read as a painted-on pattern rather than as relief.

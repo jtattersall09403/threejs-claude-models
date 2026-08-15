@@ -98,6 +98,23 @@ if the subject is clipped or tiny — but ad-hoc `npm run shot` framings are
 unchecked, so eyeball them. If a shot is badly framed, re-frame and re-shoot
 rather than reasoning from a bad image.
 
+## Judge with your EYES, and finish the head first
+
+Two standing instructions from the user:
+
+1. **Base judgements and plans on visual inspection of the images, not on numbers from
+   tools.** `npm run silhouette` and `npm run measure` exist to settle a specific
+   dispute — they are not the quality gate. Look at the render next to the reference
+   and decide whether it looks right. A measurement that says a proportion is correct
+   while the picture says otherwise means the measurement is measuring the wrong thing.
+   Several of this project's worst regressions came from stacking individually
+   "correct" measurements without looking at the whole (trap 25).
+
+2. **The head and face come FIRST.** Work on them until they are completely right from
+   EVERY angle — front, three-quarter, profile, low, top, rear — before spending time
+   on the body, the garments or anything else. It is the focal point of the model and
+   nothing else compensates for it.
+
 ## The reference corpus
 
 `corpus/character/` (INPUT, never edit). The five **named** images were added later and
