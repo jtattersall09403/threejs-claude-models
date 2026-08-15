@@ -61,8 +61,10 @@ export function clothingFields(body) {
       roundBox([0, 1.398, 0.005], [0.30, 0.108, 0.28], 0.02),
     ]);
     const f = garment(body, 0.010, cover, bounds, 0.020, folds(0.0032, 22));
-    // a cowl wrapped at the throat, so the collar is cloth rather than a hole
-    f.add(capsule([0, 1.436, -0.006], [0, 1.492, 0.006], 0.101, 0.094, { k: 0.024 }));
+    // a wrapped cloth cowl at the throat, sitting proud of the collar
+    f.add(capsule([0, 1.432, -0.008], [0, 1.478, 0.004], 0.104, 0.100, { k: 0.022 }));
+    f.add(ellipsoid([0, 1.470, 0.030], [0.086, 0.030, 0.062], { k: 0.020 }));  // knotted front
+    f.add(ellipsoid([0.030, 1.452, 0.062], [0.036, 0.026, 0.030], { k: 0.018 }));
     f.sub(capsule([0, 1.43, -0.016], [0, 1.62, 0.012], 0.082, 0.080, { k: 0.018 })); // neck hole
     out.push({ field: f, bounds, cell: 0.0055, region: REGION.UNDERSHIRT });
   }
@@ -200,8 +202,8 @@ export function buildBelt() {
     const rx = 0.186, rz = 0.152;
     ring.push({
       p: [Math.cos(a) * rx, 0.972 + Math.sin(a * 2) * 0.004, Math.sin(a) * rz + 0.004],
-      r: [0.038, 0.0085],
-      profile: (t) => 1 + 0.06 * Math.sin(t * 6),
+      r: [0.052, 0.0105],
+      profile: (t) => 1 + 0.10 * Math.sin(t * 5) + 0.05 * Math.sin(t * 11),
     });
   }
   parts.push(sweep(ring, {
