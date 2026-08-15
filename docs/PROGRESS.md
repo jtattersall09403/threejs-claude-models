@@ -14,47 +14,86 @@ cut off. Ignore it if mid-iteration. Delete it once the critic signs off.
 
 ## Where the loop is
 
-**Critic round 3 returned FAIL.** Iterations 8 and 9 worked its list. **We are in the
-INNER loop now** — iterate `npm run build && npm run capture && npm run compare` and
-LOOK, until *nothing* looks wrong to you. Only then hand off for critic round 4.
+**Critic round 3 returned FAIL.** **We are in the INNER loop** — iterate
+`npm run build && npm run capture && npm run compare` and LOOK, until *nothing* looks
+wrong to you. Only then hand off for critic round 4.
 
 **Read `CLAUDE.md` "The loop" first.** You hand off only when your own defect list is
 EMPTY, not when you have run out of patience.
 
 ## State of the build
 
-~634k tris, ~10 s build, ~3 min capture. `npm run capture` green (winding + framing
+~646k tris, ~13 s build, ~3 min capture. `npm run capture` green (winding + framing
 asserts). `npm run compare` is the most valuable diagnostic in the project — use it
 every single iteration.
 
 ## My open list (must be empty before hand-off)
 
-Iterations 10–11 closed: floating sash, cloth value, chest medallion, belt wrap,
-throat cowl, cloth blotching, seam visibility, front placket, rolled cuffs, shoulder
-yoke, closed stance, tail no longer showing between the legs, maroon brow band,
-horn band. Still open — **these must be fixed before the next hand-off**:
+Iteration 12 closed a lot (see log). Still open — **fix these before the next
+hand-off**:
 
-1. **The muzzle is still lighter and yellower than the reference's dark olive**,
-   especially the lower half and chin. Closer than it was but not converged. Keep
-   pulling `warmOl`/`belly` down in `SKIN_FRAG` and re-measure against the reference
-   crop rather than eyeballing.
-2. **The jaw and lower cheek are smooth** where the reference is plated and textured.
-   The `crownZone` plate mask covers the cranium only — extend a coarser plate zone
-   down over the jaw.
-3. **The reference horn carries a metal cuff** near its midpoint; ours is a painted
-   dark ring. Consider a small swept torus in a metal material.
-4. Hands: fingers still fairly uniform in length; claws could seat 1–2 mm deeper.
-5. Legs/feet still simple (plausibility only — the references never show them).
+1. **No hood/cowl behind the head.** The full-body reference clearly has one sitting
+   at the back of the neck; we have a bare sloping shoulder line there.
+2. **The weave normal still reads as a regular dotted grid** at torso distance rather
+   than as cloth. Coarsening `uWeave` helped but has not eliminated it — the
+   `makeClothTexture` thread count itself is probably still too high.
+3. **The sash reads as a round cord**, not the flat braided band in the reference.
+4. **The collar is a smooth funnel** — the reference has a rolled edge with the head
+   sitting down into it.
+5. **The tunic is slightly light and too even**; the reference has heavier wear
+   mottling and much darker shadow under the arms and at the waist.
+6. Legs/feet still simple (plausibility only — the references never show them).
+7. Hands: fingers still fairly uniform in length.
 
-## Reference numbers to converge (from critic round 3)
+## Measuring rather than eyeballing
 
-Normalised to muzzle-top so exposure cancels. **In the reference every head point
-except the crown spike is DARKER than the muzzle top (0.14–0.86).** Render median was
-+0.85 stop hot and 1.6× oversaturated; reference belt saturation is 0.07 (near-grey);
-reference head hues run 41–71°. Iterations 8–9 addressed these — **re-measure, do not
-assume.**
+`npm run measure` samples matched points on a reference crop and the render,
+normalises both to a `muzzle_top` anchor so exposure cancels, and prints ratios.
+**It writes `captures/compare/_measure_points.png` — always look at that first.** Its
+sample coordinates are currently mis-registered (they were authored against the wrong
+reference screenshot), so its numbers are not trustworthy until they are re-placed
+against the crops `tools/compare.mjs` uses.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
+
+### Iteration 12 — the head silhouette, and the body I had been neglecting
+- **The head was a rectangular box and I had not registered it**, having spent several
+  iterations on paint. Measured off the reference: skull width is **0.69 of skull
+  height**, and width at the mouth is **0.58 of width at the eyes**. Ours were 0.88
+  and ~0.95. Narrowed the braincase/temples, deepened the jaw, tapered and swept back
+  the cheek masses. This mattered far more than any amount of colour work.
+- **`headMask` was computed from world `P.y`, not head-space `H.y`**, so it read ~0
+  over the entire lower jaw: the jaw was being shaded as *body*, which is why it kept
+  coming out as a pale smooth panel bolted under a detailed muzzle. Several previous
+  attempts to fix "the pale jaw" by tuning the ventral mask were chasing the wrong
+  cause. Added **debug mode 5** (head-space Y banded every 10 mm, red stripe at 1.60)
+  — reading the coordinate straight off the surface settles this class of question in
+  one look instead of one rebuild per hypothesis.
+- **Horns rebuilt**: slender, longer, sharply tapered, sweeping clear of the skull,
+  with a real **metal cuff** (own region, own metalness output). Crown spikes cut to a
+  low crest; a proper **row of jaw spikes** angled laterally so they break the
+  silhouette; **brow scutes** added.
+- **The neck was nearly as wide as the skull and completely bare**, so head and neck
+  fused into one column. Narrowed it and brought the undershirt cowl up to the jaw.
+- **The sash and belt were rendering as torn slivers.** Cause was not the frame: the
+  strap was projected from only **7 control points** and then interpolated, so it cut
+  through the cloth folds in between and surfaced only in patches. Now every ring
+  centre is projected, then lightly smoothed, with the lift clearing the fold depth.
+- **Three separate garment-fold failures, in order:** ridged (zero-mean) fold noise
+  drove the offset *negative* and the body erupted through the tunic in patches;
+  making it non-negative kept the kink in the gradient, which the voxel bake turned
+  into hard faceted plateaus reading as peeling paint; the fix was to keep the *bake*
+  folds smooth and low, and shade the fine creases in `CLOTH_FRAG` instead, where no
+  bake resolution is involved.
+- **The sleeve coverage capsule was anchored out over the deltoid**, so its spherical
+  end cap was the outermost coverage surface at the shoulder and printed straight
+  through the smooth intersection as a leg-of-mutton puff sleeve. Coverage volumes
+  must start *inboard*, inside the torso volume.
+- Garment values separated deliberately (they had collapsed into one flat brown mass),
+  tunic warmed to the reference's brown, **rust-red hands** added — one of the few
+  strong hue breaks on the character and its absence flattened the whole figure.
+- Head capture shots re-framed: at 0.92 m the horn tips fell outside the frame, so the
+  one thing those shots exist to judge was being cropped away.
 
 ### Iteration 9 — the floating sash, and cloth value
 - **The sash was two stacked bugs.** It was authored in world space, so it drifted in
