@@ -14,6 +14,32 @@ cut off. Ignore it if mid-iteration. Delete it once the critic signs off.
 
 ## Where the loop is
 
+**CRITIC ROUND 4 RETURNED FAIL.** Its ranked list has been worked once (iteration 16)
+but is NOT closed — see below. Evidence images are in `critic/latest/`. The critic's
+report could not be written to disk by the subagent, so the findings live in the
+session transcript; the actionable residue is captured here.
+
+### Critic round 4 list — status after iteration 16
+| # | defect | status |
+|---|---|---|
+| 1 | hands read as a bundle of sticks; palm was 9.6 cm deep | palm rebuilt as a flat wedge, finger curl 3-4x, deeper taper — **re-check** |
+| 2 | eye sits too high / muzzle too long, and the jaw NARROWS where the reference FLARES | jaw and muzzle blocks widened ~20 %, braincase raised — **not fully closed** |
+| 3 | horns 55 % too long, 19 deg too steep, 30 % too slender | re-authored to ~27 deg, 0.20 m, base 0.0212 — now arguably too SHORT and stubby |
+| 4 | oxblood brow field absent (hue contrast 3x under) | widened and strengthened, then **overshot to pink and dialled back** to R/G ~2.1 |
+| 5 | scale grout polarity INVERTED — reference grout is bright, ours dark | cells enlarged, plates flattened — **albedo polarity still needs verifying** |
+| 6 | eye is a sphere loose in a hole; pupil does not read from the front | **NOT DONE** |
+| 7 | no bare reptilian throat — cowl runs to the chin | cowl dropped ~5 cm |
+| 8 | garment values collapsed; sash and cuff DARKER than the coat, should be lightest | sash/wrap/undershirt/belt all lifted — **re-check polarity** |
+| 9 | mouth line does not read | thickened and darkened — **re-check** |
+| 10 | bare forearm too short | sleeve cuff raised to two-thirds up the forearm |
+| 11 | tail hue cooler than the head | warmed toward the head |
+
+**Do not regress what the critic explicitly signed off:** figure silhouette and scale,
+sash direction and braid, belt and knot, lighting and mood (median head luminance 25.1
+vs reference 24.1), zero winding/translucency/print-through artefacts across the orbit,
+muzzle hue (G/R 0.85 vs 0.87), and all head features seated correctly.
+
+
 **Critic round 3 returned FAIL.** **We are in the INNER loop** — iterate
 `npm run build && npm run capture && npm run compare` and LOOK, until *nothing* looks
 wrong to you. Only then hand off for critic round 4.
