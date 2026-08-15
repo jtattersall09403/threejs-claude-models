@@ -110,15 +110,16 @@ export function buildJawSpikes(field) {
     // clearly separated spikes a side, angled out and down so they break the
     // silhouette from the front as well as in profile.
     const jaw = [
-      [s * 0.0385, 1.6020, 0.018, 0.0335, 0.0092],
-      [s * 0.0360, 1.5975, 0.058, 0.0305, 0.0084],
-      [s * 0.0315, 1.5940, 0.096, 0.0265, 0.0074],
-      [s * 0.0255, 1.5920, 0.130, 0.0210, 0.0060],
+      [s * 0.0385, 1.6035, 0.016, 0.0455, 0.0118],
+      [s * 0.0360, 1.5990, 0.056, 0.0415, 0.0108],
+      [s * 0.0315, 1.5955, 0.094, 0.0355, 0.0094],
+      [s * 0.0255, 1.5935, 0.128, 0.0285, 0.0077],
     ];
     for (const [x, y, z, len, r] of jaw) {
-      // mostly LATERAL. Angled down-and-back they seated on the jaw underside and
-      // were invisible from every angle that matters.
-      const dir = [s * 0.88, -0.40, -0.26];
+      // Lateral AND swept back, as in the references. Angled down-and-back they
+      // seated on the jaw underside and were invisible from every angle that matters;
+      // purely lateral they read as whiskers rather than as a swept row.
+      const dir = [s * 0.74, -0.34, -0.58];
       out.push(spike(seat(field, [x, y, z], dir, 0.004), dir, len, r, { taper: 0.7, sides: 8, steps: 6 }));
     }
     // cheek / jaw-hinge spikes
@@ -127,6 +128,17 @@ export function buildJawSpikes(field) {
       [[s * 0.0570, 1.6110, 0.008], [s * 0.6, -0.4, -0.7], 0.022, 0.0074],
     ]) {
       out.push(spike(seat(field, p, dir), dir, len, r, { taper: 0.7, sides: 8, steps: 6 }));
+    }
+    // Cheek frill: a cluster of small spikes running back from behind the eye to the
+    // jaw hinge. In the references this is a distinct dark spiky patch and its
+    // absence left the cheek as one blank panel.
+    for (const [p, dir, len, r] of [
+      [[s * 0.0560, 1.6790, 0.026], [s * 0.86, 0.10, -0.50], 0.0165, 0.0050],
+      [[s * 0.0585, 1.6650, 0.006], [s * 0.88, -0.04, -0.47], 0.0185, 0.0056],
+      [[s * 0.0590, 1.6505, -0.010], [s * 0.86, -0.16, -0.48], 0.0175, 0.0052],
+      [[s * 0.0525, 1.6905, 0.004], [s * 0.80, 0.30, -0.52], 0.0140, 0.0044],
+    ]) {
+      out.push(spike(seat(field, p, dir, 0.003), dir, len, r, { taper: 0.8, sides: 8, steps: 5 }));
     }
     // brow scutes: three flat claw-like plates lying back along the brow ridge,
     // one of the most recognisable markings on the reference face
