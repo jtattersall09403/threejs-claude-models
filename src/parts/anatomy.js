@@ -141,8 +141,8 @@ export function buildHeadField() {
     // [z,     centre y, half-height, half-width]
     [0.046, 1.6724, 0.0337, 0.0400],
     [0.100, 1.6572, 0.0274, 0.0316],
-    [0.144, 1.6440, 0.0215, 0.0232],
-    [0.174, 1.6348, 0.0172, 0.0168],
+    [0.138, 1.6440, 0.0215, 0.0242],
+    [0.162, 1.6362, 0.0186, 0.0200],   // blunt, not pointed: the reference nose is round
   ];
   for (let i = 0; i < snout.length; i++) {
     const [z, cy, hy, hx] = snout[i];
@@ -150,9 +150,9 @@ export function buildHeadField() {
       { k: i === 0 ? 0.055 : 0.038 }));
   }
   // a low dorsal ridge riding the same curve — a crest, not a separate bridge
-  f.add(capsule([0, 1.6990, 0.020], [0, 1.6470, 0.156], 0.0130, 0.0072,
+  f.add(capsule([0, 1.6990, 0.020], [0, 1.6480, 0.146], 0.0130, 0.0078,
     { k: 0.026, scale: [1, 0.62, 1] }));
-  f.add(ellipsoid([0, 1.6348, 0.1830], [0.0150, 0.0140, 0.0125], { k: 0.014 })); // nose pad
+  f.add(ellipsoid([0, 1.6362, 0.1690], [0.0182, 0.0168, 0.0132], { k: 0.016 })); // nose pad
 
   // ---- lower jaw: deep and straight, turning up at a visible hinge --------------
   // Narrower than the upper muzzle at every station, so the jaw tucks under the lip

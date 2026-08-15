@@ -144,7 +144,13 @@ export function spike(base, dir, length, radius, opts = {}) {
         base[1] + d[1] * length * t + bend[1] * curveAmt,
         base[2] + d[2] * length * t + bend[2] * curveAmt,
       ],
-      r: radius * Math.pow(1 - t, opts.taper || 0.75) * (opts.swell ? 1 + 0.12 * Math.sin(t * Math.PI) : 1),
+      r: (() => {
+        const rr = radius * Math.pow(1 - t, opts.taper || 0.75)
+                 * (opts.swell ? 1 + 0.12 * Math.sin(t * Math.PI) : 1);
+        // opts.flat < 1 gives a BLADE rather than a cone. The reference jaw and brow
+        // spikes are flat plates, and a circular cross-section reads as a whisker.
+        return opts.flat ? [rr, rr * opts.flat] : rr;
+      })(),
     });
   }
   return sweep(rings, { sides: opts.sides || 10, capEnd: false, capStart: opts.capStart !== false });

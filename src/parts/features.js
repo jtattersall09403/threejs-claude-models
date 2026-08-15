@@ -113,18 +113,20 @@ export function buildJawSpikes(field) {
     // A continuous row running the length of the jaw. The references show four
     // clearly separated spikes a side, angled out and down so they break the
     // silhouette from the front as well as in profile.
+    // THREE large flat blades, not a row of small cones. The profile reference shows
+    // few, big, swept-back plates along the jaw — this is the reading the user flagged.
+    // On the CHEEK PLANE at roughly mouth height, not down on the lower jaw edge —
+    // seated low they sit behind the collar and never read at all.
     const jaw = [
-      [s * 0.0385, 1.6105, 0.014, 0.0455, 0.0118],
-      [s * 0.0360, 1.6060, 0.050, 0.0415, 0.0108],
-      [s * 0.0315, 1.6025, 0.084, 0.0355, 0.0094],
-      [s * 0.0255, 1.6005, 0.115, 0.0285, 0.0077],
+      [s * 0.0505, 1.6475, 0.006, 0.0760, 0.0190],
+      [s * 0.0472, 1.6395, 0.052, 0.0690, 0.0172],
+      [s * 0.0410, 1.6330, 0.094, 0.0560, 0.0146],
     ];
     for (const [x, y, z, len, r] of jaw) {
-      // Lateral AND swept back, as in the references. Angled down-and-back they
-      // seated on the jaw underside and were invisible from every angle that matters;
-      // purely lateral they read as whiskers rather than as a swept row.
-      const dir = [s * 0.74, -0.34, -0.58];
-      out.push(spike(seat(field, [x, y, z], dir, 0.004), dir, len, r, { taper: 0.7, sides: 8, steps: 6 }));
+      const dir = [s * 0.66, -0.30, -0.69];
+      out.push(spike(seat(field, [x, y, z], dir, 0.005), dir, len, r, {
+        taper: 0.62, flat: 0.34, sides: 10, steps: 7, bend: [0, -0.004, -0.010],
+      }));
     }
     // cheek / jaw-hinge spikes
     for (const [p, dir, len, r] of [
@@ -155,7 +157,7 @@ export function buildJawSpikes(field) {
       [[s * 0.0552, 1.7240, 0.0290], [s * 0.64, 0.36, 0.68], 0.0330, 0.0053],
     ]) {
       out.push(spike(seat(field, p, dir, 0.003), dir, len, r, {
-        taper: 0.9, sides: 8, steps: 7, bend: [0, 0.004, -0.010],
+        taper: 0.9, flat: 0.38, sides: 10, steps: 7, bend: [0, 0.004, -0.010],
       }));
     }
   }
