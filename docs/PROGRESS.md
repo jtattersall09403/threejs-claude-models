@@ -29,23 +29,24 @@ every single iteration.
 
 ## My open list (must be empty before hand-off)
 
-Iterations 12–13 closed a great deal (see log). **Head value, hue and proportion are
-now genuinely close to the reference** — that was the main win. Still open:
+Iterations 12–14 closed a great deal (see log). **The head is now genuinely close to
+the reference** in proportion, value, hue and markings — that was the main win.
+Closed since: rear-angle lighting, collar rim and height, lip scutes and the mouth
+through-cut, cheek frill, crown crest size, snout length, jawline/neck separation,
+brow spines, eye angle, orange eye rim, dark ocular mask. Still open:
 
-1. **The character goes nearly black at rear orbit angles.** The rim lights do little
-   from behind and orbit frames 5–8 are barely readable. The viewer is orbitable, so
-   every angle has to hold up.
-2. **The collar is a smooth funnel** — the reference has a rolled edge with the head
-   sitting down into it, and our neck still reads slightly long.
-3. **The mouth line is a straight dark dash**; the reference curves up toward the jaw
-   hinge and is broken by lip scutes.
-4. **No dark spiky cheek frill** beside the eye — a distinctive reference marking.
-5. **Crown spikes are a small tight mohawk**; the reference crest is larger and more
-   scattered, with darker bases.
-6. Legs and feet are still simple and the feet are plain blocks (plausibility only —
+1. **The shadowed neck recess under the jaw is still shallower than the reference's.**
+   The collar now sits clear of the jaw and the shadow is painted, but the reference
+   has a deeper, darker undercut between jawline and clavicle.
+2. **The horns are smooth pale spars.** The reference horn has visible surface
+   texture and grime along its length, not just at the root.
+3. **The muzzle's reticulation is fainter than the reference's**, whose pale mesh
+   between scales is crisp and continuous over the whole snout.
+4. Legs and feet are still simple and the feet are plain blocks (plausibility only —
    the references never show below the waist, but the artifact is orbitable).
-7. Hands: fingers still fairly uniform in length.
-8. The tail is plausible but exits fairly horizontally and its tip kink reads oddly.
+5. Hands: fingers still fairly uniform in length.
+6. The tail is plausible but exits fairly horizontally and its tip kink reads oddly.
+7. The tunic weave is much improved but still slightly regular at close range.
 
 ## Direct feedback from the user on the head (iteration 13) — keep checking these
 
@@ -81,6 +82,26 @@ reference screenshot), so its numbers are not trustworthy until they are re-plac
 against the crops `tools/compare.mjs` uses.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
+
+### Iteration 14 — the user's head notes, and a through-cut mouth
+- **`creaseSlot` was a through-cut, not a groove.** A band in y inside a hard limit in
+  x: out at the corners of the mouth, where the surface turns to face sideways, it
+  sawed a slit clean through the jaw — solid at the front, sliced open at the sides.
+  It now tapers closed in x as well as z, and its x-extent follows the muzzle's own
+  half-width. Worth remembering for any future crease cut.
+- **`jawShadow` was multiplied by `headMask`**, which fades out across exactly the
+  band the shadow was meant to darken — it cancelled itself. Same class of mistake as
+  the world-vs-head-space `headMask` bug in iteration 13: a mask gated by another
+  mask that is zero where it matters.
+- **The collar was swallowing the jaw.** After the head was scaled to 1.16 the jaw
+  dropped ~2 cm while the collar stayed put, so the cowl rim sat *above* the jaw
+  bottom and there was nowhere for a neck shadow to exist. Dropped ~5 cm.
+- Head proportion rebalanced: eye-to-jaw over eye-to-crown was 2.7 against the
+  reference's 2.1, so the lower face read as one long expanse. Jaw and braincase both
+  raised. Snout shortened ~11 % and deepened — it was running long and low in profile.
+- Also: crown crest enlarged, brow scutes lengthened into spines, upper lid built from
+  two lobes (outer high, inner low) so the eye slants toward the snout, tight orange
+  eye rim, dark ocular mask extended back toward the hinge.
 
 ### Iteration 13 — the body, and two coordinate-space bugs
 - **`EYE_FRAG` compared world-space `vRest` against authoring-space eye constants.**

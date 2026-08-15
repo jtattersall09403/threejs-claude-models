@@ -161,6 +161,19 @@ rather than reasoning from a bad image.
     anchors, which cuts straight through the folds in between: the strap surfaces only
     in patches and reads as torn geometry. Project every ring centre, smooth the
     resulting polyline lightly, and make the lift exceed the fold depth.
+15. **A crease cut is not a slab of empty space.** `creaseSlot` was a band in `y`
+    inside a hard limit in `x` — a *through-cut*. Where the surface turns to face
+    sideways (the corners of the mouth) it stops grazing the surface and saws a slit
+    clean through: solid at the front, sliced open at the sides. Any cut meant to be
+    a groove must taper closed on **every** axis it is bounded on.
+16. **Don't gate a mask by another mask that is zero where it matters.** `jawShadow`
+    was multiplied by `headMask`, which fades across exactly the band the shadow was
+    meant to darken, so it cancelled itself. Same family as trap 11. When a painted
+    effect "does nothing", check what it is being multiplied by before re-tuning it.
+17. **Changing `HEAD_XF.scale` moves everything the head sits against.** Scaling the
+    head to 1.16 dropped the jaw ~2 cm while the collar stayed put, so the cowl rim
+    ended up *above* the jaw and swallowed it. After any head resize, re-check the
+    collar height, the capture framings, and anything seated by world coordinate.
 
 ## Commands
 
