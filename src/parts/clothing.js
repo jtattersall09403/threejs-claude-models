@@ -89,10 +89,13 @@ export function clothingFields(body) {
       capsule([0, 1.415, 0.0], [0, 1.24, 0.008], 0.245, 0.235),
       capsule([0, 1.24, 0.008], [0, 1.10, 0.01], 0.235, 0.198),
       capsule([0, 1.10, 0.01], [0, 0.985, 0.005], 0.198, 0.212),
-      // The sleeve cap radius sets the shoulder's bulk. At 0.15 it ballooned into a
-      // padded square pauldron; the reference shoulder slopes away from the neck.
-      capsule([-0.185, 1.386, 0], [-0.211, 1.128, -0.006], 0.106, 0.079),
-      capsule([0.185, 1.386, 0], [0.211, 1.128, -0.006], 0.106, 0.079),
+      // The sleeve coverage capsule must START INBOARD, inside the torso volume.
+      // Anchored out over the deltoid its end cap is the outermost coverage surface
+      // at the shoulder, and since the garment is a smooth intersection with this
+      // volume, that cap prints straight through as a balloon — a leg-of-mutton
+      // sleeve with a seam ring around the upper arm.
+      capsule([-0.105, 1.425, 0], [-0.211, 1.128, -0.006], 0.115, 0.086),
+      capsule([0.105, 1.425, 0], [0.211, 1.128, -0.006], 0.115, 0.086),
     ]);
     const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0105, 16));
     // a cut-free copy of the same shell, used only as a projection target for the
@@ -125,7 +128,7 @@ export function clothingFields(body) {
     // for the undershirt reads as a disc stuck on the chest — don't.
     f.sub(capsule([0, 1.398, 0.048], [0, 1.60, 0.022], 0.068, 0.098, { k: 0.028 }));
     // rolled collar band around the opening, so the edge reads as a hem
-    f.add(capsule([0, 1.408, 0.034], [0, 1.442, 0.026], 0.092, 0.090, { k: 0.018 }));
+    f.add(capsule([0, 1.408, 0.034], [0, 1.438, 0.026], 0.082, 0.080, { k: 0.018 }));
     f.sub(capsule([0, 1.39, 0.05], [0, 1.62, 0.020], 0.064, 0.092, { k: 0.020 }));
     out.push({ field: f, bounds, cell: 0.004, region: REGION.TUNIC, tunic: true, shell });
   }

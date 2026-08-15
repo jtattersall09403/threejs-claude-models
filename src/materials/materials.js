@@ -79,8 +79,10 @@ float fbm(vec3 p) {
 float clothCrease(vec3 p) {
   // Two smooth octaves, NOT fbm: fbm's high octaves are isotropic and turn the
   // creases into marbled camouflage blotches instead of hanging drape lines.
-  float d = vnoise(vec3(p.x * 30.0, p.y * 5.5, p.z * 30.0)) * 0.68
-          + vnoise(vec3(p.x * 63.0, p.y * 12.0, p.z * 63.0)) * 0.32;
+  // Elongated, but only ~3:1. At 5:1 the creases stretch into full-length vertical
+  // streaks that read as stains running down the garment rather than as folds.
+  float d = vnoise(vec3(p.x * 28.0, p.y * 9.5, p.z * 28.0)) * 0.66
+          + vnoise(vec3(p.x * 57.0, p.y * 21.0, p.z * 57.0)) * 0.34;
   float c = 1.0 - abs(d * 2.0 - 1.0);
   return pow(clamp(c, 0.0, 1.0), 2.4);
 }
@@ -384,7 +386,7 @@ const CLOTH_FRAG = /* glsl */`
   gr -= Nr * dot(gr, Nr);              // keep the perturbation tangential
   float gl = length(gr);
   if (gl > 1e-5) gNormal = normalize(gNormal - (gr / gl) * (0.42 * cr));
-  col *= mix(1.05, 0.74, cr);
+  col *= mix(1.04, 0.82, cr);
   col *= 0.94 + 0.11 * wear;
   // grime settles low on the garment
   col *= mix(0.72, 1.0, ss(0.75, 1.15, vRest.y));
