@@ -98,6 +98,32 @@ if the subject is clipped or tiny — but ad-hoc `npm run shot` framings are
 unchecked, so eyeball them. If a shot is badly framed, re-frame and re-shoot
 rather than reasoning from a bad image.
 
+## The reference corpus
+
+`corpus/character/` (INPUT, never edit). The five **named** images were added later and
+are far more informative than the original timestamped screenshots — prefer them.
+
+| file | what it is best for |
+|---|---|
+| `face-left-profile.jpg` | **The most important one.** The forehead-to-snout line, snout depth, horn sweep, jaw spike row, neck. |
+| `face-neck-jawline-closeup.jpg` | Jawline, spike count/size/placement, neck and clavicle. |
+| `face-neck-jawline-right-profile.jpg` | Same from the other side — check bilateral consistency. |
+| `close-crop-face-front-slight-right-profile.jpg` | Facial markings, eye and brow detail at close range. |
+| `face-front-and-bust-proportions.jpg` | Head-to-shoulder proportion, shoulder width and slope, stance. |
+| `Screenshot_*.jpg` (5) | The originals. Wider context, full body, garments. |
+
+### What the profile reference settles
+
+- **The forehead flows into the snout as ONE SMOOTH CURVE** — crown, brow and snout
+  form a single unbroken arc. There is no step, no shelf, no separate muzzle block.
+  Building the muzzle as a box bolted onto a braincase produces a *dog* muzzle, which
+  is the single most persistent likeness error in this project.
+- **The snout is SHALLOW in vertical section** and tapers to a narrow tip. A deep
+  box-section snout is wrong even when its length and width are right.
+- **The jaw spikes are large, flat and blade-like**, swept back, and there are only a
+  few of them — not a row of small cones.
+- The neck is substantial and visible, running down into the collar.
+
 ## Known traps (each of these cost a full iteration — do not re-learn them)
 
 1. **Triangle winding.** Marching cubes and swept tubes must emit CCW-from-outside
@@ -174,6 +200,17 @@ rather than reasoning from a bad image.
     head to 1.16 dropped the jaw ~2 cm while the collar stayed put, so the cowl rim
     ended up *above* the jaw and swallowed it. After any head resize, re-check the
     collar height, the capture framings, and anything seated by world coordinate.
+
+18. **Backticks inside a GLSL template literal terminate the JS string.** A comment
+    reading ``in ss(a, b, d), `b` is the solid radius`` inside a `/* glsl */\`...\``
+    block ends the literal and esbuild reports a syntax error somewhere else entirely.
+19. **`npm run build` failing is easy to miss** — the shell pipeline's exit status
+    comes from `tail`, not from node, so `npm run build | tail -2` reports success
+    while `dist/` keeps the previous build. If a change appears to have no effect,
+    `grep` the new value in `dist/argonian.html` before re-tuning anything.
+20. **In `ss(a, b, x)` with `a > b` (the descending form), `b` is the SOLID radius**
+    and `a` is where it fades to zero. Setting `b` very small leaves a sub-pixel core
+    and the feature disappears even though the mask is present and correctly placed.
 
 ## Commands
 

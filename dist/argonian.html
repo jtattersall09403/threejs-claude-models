@@ -4134,7 +4134,11 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
   // wide \u2014 a uniformly dark band that broad over already-dark hide has nothing to
   // contrast against and reads as no mouth at all. The reference mouth is a crisp
   // line. Widening the paint was the wrong instinct three times running.
-  float lip = ss(0.0042 * scute, 0.0008, abs(H.y - lipY))
+  // In ss(a, b, d) with a > b, the SECOND argument is the solid radius and the first
+  // is where it fades out.
+  // At b = 0.0008 the fully-dark core was 0.8 mm \u2014 sub-pixel at most framings, so the
+  // line vanished even though debugMasks(6) showed the mask present and correct.
+  float lip = ss(0.0062 * scute, 0.0022, abs(H.y - lipY))
             * ss(0.168, 0.157, H.z) * ss(0.006, 0.026, H.z);
   col = mix(col, vec3(0.0016, 0.0014, 0.0013), lip * 0.99);
 
