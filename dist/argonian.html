@@ -4032,7 +4032,7 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
   // references carry dark red over the whole brow shelf and back to the horn roots,
   // roughly a fifth of the frontal head area.
   float browD = length((J - vec3(0.040, 1.7180, 0.030)) * vec3(0.56, 1.60, 1.05));
-  float brow = ss(0.104, 0.020, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.638, 1.664, H.y);
+  float brow = ss(0.088, 0.020, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.638, 1.664, H.y);
 
   // dorsal scute ridge down the tail \u2014 a plain taper reads as a rubber tube
   float tailZone = ss(-0.10, -0.16, P.z) * ss(1.02, 0.94, P.y);
@@ -4057,7 +4057,10 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
   vec3 warmOl   = vec3(0.0252, 0.0268, 0.0176);
   vec3 belly    = vec3(0.0242, 0.0256, 0.0180);
   vec3 plate    = vec3(0.0062, 0.0068, 0.0048);   // dark OLIVE-black, not blue-black
-  vec3 maroon   = vec3(0.0560, 0.0116, 0.0092);
+  // R/G ~2.1, not ~4.8. The critic measured the reference brow at R/G 1.74 against a
+  // 1.17 muzzle; pushed to a pure red this floods the crown salmon-pink instead of
+  // reading as dark oxblood over olive.
+  vec3 maroon   = vec3(0.0330, 0.0158, 0.0126);
   vec3 boneCol  = vec3(0.088, 0.078, 0.055);
 
   vec3 col = mix(dorsal2, dorsal, ss(0.30, 0.72, mottle * 0.6 + blotch * 0.7));
@@ -4074,8 +4077,9 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
   col = mix(col, mix(dorsal2, plate, 0.5), tailTop * (0.35 + 0.5 * tailScute));
   col = mix(col, plate * 0.72, cap * 0.98);
   col = mix(col, plate * vec3(1.15, 1.20, 1.55), socket * 0.98);
-  col = mix(col, maroon, brow * 0.98);
-  col = mix(col, maroon * 0.62, brow * 0.55);  // deepen the oxblood band
+  // partial mix, so the olive hide shows through and the band lands near the
+  // reference's 1.74 rather than at the paint's own ratio
+  col = mix(col, maroon, brow * 0.72);
   // three cream claw-mark streaks across the maroon brow band
   float streak = ss(0.72, 0.97, abs(sin((J.x - 0.010) * 150.0)));
   col = mix(col, boneCol * 0.78, brow * streak * ss(0.012, 0.052, abs(J.x)) * 0.95);
