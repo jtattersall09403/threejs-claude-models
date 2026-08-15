@@ -107,16 +107,31 @@ export function makeClothTexture(size = 512, threads = 46, seed = 19) {
   const height = new Float32Array(size * size);
   const fib = fbmField(size, 16, 4, seed);
   const slub = fbmField(size, 4, 3, seed + 5);
+  // Per-thread jitter. A strict over/under grid of identical threads reads as
+  // machine-printed tweed — at garment scale it was the most artificial-looking
+  // thing in the render. Real cloth has uneven thread thickness, so vary the
+  // cross-section exponent and the height per warp and per weft.
+  const rand = rng(seed + 11);
+  const jw = new Float32Array(threads + 1);
+  const jh = new Float32Array(threads + 1);
+  const aw = new Float32Array(threads + 1);
+  const ah = new Float32Array(threads + 1);
+  for (let i = 0; i <= threads; i++) {
+    jw[i] = 0.58 + rand() * 0.90;   // warp thread "width" exponent
+    jh[i] = 0.58 + rand() * 0.90;
+    aw[i] = 0.74 + rand() * 0.46;   // warp thread height
+    ah[i] = 0.74 + rand() * 0.46;
+  }
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       const u = (x / size) * threads, v = (y / size) * threads;
       const iu = Math.floor(u), iv = Math.floor(v);
       const fu = u - iu, fv = v - iv;
       const over = (iu + iv) % 2 === 0;
-      const warp = Math.sin(fu * Math.PI);
-      const weft = Math.sin(fv * Math.PI);
+      const warp = Math.pow(Math.sin(fu * Math.PI), jw[iu]) * aw[iu];
+      const weft = Math.pow(Math.sin(fv * Math.PI), jh[iv]) * ah[iv];
       const h = over ? warp * 0.9 + weft * 0.25 : weft * 0.9 + warp * 0.25;
-      height[y * size + x] = h * (0.62 + slub[y * size + x] * 0.5) + (fib[y * size + x] - 0.5) * 0.3;
+      height[y * size + x] = h * (0.62 + slub[y * size + x] * 0.5) + (fib[y * size + x] - 0.5) * 0.42;
     }
   }
   return heightToTexture(height, size, 1.5);

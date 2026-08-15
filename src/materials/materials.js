@@ -321,7 +321,7 @@ const SKIN_FRAG = /* glsl */`
 // ---------------------------------------------------------------------------
 const HORN_FRAG = /* glsl */`
   vec3 Nr = normalize(vRestN);
-  vec4 det = triDetail(vRest, Nr, 90.0, 0.7);
+  vec4 det = triDetail(vRest, Nr, 130.0, 1.15);
   gNormal = det.xyz;
   float h = det.w;
 
@@ -335,7 +335,7 @@ const HORN_FRAG = /* glsl */`
   col = mix(col, dark, ss(0.19, 0.02, t));
 
   float grime = fbm(vRest * 60.0);
-  col *= 0.80 + 0.34 * grime;
+  col *= 0.76 + 0.40 * grime;
   col *= mix(0.62, 1.05, ss(0.1, 0.7, h));
   gRoughOut = clamp(0.48 + (1.0 - h) * 0.28 + grime * 0.12, 0.3, 0.95);
 

@@ -59,11 +59,11 @@ export function buildHorn(side, field) {
  */
 export function buildHornCuff(side, field) {
   const full = hornRings(side, field);
-  const a = Math.round(HORN_STEPS * 0.33), b = Math.round(HORN_STEPS * 0.44);
+  const a = Math.round(HORN_STEPS * 0.35), b = Math.round(HORN_STEPS * 0.42);
   const rings = full.slice(a, b + 1).map((ring, i, arr) => {
     const u = i / (arr.length - 1);
     // barrelled slightly, so it reads as a band clamped on rather than a swelling
-    return { p: ring.p, r: ring.r * (1.30 + 0.07 * Math.sin(u * Math.PI)) };
+    return { p: ring.p, r: ring.r * (1.20 + 0.06 * Math.sin(u * Math.PI)) };
   });
   return sweep(rings, { sides: 18 });
 }
