@@ -5,11 +5,11 @@
 //
 // Head proportions target the references: length : height : width ≈ 1.6 : 1 : 0.9,
 // i.e. long-snouted but with a tall braincase and a deep jaw — NOT a flat plank.
-import { Field, capsule, ellipsoid, roundBox } from '../core/sdf.js';
+import { Field, capsule, ellipsoid, roundBox, creaseSlot } from '../core/sdf.js';
 
 export const EYE = {
   c: [0.0578, 1.6975, 0.0715],   // mirrored on x
-  r: 0.0192,
+  r: 0.0208,
   gaze: [0.34, 0.05, 0.939],     // outward/forward gaze axis for the left(+x) eye
 };
 
@@ -97,22 +97,24 @@ export function buildHeadField() {
 
   // ---- brow / eye ridges -------------------------------------------------------
   for (const s of [1, -1]) {
-    f.add(ellipsoid([s * 0.058, 1.7175, 0.052], [0.036, 0.021, 0.044], { k: 0.028 })); // brow shelf
+    f.add(ellipsoid([s * 0.058, 1.7215, 0.05], [0.036, 0.020, 0.042], { k: 0.026 })); // brow shelf
     f.add(ellipsoid([s * 0.0755, 1.686, 0.022], [0.021, 0.05, 0.056], { k: 0.035 }));  // temple
   }
 
   // ---- muzzle ------------------------------------------------------------------
-  f.add(capsule([0, 1.6705, 0.058], [0, 1.6525, 0.2075], 0.0635, 0.0345,
+  f.add(capsule([0, 1.6705, 0.058], [0, 1.6555, 0.1795], 0.0635, 0.0375,
     { k: 0.034, scale: [1, 0.74, 1] }));
-  f.add(roundBox([0, 1.6745, 0.135], [0.045, 0.012, 0.062], 0.014, { k: 0.026 })); // flat snout top
+  f.add(capsule([0, 1.6555, 0.1795], [0, 1.6505, 0.2135], 0.0375, 0.0272,
+    { k: 0.026, scale: [1, 0.8, 1] }));
+  f.add(roundBox([0, 1.6755, 0.128], [0.041, 0.011, 0.056], 0.013, { k: 0.024 })); // flat snout top
   f.add(capsule([0, 1.6885, 0.07], [0, 1.6665, 0.196], 0.031, 0.018,
     { k: 0.028, scale: [1, 0.8, 1] }));                                       // nasal bridge ridge
-  f.add(ellipsoid([0, 1.6555, 0.2155], [0.0355, 0.0245, 0.0205], { k: 0.022 })); // nose pad
+  f.add(ellipsoid([0, 1.6545, 0.2185], [0.0285, 0.0205, 0.0185], { k: 0.018 })); // nose pad
 
   // ---- lower jaw: deep, giving the head real height ------------------------------
-  f.add(capsule([0, 1.6115, 0.052], [0, 1.6055, 0.1955], 0.0585, 0.0305,
+  f.add(capsule([0, 1.6115, 0.052], [0, 1.6075, 0.1885], 0.0585, 0.0268,
     { k: 0.038, scale: [1, 0.68, 1] }));
-  f.add(ellipsoid([0, 1.612, 0.176], [0.033, 0.024, 0.036], { k: 0.028 }));   // chin
+  f.add(ellipsoid([0, 1.6125, 0.171], [0.0275, 0.0215, 0.032], { k: 0.024 }));   // chin
   for (const s of [1, -1]) {
     f.add(ellipsoid([s * 0.0625, 1.6385, 0.036], [0.031, 0.05, 0.061], { k: 0.038 })); // cheek / masseter
     f.add(ellipsoid([s * 0.0715, 1.6485, -0.012], [0.028, 0.05, 0.047], { k: 0.042 })); // jaw hinge
@@ -124,10 +126,11 @@ export function buildHeadField() {
 
   // ---- cuts ------------------------------------------------------------------
   for (const s of [1, -1]) {
-    f.sub(ellipsoid([s * EYE.c[0], EYE.c[1], EYE.c[2] + 0.006], [0.0285, 0.0255, 0.030], { k: 0.012 }));
+    f.sub(ellipsoid([s * EYE.c[0], EYE.c[1], EYE.c[2] + 0.005], [0.0295, 0.0268, 0.031], { k: 0.011 }));
   }
-  // mouth crease — a thin slot, just enough to read as a closed lip line
-  f.sub(roundBox([0, 1.6155, 0.15], [0.082, 0.001, 0.096], 0.002, { k: 0.005 }));
+  // mouth crease — rises toward the jaw hinge like a real reptile jaw line
+  f.sub(creaseSlot((z) => 1.6118 + (0.205 - z) * 0.082, 0.0011, [0.036, 0.206], 0.083,
+    { k: 0.0045, yMin: 1.56, yMax: 1.68 }));
   // nostrils
   for (const s of [1, -1]) {
     f.sub(ellipsoid([s * 0.0145, 1.6605, 0.2295], [0.0055, 0.004, 0.007], { k: 0.004 }));

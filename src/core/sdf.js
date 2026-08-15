@@ -154,6 +154,24 @@ export function raySurface(field, origin, dir, opts = {}) {
   return [...origin];
 }
 
+/**
+ * A thin slot whose height follows a function of z — the mouth line. A flat slab
+ * cuts a dead-straight crease, which reads as mechanical; real jaws rise toward
+ * the hinge.
+ */
+export function creaseSlot(fy, halfT, zRange, xHalf, opts = {}) {
+  return {
+    k: opts.k !== undefined ? opts.k : 0.005,
+    aabb: [-xHalf, opts.yMin || 1.5, zRange[0], xHalf, opts.yMax || 1.75, zRange[1]],
+    d(px, py, pz) {
+      const dy = Math.abs(py - fy(pz)) - halfT;
+      const dz = Math.max(pz - zRange[1], zRange[0] - pz);
+      const dx = Math.abs(px) - xHalf;
+      return Math.max(dy, Math.max(dz, dx));
+    },
+  };
+}
+
 export class Field {
   constructor() {
     this.adds = [];

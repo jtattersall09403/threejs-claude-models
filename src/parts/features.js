@@ -17,11 +17,11 @@ export function fromGeometry(geo) {
 export function buildHorn(side, field) {
   const s = side;
   const pts = [
-    [s * 0.0625, 1.7215, 0.012],
-    [s * 0.0855, 1.7625, -0.018],
-    [s * 0.1005, 1.7925, -0.066],
-    [s * 0.1065, 1.8095, -0.122],
-    [s * 0.1015, 1.8155, -0.172],
+    [s * 0.0555, 1.7285, 0.006],
+    [s * 0.0745, 1.7565, -0.036],
+    [s * 0.0885, 1.7715, -0.092],
+    [s * 0.0955, 1.7795, -0.15],
+    [s * 0.0935, 1.7815, -0.201],
   ];
   const root = seat(field, pts[0], [s * 0.55, 0.72, 0.2], 0.024);
   pts[0] = root;
@@ -108,7 +108,7 @@ export function buildTeeth() {
   const out = [];
   for (const s of [1, -1]) {
     // lower tusk poking up outside the lip
-    out.push(spike([s * 0.0375, 1.6085, 0.166], [s * 0.15, 0.96, 0.22], 0.0115, 0.0042,
+    out.push(spike([s * 0.0345, 1.6095, 0.1585], [s * 0.15, 0.96, 0.22], 0.0072, 0.0030,
       { taper: 0.62, sides: 7, steps: 5 }));
   }
   return out;

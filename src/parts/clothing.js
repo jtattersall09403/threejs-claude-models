@@ -72,14 +72,14 @@ export function clothingFields(body) {
       // waisted: wide at the chest, pinched at the waist, flaring again at the hips
       capsule([0, 1.415, 0.0], [0, 1.24, 0.008], 0.245, 0.235),
       capsule([0, 1.24, 0.008], [0, 1.10, 0.01], 0.235, 0.198),
-      capsule([0, 1.10, 0.01], [0, 0.985, 0.005], 0.198, 0.225),
+      capsule([0, 1.10, 0.01], [0, 0.985, 0.005], 0.198, 0.212),
       capsule([-0.188, 1.40, 0], [-0.211, 1.128, -0.006], 0.15, 0.079),
       capsule([0.188, 1.40, 0], [0.211, 1.128, -0.006], 0.15, 0.079),
     ]);
     const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0082));
     // the skirt hangs clear of the body, so it is added rather than offset
-    f.add(capsule([0, 1.0, 0.0], [0, 0.775, -0.012], 0.158, 0.166, { k: 0.045, scale: [1, 1, 0.86] }));
-    f.add(ellipsoid([0, 0.778, -0.012], [0.168, 0.016, 0.14], { k: 0.018 }));  // hem roll
+    f.add(capsule([0, 1.0, 0.0], [0, 0.782, -0.012], 0.15, 0.152, { k: 0.04, scale: [1, 1, 0.88] }));
+    f.add(ellipsoid([0, 0.784, -0.012], [0.154, 0.014, 0.132], { k: 0.016 }));  // hem roll
     for (const s of [1, -1]) {
       f.add(ellipsoid([s * 0.2115, 1.052, -0.008], [0.054, 0.017, 0.054], { k: 0.015 })); // cuff
     }

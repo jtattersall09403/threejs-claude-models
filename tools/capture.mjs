@@ -19,21 +19,21 @@ const ORBIT_STEPS = 12;
 const SHOTS = [];
 for (let i = 0; i < ORBIT_STEPS; i++) {
   const az = (i / ORBIT_STEPS) * 360;
-  SHOTS.push([`orbit_${String(i).padStart(2, '0')}_az${Math.round(az)}`, az, 6, 3.05, 1.02, 32]);
+  SHOTS.push([`orbit_${String(i).padStart(2, '0')}_az${Math.round(az)}`, az, 5, 3.95, 0.92, 32]);
 }
 SHOTS.push(
-  ['head_front', 0, 2, 0.60, 1.638, 26],
-  ['head_q34', 35, 4, 0.60, 1.638, 26],
-  ['head_side', 88, 2, 0.62, 1.638, 26],
-  ['head_rear34', 145, 8, 0.62, 1.640, 26],
-  ['head_low', 10, -14, 0.62, 1.630, 26],
-  ['head_top', 20, 46, 0.62, 1.660, 26],
-  ['torso_front', 8, 4, 1.55, 1.28, 30],
-  ['hands', 40, -6, 0.85, 0.83, 30],
-  ['feet', 25, 8, 1.0, 0.30, 30],
-  ['tail', 205, 6, 1.5, 0.80, 32],
-  ['full_front', 0, 3, 3.05, 1.02, 32],
-  ['full_side', 90, 3, 3.05, 1.02, 32],
+  ['head_front', 0, 2, 0.92, 1.672, 30],
+  ['head_q34', 35, 4, 0.94, 1.672, 30],
+  ['head_side', 88, 2, 0.96, 1.672, 30],
+  ['head_rear34', 145, 8, 0.96, 1.678, 30],
+  ['head_low', 10, -16, 0.94, 1.660, 30],
+  ['head_top', 20, 46, 0.96, 1.700, 30],
+  ['torso_front', 8, 2, 1.70, 1.22, 30],
+  ['hands', 48, -4, 1.05, 0.86, 30],
+  ['feet', 25, 10, 1.15, 0.28, 30],
+  ['tail', 205, 4, 1.75, 0.78, 32],
+  ['full_front', 0, 3, 3.95, 0.92, 32],
+  ['full_side', 90, 3, 3.95, 0.92, 32],
 );
 
 const browser = await chromium.launch({
@@ -78,9 +78,23 @@ console.log(info);
 rmSync(outDir, { recursive: true, force: true });
 mkdirSync(outDir, { recursive: true });
 
+const framingProblems = [];
 for (const [name, az, el, dist, ty, fov] of SHOTS) {
   await tab.evaluate(([a, e, d, t, f]) => window.__setCamera(a, e, d, t, f), [az, el, dist, ty, fov]);
+  if (name.startsWith('orbit') || name.startsWith('full')) {
+    const fs = await tab.evaluate('window.__frameStats()');
+    if (fs.fillH > 0.98 || fs.fillH < 0.45 || fs.bottom < 0.0 || fs.top > 1.0) {
+      framingProblems.push(`${name}: fills ${(fs.fillH * 100).toFixed(0)}% of frame, ` +
+        `y ${fs.bottom.toFixed(2)}..${fs.top.toFixed(2)} (want inside 0..1)`);
+    }
+  }
   await tab.screenshot({ path: resolve(outDir, `${name}.png`), timeout: 180000 });
+}
+if (framingProblems.length) {
+  console.error('FRAMING PROBLEMS — the full-body shots do not contain the subject:\n  ' +
+    framingProblems.join('\n  '));
+  await browser.close();
+  process.exit(1);
 }
 
 console.log(`wrote ${SHOTS.length} frames to captures/latest/`);

@@ -127,10 +127,14 @@ const SKIN_FRAG = /* glsl */`
   vec3 A = vec3(abs(H.x), H.y, H.z);
 
   float headMask = ss(1.53, 1.61, P.y);
-  float freq = mix(23.0, 38.0, headMask);
-  vec4 det = triDetail(P, Nr, freq, mix(1.35, 1.25, headMask));
-  gNormal = det.xyz;
-  float h = det.w;
+  // Two FIXED scale frequencies blended by a noise mask. Scaling the triplanar UVs
+  // by a spatially varying factor warps the domain and produces contour-line swirls.
+  float freq = mix(22.0, 36.0, headMask);
+  vec4 fine = triDetail(P, Nr, freq, mix(1.3, 1.2, headMask));
+  vec4 plateD = triDetail(P, Nr, freq * 0.52, 1.0);
+  float sizeMix = ss(0.38, 0.66, fbm(P * 3.1 + 4.0)) * 0.55;
+  gNormal = normalize(mix(fine.xyz, plateD.xyz, sizeMix));
+  float h = mix(fine.w, plateD.w, sizeMix);
 
   // jitter the mask coordinates so painted edges follow the scales instead of
   // cutting across them in hard geometric arcs
@@ -181,9 +185,10 @@ const SKIN_FRAG = /* glsl */`
   col = mix(col, maroon, brow * 0.92);
 
   // dark closed lip line along the mouth crease
-  float lip = ss(0.0115, 0.0025, abs(H.y - 1.6155))
-            * ss(0.235, 0.205, H.z) * ss(0.030, 0.060, H.z);
-  col = mix(col, vec3(0.006, 0.005, 0.005), lip * 0.92);
+  float lipY = 1.6118 + (0.205 - H.z) * 0.082;
+  float lip = ss(0.0165, 0.0035, abs(H.y - lipY))
+            * ss(0.222, 0.196, H.z) * ss(0.028, 0.055, H.z);
+  col = mix(col, vec3(0.0035, 0.0030, 0.0028), lip * 0.97);
 
   // crevices between scales go dark
   col *= mix(0.30, 1.10, ss(0.04, 0.60, h));
