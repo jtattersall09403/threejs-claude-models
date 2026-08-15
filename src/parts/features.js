@@ -13,28 +13,59 @@ export function fromGeometry(geo) {
   return { positions: pos, indices: idx, uvs: uv, normals: nrm };
 }
 
+// The horn pair. The reference horn is a LONG, SLENDER, sharply-tapered spar that
+// sweeps up and back well clear of the skull — not a stubby tusk. Curve and radius
+// live at module scope because the metal cuff is swept along the same pair.
+const HORN_STEPS = 46;
+const HORN_DIR = (s) => [s * 0.55, 0.72, 0.2];
+
+function hornPts(s) {
+  return [
+    [s * 0.0555, 1.7255, 0.004],
+    [s * 0.0745, 1.7745, -0.028],
+    [s * 0.0860, 1.8175, -0.082],
+    [s * 0.0910, 1.8520, -0.146],
+    [s * 0.0895, 1.8720, -0.212],
+    [s * 0.0855, 1.8790, -0.262],
+  ];
+}
+
+// Fine ring ridging concentrated near the base and gone by mid-length, as in the
+// reference. Trap #10: keep the per-ring phase step under a radian — 38 rad over
+// 46 rings is 0.84, so it reads as ridging rather than aliasing into a rope.
+const hornRadius = (t) => (0.0158 * Math.pow(1 - t, 0.62) + 0.0006)
+  * (1 + 0.055 * Math.sin(t * 38) * Math.max(0, 1 - t * 1.6));
+
+function hornRings(side, field) {
+  const pts = hornPts(side);
+  pts[0] = seat(field, pts[0], HORN_DIR(side), 0.024);
+  return curveRings(pts, hornRadius, HORN_STEPS, { tension: 0.5 });
+}
+
 /** The big rear-sweeping horn pair. uv.y carries the 0..1 run for shader banding. */
 export function buildHorn(side, field) {
-  const s = side;
-  const pts = [
-    [s * 0.0555, 1.7255, 0.004],
-    [s * 0.0765, 1.7695, -0.03],
-    [s * 0.0905, 1.8005, -0.082],
-    [s * 0.0975, 1.8235, -0.141],
-    [s * 0.0955, 1.8425, -0.194],
-  ];
-  const root = seat(field, pts[0], [s * 0.55, 0.72, 0.2], 0.024);
-  pts[0] = root;
-  const rings = curveRings(pts, (t) => {
-    const base = 0.0222 * Math.pow(1 - t, 0.55) + 0.0014;
-    // ridging must run the FULL length; a (1-t) falloff leaves the horn a smooth tube
-    const ridge = 1 + 0.14 * Math.sin(t * 24) * Math.min(1, t * 4);
-    return base * ridge;
-  }, 34, {
+  const pts = hornPts(side);
+  pts[0] = seat(field, pts[0], HORN_DIR(side), 0.024);
+  const rings = curveRings(pts, hornRadius, HORN_STEPS, {
     tension: 0.5,
-    profile: (a) => 1 + 0.13 * Math.cos(2 * a) - 0.05 * Math.cos(a),
+    profile: (a) => 1 + 0.10 * Math.cos(2 * a) - 0.04 * Math.cos(a),
   });
   return sweep(rings, { sides: 18, capEnd: false });
+}
+
+/**
+ * The metal cuff clamped around each horn. Its own part so the horn shader can pick
+ * it out by region and shade it as tarnished metal rather than keratin.
+ */
+export function buildHornCuff(side, field) {
+  const full = hornRings(side, field);
+  const a = Math.round(HORN_STEPS * 0.33), b = Math.round(HORN_STEPS * 0.44);
+  const rings = full.slice(a, b + 1).map((ring, i, arr) => {
+    const u = i / (arr.length - 1);
+    // barrelled slightly, so it reads as a band clamped on rather than a swelling
+    return { p: ring.p, r: ring.r * (1.30 + 0.07 * Math.sin(u * Math.PI)) };
+  });
+  return sweep(rings, { sides: 18 });
 }
 
 /**
@@ -52,13 +83,15 @@ function seat(field, p, dir, inset = 0.008) {
 /** Cream crown spikes fanned across the top-rear of the skull. */
 export function buildCrownSpikes(field) {
   const out = [];
+  // A low crest, not a crown. In the reference these are modest nubs behind the
+  // brow; at the previous size they competed with the horns and read as antlers.
   const defs = [
-    [-0.0375, 1.7445, -0.022, 0.038, 0.0102],
-    [-0.0135, 1.7515, -0.028, 0.050, 0.0118],
-    [0.0135, 1.7515, -0.028, 0.050, 0.0118],
-    [0.0375, 1.7445, -0.022, 0.038, 0.0102],
-    [-0.0245, 1.7285, -0.070, 0.034, 0.0092],
-    [0.0245, 1.7285, -0.070, 0.034, 0.0092],
+    [-0.0345, 1.7465, -0.026, 0.0225, 0.0072],
+    [-0.0115, 1.7525, -0.032, 0.0285, 0.0082],
+    [0.0115, 1.7525, -0.032, 0.0285, 0.0082],
+    [0.0345, 1.7465, -0.026, 0.0225, 0.0072],
+    [-0.0225, 1.7295, -0.072, 0.0195, 0.0064],
+    [0.0225, 1.7295, -0.072, 0.0195, 0.0064],
   ];
   for (const [x, y, z, len, r] of defs) {
     const dir = [x * 5.5, 0.86, -0.5];
@@ -69,25 +102,38 @@ export function buildCrownSpikes(field) {
   return out;
 }
 
-/** Small spikes along the jaw line, cheek and the back of the neck. */
+/** Small spikes along the jaw line, cheek, brow and the back of the neck. */
 export function buildJawSpikes(field) {
   const out = [];
   for (const s of [1, -1]) {
+    // A continuous row running the length of the jaw. The references show four
+    // clearly separated spikes a side, angled out and down so they break the
+    // silhouette from the front as well as in profile.
     const jaw = [
-      [s * 0.0475, 1.6005, 0.044, 0.040, 0.0078],
-      [s * 0.0415, 1.5975, 0.084, 0.034, 0.0068],
-      [s * 0.0335, 1.5955, 0.120, 0.028, 0.0056],
+      [s * 0.0505, 1.6055, 0.020, 0.0335, 0.0092],
+      [s * 0.0475, 1.6005, 0.062, 0.0305, 0.0084],
+      [s * 0.0420, 1.5975, 0.102, 0.0265, 0.0074],
+      [s * 0.0345, 1.5960, 0.138, 0.0210, 0.0060],
     ];
     for (const [x, y, z, len, r] of jaw) {
-      const dir = [s * 0.42, -0.62, -0.66];
+      const dir = [s * 0.50, -0.72, -0.48];
       out.push(spike(seat(field, [x, y, z], dir, 0.004), dir, len, r, { taper: 0.7, sides: 8, steps: 6 }));
     }
     // cheek / jaw-hinge spikes
     for (const [p, dir, len, r] of [
-      [[s * 0.0685, 1.6435, -0.016], [s * 0.62, -0.1, -0.78], 0.023, 0.0084],
-      [[s * 0.0645, 1.6165, 0.008], [s * 0.6, -0.4, -0.7], 0.019, 0.0070],
+      [[s * 0.0685, 1.6435, -0.016], [s * 0.62, -0.1, -0.78], 0.026, 0.0088],
+      [[s * 0.0645, 1.6165, 0.008], [s * 0.6, -0.4, -0.7], 0.022, 0.0074],
     ]) {
       out.push(spike(seat(field, p, dir), dir, len, r, { taper: 0.7, sides: 8, steps: 6 }));
+    }
+    // brow scutes: three flat claw-like plates lying back along the brow ridge,
+    // one of the most recognisable markings on the reference face
+    for (const [p, dir, len, r] of [
+      [[s * 0.0330, 1.7305, 0.0460], [s * 0.26, 0.34, 0.90], 0.030, 0.0055],
+      [[s * 0.0480, 1.7285, 0.0390], [s * 0.48, 0.30, 0.82], 0.027, 0.0051],
+      [[s * 0.0610, 1.7220, 0.0285], [s * 0.70, 0.26, 0.66], 0.023, 0.0046],
+    ]) {
+      out.push(spike(seat(field, p, dir, 0.003), dir, len, r, { taper: 0.85, sides: 8, steps: 6 }));
     }
   }
   return out;

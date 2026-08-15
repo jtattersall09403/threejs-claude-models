@@ -147,7 +147,10 @@ const SKIN_FRAG = /* glsl */`
   // --- masks -------------------------------------------------------------
   float ventral = ss(0.05, 0.62, dot(Nr, normalize(vec3(0.0, -0.80, 0.60))));
   ventral = max(ventral, ss(0.15, -0.5, Nr.y) * ss(1.70, 1.58, H.y));
-  ventral *= 1.0 - 0.55 * ss(1.58, 1.65, H.y);   // not on the muzzle itself
+  // The reference face is one uniform dark olive from brow to chin — it has NO pale
+  // belly tone. Kill ventral outright above the jaw line rather than merely damping
+  // it, or the lower muzzle washes out to a light yellow-green.
+  ventral *= 1.0 - 0.94 * ss(1.545, 1.600, H.y);
 
   // armoured skull cap: top of the braincase, wrapping down over the temples
   // covers the whole cranium from the brow back, wrapping down behind the eyes —
@@ -161,9 +164,11 @@ const SKIN_FRAG = /* glsl */`
   float eyeD = length((J - vec3(EYE_X, EYE_Y + 0.004, EYE_Z + 0.018)) * vec3(0.60, 1.05, 0.46));
   float socket = ss(0.132, 0.048, eyeD) * ss(1.628, 1.650, H.y);
 
-  // maroon plate over the brow ridges and between the eyes
-  float browD = length((J - vec3(0.038, 1.7145, 0.040)) * vec3(0.72, 2.3, 0.95));
-  float brow = ss(0.082, 0.016, browD) * ss(-0.55, 0.10, Nr.y) * step(1.632, H.y);
+  // maroon plate over the brow ridges and between the eyes. This is a NARROW band
+  // just above the eyes in the reference; at its old extent it flooded the whole
+  // cranium and the skull read red-brown instead of near-black olive.
+  float browD = length((J - vec3(0.040, 1.7175, 0.046)) * vec3(0.62, 3.6, 1.35));
+  float brow = ss(0.070, 0.014, browD) * ss(-0.55, 0.10, Nr.y) * step(1.646, H.y);
 
   // dorsal scute ridge down the tail — a plain taper reads as a rubber tube
   float tailZone = ss(-0.10, -0.16, P.z) * ss(1.02, 0.94, P.y);
@@ -182,17 +187,17 @@ const SKIN_FRAG = /* glsl */`
 
   vec3 dorsal   = vec3(0.0275, 0.0355, 0.0185);
   vec3 dorsal2  = vec3(0.0068, 0.0098, 0.0056);
-  vec3 warmOl   = vec3(0.0380, 0.0405, 0.0225);
-  vec3 belly    = vec3(0.0395, 0.0415, 0.0248);
-  vec3 plate    = vec3(0.0046, 0.0048, 0.0052);
-  vec3 maroon   = vec3(0.0560, 0.0148, 0.0110);
+  vec3 warmOl   = vec3(0.0316, 0.0348, 0.0198);
+  vec3 belly    = vec3(0.0292, 0.0318, 0.0206);
+  vec3 plate    = vec3(0.0062, 0.0068, 0.0048);   // dark OLIVE-black, not blue-black
+  vec3 maroon   = vec3(0.0322, 0.0092, 0.0076);
   vec3 boneCol  = vec3(0.088, 0.078, 0.055);
 
   vec3 col = mix(dorsal2, dorsal, ss(0.30, 0.72, mottle * 0.6 + blotch * 0.7));
   col = mix(col, warmOl, ss(0.45, 0.88, blotch));
   col = mix(col, col * 0.46, ss(0.42, 0.72, macro) * 0.55);
   col = mix(col, belly, ventral * 0.66);
-  col = mix(col, belly * vec3(1.30, 1.14, 0.84), bandZone * bands * 0.95);
+  col = mix(col, belly * vec3(1.06, 1.00, 0.80), bandZone * bands * 0.55);
   col = mix(col, mix(dorsal2, plate, 0.5), tailTop * (0.35 + 0.5 * tailScute));
   col = mix(col, plate, cap * 0.97);
   col = mix(col, plate * vec3(1.15, 1.20, 1.55), socket * 0.98);
@@ -203,15 +208,15 @@ const SKIN_FRAG = /* glsl */`
 
   // dark closed lip line along the mouth crease
   float lipY = LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE;
-  float lip = ss(0.0105, 0.0028, abs(H.y - lipY))
-            * ss(0.192, 0.178, H.z) * ss(0.016, 0.040, H.z);
+  float lip = ss(0.0135, 0.0035, abs(H.y - lipY))
+            * ss(0.198, 0.186, H.z) * ss(0.006, 0.028, H.z);
   col = mix(col, vec3(0.0032, 0.0028, 0.0026), lip * 0.99);
 
   // crevices between scales go dark
   col *= mix(0.42, 1.06, ss(0.02, 0.55, h));
   // cream mortar lines between the cranial plates — in the reference the gaps are
   // LIGHTER than the plates, the opposite of a generic crevice darkening
-  col = mix(col, boneCol * 0.42, crownZone * (1.0 - ss(0.06, 0.30, h)) * 0.55);
+  col = mix(col, boneCol * 0.30, crownZone * (1.0 - ss(0.06, 0.30, h)) * 0.38);
 
   diffuseColor.rgb = col;
   float rough = mix(0.88, 0.60, ss(0.2, 0.8, h));
@@ -247,17 +252,21 @@ const HORN_FRAG = /* glsl */`
   vec3 col = mix(bone, tip, ss(0.45, 1.0, t));
   // dark root where the horn leaves the hide
   col = mix(col, dark, ss(0.19, 0.02, t));
-  // banded ring on the big horns only
-  // t < ~0.2 is inside the skull (the root is seated below the surface), so the
-  // band has to sit further out to be visible at all
-  float ring = step(0.5, vRegion) * ss(0.075, 0.038, abs(t - 0.30));
-  col = mix(col, dark * 0.42, ring * 0.99);
 
   float grime = fbm(vRest * 60.0);
   col *= 0.80 + 0.34 * grime;
   col *= mix(0.62, 1.05, ss(0.1, 0.7, h));
-  diffuseColor.rgb = col;
   gRoughOut = clamp(0.48 + (1.0 - h) * 0.28 + grime * 0.12, 0.3, 0.95);
+
+  // region 2 is the metal cuff: tarnished dark bronze, and actually metallic, so it
+  // catches the rim lights differently from the keratin it is clamped to
+  if (vRegion > 1.5) {
+    vec3 metal = vec3(0.126, 0.103, 0.071);
+    col = metal * (0.62 + 0.52 * grime) * mix(0.70, 1.10, ss(0.15, 0.8, h));
+    gRoughOut = clamp(0.38 + grime * 0.26, 0.24, 0.78);
+    gMetalOut = 0.92;
+  }
+  diffuseColor.rgb = col;
 `;
 
 const EYE_FRAG = /* glsl */`
@@ -269,8 +278,10 @@ const EYE_FRAG = /* glsl */`
   float x = dot(d, rt), y = dot(d, up);
   float r = length(vec2(x, y));
 
-  vec3 amber = vec3(0.600, 0.500, 0.110);
-  vec3 amberHot = vec3(0.950, 0.900, 0.440);
+  // Deep amber-orange, not the near-white yellow it was: in the references the eye
+  // is a dark jewel set in a black socket, and it must not out-glow the horns.
+  vec3 amber = vec3(0.420, 0.276, 0.052);
+  vec3 amberHot = vec3(0.760, 0.612, 0.186);
   float fibers = fbm(vec3(atan(y, x) * 5.0, r * 26.0, 0.0));
   vec3 iris = mix(amber, amberHot, fibers * 0.85);
   iris *= 0.86 + 0.42 * ss(0.05, 0.55, r);
@@ -334,6 +345,7 @@ function wrap(frag) {
   return `
   vec3 gNormal = vec3(0.0, 0.0, 1.0);
   float gRoughOut = -1.0;
+  float gMetalOut = -1.0;
   vec3 gEmissive = vec3(-1.0);
   {
     ${frag}
@@ -348,6 +360,8 @@ function finishRoughness(material) {
     shader.fragmentShader = shader.fragmentShader
       .replace('#include <roughnessmap_fragment>',
         `#include <roughnessmap_fragment>\n  if (gRoughOut >= 0.0) roughnessFactor = gRoughOut;`)
+      .replace('#include <metalnessmap_fragment>',
+        `#include <metalnessmap_fragment>\n  if (gMetalOut >= 0.0) metalnessFactor = gMetalOut;`)
       .replace('#include <emissivemap_fragment>',
         `#include <emissivemap_fragment>\n  if (gEmissive.r >= 0.0) totalEmissiveRadiance *= gEmissive;`);
   };
@@ -374,7 +388,7 @@ export function createMaterials() {
 
   const eye = mk('argonianEye', {
     roughness: 0.30, metalness: 0.0,
-    emissive: new THREE.Color(0x8a7a24), emissiveIntensity: 0.95,
+    emissive: new THREE.Color(0x8a7a24), emissiveIntensity: 0.52,
   }, EYE_FRAG, { uDetail: { value: scale } }, false);
 
   const clothMat = (name, base, rough, weave, tex) => mk(name, { roughness: rough }, CLOTH_FRAG, {

@@ -9,7 +9,8 @@ import {
   buildBodyField, buildHeadField, transformHeadField, BODY_BOUNDS, HEAD_BOUNDS, HEAD_XF,
 } from './parts/anatomy.js';
 import {
-  buildHorn, buildCrownSpikes, buildJawSpikes, buildTeeth, buildFingers, buildEyes,
+  buildHorn, buildHornCuff, buildCrownSpikes, buildJawSpikes, buildTeeth, buildFingers,
+  buildEyes,
 } from './parts/features.js';
 import {
   clothingFields, buildStrap, buildBelt, buildWristWraps, buildMedallion,
@@ -98,8 +99,16 @@ export function buildArgonian(opts = {}) {
   const seatField = buildHeadField();
   const body = smoothPositions(bakeField(bodyField, BODY_BOUNDS, 0.0062), 2);
   log('baking head');
-  const headParts = [buildHorn(1, seatField), buildHorn(-1, seatField),
-                     ...buildCrownSpikes(seatField), ...buildJawSpikes(seatField)];
+  // region: 0 = plain keratin, 1 = the big horns (shader draws their ring banding),
+  // 2 = the metal cuffs
+  const headParts = [
+    { geom: buildHorn(1, seatField), region: 1 },
+    { geom: buildHorn(-1, seatField), region: 1 },
+    { geom: buildHornCuff(1, seatField), region: 2 },
+    { geom: buildHornCuff(-1, seatField), region: 2 },
+    ...buildCrownSpikes(seatField).map((geom) => ({ geom, region: 0 })),
+    ...buildJawSpikes(seatField).map((geom) => ({ geom, region: 0 })),
+  ];
   const headField = transformHeadField(seatField);
   const head = smoothPositions(bakeField(headField, HEAD_BOUNDS, 0.0031), 1);
 
@@ -115,10 +124,10 @@ export function buildArgonian(opts = {}) {
   log('horns and spikes');
   const toHead = (p) => scalePartAbout(p, HEAD_XF.scale, HEAD_XF.pivot, HEAD_XF.offset);
   const hornB = new MeshBuilder();
-  headParts.forEach((part, i) => {
-    const q = toHead(part);
-    hornB.add(q, skinPart(q), i < 2 ? 1 : 0);  // region 1 => banded ring on the horns
-  });
+  for (const { geom, region } of headParts) {
+    const q = toHead(geom);
+    hornB.add(q, skinPart(q), region);
+  }
   for (const f of buildFingers(rig)) {
     if (f.region === 'horn') hornB.add(f.geom, skinPart(f.geom), 0);
   }

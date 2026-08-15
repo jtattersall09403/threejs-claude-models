@@ -133,8 +133,10 @@ export function buildHeadField() {
   }
 
   // ---- throat / neck (overlaps the body bake) ------------------------------------
-  f.add(ellipsoid([0, 1.5955, 0.05], [0.062, 0.045, 0.058], { k: 0.05 }));
-  f.add(capsule([0, 1.462, -0.012], [0, 1.578, 0.012], 0.072, 0.064, { k: 0.05 }));
+  // Kept narrower than the jaw. When the neck matched the skull for width the head
+  // and neck fused into one vertical box and the jaw line vanished.
+  f.add(ellipsoid([0, 1.5955, 0.046], [0.055, 0.042, 0.053], { k: 0.05 }));
+  f.add(capsule([0, 1.462, -0.012], [0, 1.578, 0.012], 0.070, 0.056, { k: 0.05 }));
 
   // ---- cuts ------------------------------------------------------------------
   for (const s of [1, -1]) {
@@ -149,9 +151,9 @@ export function buildHeadField() {
   // mouth crease — rises toward the jaw hinge like a real reptile jaw line
   f.sub(creaseSlot((z) => LIP.y0 + (LIP.z0 - z) * LIP.slope, 0.0024, [-0.005, 0.186], 0.058,
     { k: 0.0045, yMin: 1.56, yMax: 1.68 }));
-  // nostrils
+  // nostrils — at the old size they were below the bake resolution and invisible
   for (const s of [1, -1]) {
-    f.sub(ellipsoid([s * 0.0092, 1.6640, 0.1885], [0.0042, 0.0054, 0.0090], { k: 0.0035 }));
+    f.sub(ellipsoid([s * 0.0105, 1.6635, 0.1875], [0.0056, 0.0070, 0.0118], { k: 0.0035 }));
   }
   // ear depression
   for (const s of [1, -1]) {
