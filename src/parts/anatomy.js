@@ -14,7 +14,7 @@ import { Field, capsule, ellipsoid, roundBox, creaseSlot } from '../core/sdf.js'
 
 export const EYE = {
   c: [0.0468, 1.6975, 0.0705],   // mirrored on x
-  r: 0.0180,
+  r: 0.0152,
   gaze: [0.16, 0.0, 0.987],      // outward/forward gaze axis for the left(+x) eye
 };
 
@@ -158,7 +158,7 @@ export function buildHeadField() {
         // A LENS-shaped cut, not a round crater: the skin left above and below forms
     // the upper and lower lids, so the eyeball is clipped the way a real eye is.
     f.sub(ellipsoid([s * EYE.c[0], EYE.c[1] + 0.0015, EYE.c[2] + 0.008],
-      [0.0255, 0.0175, 0.029], { k: 0.006 }));
+      [0.0238, 0.0152, 0.0272], { k: 0.006 }));
     // a lid rim above and below, so the opening reads as lidded rather than as a crater
     f.add(ellipsoid([s * 0.0490, 1.7150, 0.0620], [0.0270, 0.0070, 0.0245], { k: 0.007 }));
     f.add(ellipsoid([s * 0.0482, 1.6800, 0.0630], [0.0250, 0.0058, 0.0225], { k: 0.007 }));

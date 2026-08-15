@@ -215,10 +215,13 @@ const SKIN_FRAG = /* glsl */`
   float blotch = fbm(P * 5.6 + 11.0);
   float macro  = fbm(P * 1.45 + 31.0);   // large irregular blotching
 
-  vec3 dorsal   = vec3(0.0275, 0.0355, 0.0185);
-  vec3 dorsal2  = vec3(0.0068, 0.0098, 0.0056);
-  vec3 warmOl   = vec3(0.0316, 0.0348, 0.0198);
-  vec3 belly    = vec3(0.0292, 0.0318, 0.0206);
+  // Darker and less green-dominant. The reference hide is a DESATURATED olive: at a
+  // green/red ratio of 1.29 the muzzle read as a bright leaf green next to the
+  // oxblood brow band, which is the upper/lower face split that kept reappearing.
+  vec3 dorsal   = vec3(0.0224, 0.0256, 0.0162);
+  vec3 dorsal2  = vec3(0.0062, 0.0080, 0.0052);
+  vec3 warmOl   = vec3(0.0252, 0.0268, 0.0176);
+  vec3 belly    = vec3(0.0242, 0.0256, 0.0180);
   vec3 plate    = vec3(0.0062, 0.0068, 0.0048);   // dark OLIVE-black, not blue-black
   vec3 maroon   = vec3(0.0322, 0.0092, 0.0076);
   vec3 boneCol  = vec3(0.088, 0.078, 0.055);
@@ -230,7 +233,7 @@ const SKIN_FRAG = /* glsl */`
   // panel of green; the reference muzzle is mottled dark-on-dark, with the top of
   // the snout markedly darker than the flanks.
   float snoutTop = ss(1.630, 1.676, H.y) * ss(0.020, 0.090, H.z) * ss(0.20, 0.78, Nr.y);
-  col = mix(col, col * 0.70, headMask * snoutTop * 0.62);
+  col = mix(col, col * 0.76, headMask * snoutTop * 0.35);
   col = mix(col, col * mix(0.70, 1.16, ss(0.34, 0.70, fbm(P * 8.5 + 61.0))), headMask * 0.55);
   col = mix(col, belly, ventral * 0.66);
   col = mix(col, belly * vec3(1.06, 1.00, 0.80), bandZone * bands * 0.55);
@@ -241,6 +244,12 @@ const SKIN_FRAG = /* glsl */`
   // three cream claw-mark streaks across the maroon brow band
   float streak = ss(0.72, 0.97, abs(sin((J.x - 0.010) * 150.0)));
   col = mix(col, boneCol * 0.72, brow * streak * ss(0.014, 0.048, abs(J.x)) * 0.85);
+
+  // The face as a whole, minus the already-near-black skull cap. The muzzle flanks
+  // stayed a light green after the chin was fixed; in the reference the entire head
+  // is a dark, fairly desaturated olive with the crown darker still.
+  float faceZone = headMask * (1.0 - cap) * ss(1.556, 1.598, H.y);
+  col = mix(col, col * vec3(0.82, 0.78, 0.82), faceZone * 0.55);
 
   // Rust-red hands. In the reference the hands are markedly warmer than the green
   // forearms — one of the few strong hue breaks anywhere on the character, and its
@@ -363,7 +372,7 @@ const EYE_FRAG = /* glsl */`
   vec3 iris = mix(amber, amberHot, fibers * 0.85);
   iris *= 0.86 + 0.42 * ss(0.05, 0.55, r);
 
-  vec3 col = mix(iris, vec3(0.009, 0.007, 0.005), ss(0.70, 0.84, r));
+  vec3 col = mix(iris, vec3(0.008, 0.006, 0.005), ss(0.62, 0.78, r));
   // vertical slit pupil
   float slit = length(vec2(x / 0.150, y / 0.92));
   col = mix(vec3(0.004, 0.0035, 0.003), col, ss(0.92, 1.02, slit));
@@ -378,7 +387,7 @@ const EYE_FRAG = /* glsl */`
 
 const CLOTH_FRAG = /* glsl */`
   vec3 Nr = normalize(vRestN);
-  vec4 det = triDetail(vRest, Nr, uWeave, 1.6);
+  vec4 det = triDetail(vRest, Nr, uWeave, 1.1);
   gNormal = det.xyz;
   float h = det.w;
   float dirt = fbm(vRest * 7.5);
@@ -481,7 +490,7 @@ export function createMaterials() {
 
   const eye = mk('argonianEye', {
     roughness: 0.30, metalness: 0.0,
-    emissive: new THREE.Color(0x8a7a24), emissiveIntensity: 0.70,
+    emissive: new THREE.Color(0x8a7a24), emissiveIntensity: 0.42,
   }, EYE_FRAG, { uDetail: { value: scale } }, false);
 
   const clothMat = (name, base, rough, weave, tex) => mk(name, { roughness: rough }, CLOTH_FRAG, {
