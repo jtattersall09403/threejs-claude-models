@@ -165,8 +165,10 @@ export function clothingFields(body) {
     ]);
     const f = garment(body, 0.009, cover, bounds, 0.012);
     for (const s of [1, -1]) {
-      f.add(roundBox([s * 0.090, 0.017, 0.022], [0.048, 0.011, 0.109], 0.009, { k: 0.007 })); // sole
-      f.add(roundBox([s * 0.090, 0.028, -0.054], [0.042, 0.019, 0.030], 0.008, { k: 0.007 })); // heel
+      // The sole has to be WIDER than the shoe upper or it sits inside the offset
+      // surface and contributes nothing: the upper reaches ~0.069 half-width here.
+      f.add(roundBox([s * 0.090, 0.014, 0.024], [0.066, 0.009, 0.112], 0.008, { k: 0.005 })); // sole
+      f.add(roundBox([s * 0.090, 0.026, -0.056], [0.058, 0.020, 0.034], 0.008, { k: 0.005 })); // heel
       f.add(ellipsoid([s * 0.090, 0.122, -0.026], [0.05, 0.028, 0.056], { k: 0.03 }));     // ankle collar
     }
     out.push({ field: f, bounds, cell: 0.0045, region: REGION.LEATHER });
