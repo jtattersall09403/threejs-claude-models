@@ -197,8 +197,8 @@ const SKIN_FRAG = /* glsl */`
   // maroon plate over the brow ridges and between the eyes. This is a NARROW band
   // just above the eyes in the reference; at its old extent it flooded the whole
   // cranium and the skull read red-brown instead of near-black olive.
-  float browD = length((J - vec3(0.038, 1.7235, 0.044)) * vec3(0.60, 3.1, 1.25));
-  float brow = ss(0.076, 0.016, browD) * ss(-0.55, 0.10, Nr.y) * step(1.652, H.y);
+  float browD = length((J - vec3(0.038, 1.7225, 0.042)) * vec3(0.58, 4.6, 1.30));
+  float brow = ss(0.060, 0.014, browD) * ss(-0.55, 0.10, Nr.y) * step(1.656, H.y);
 
   // dorsal scute ridge down the tail — a plain taper reads as a rubber tube
   float tailZone = ss(-0.10, -0.16, P.z) * ss(1.02, 0.94, P.y);
