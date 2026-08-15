@@ -58,9 +58,9 @@ export function clothingFields(body) {
     // coverage only bounds the EXTENT of the garment; it must be generously wider
     // than the offset body surface or the intersection lands inside the skin
     const cover = coverage([
-      roundBox([0, 1.352, 0.005], [0.30, 0.148, 0.28], 0.02),
+      roundBox([0, 1.398, 0.005], [0.30, 0.108, 0.28], 0.02),
     ]);
-    const f = garment(body, 0.010, cover, bounds, 0.014, folds(0.0075, 18));
+    const f = garment(body, 0.010, cover, bounds, 0.020, folds(0.0032, 22));
     // a cowl wrapped at the throat, so the collar is cloth rather than a hole
     f.add(capsule([0, 1.436, -0.006], [0, 1.492, 0.006], 0.101, 0.094, { k: 0.024 }));
     f.sub(capsule([0, 1.43, -0.016], [0, 1.62, 0.012], 0.082, 0.080, { k: 0.018 })); // neck hole
@@ -136,20 +136,21 @@ export function clothingFields(body) {
 /** Braided strap from the left shoulder across the chest to the right hip. */
 export function buildStrap() {
   const pts = [
-    [-0.164, 1.440, -0.060],
-    [-0.194, 1.414, 0.052],
-    [-0.114, 1.324, 0.174],
-    [0.0, 1.223, 0.193],
-    [0.114, 1.113, 0.171],
-    [0.187, 1.007, 0.070],
-    [0.202, 0.963, -0.039],
+    [-0.160, 1.438, -0.058],
+    [-0.190, 1.412, 0.050],
+    [-0.111, 1.322, 0.168],
+    [0.0, 1.222, 0.186],
+    [0.111, 1.112, 0.165],
+    [0.183, 1.006, 0.068],
+    [0.198, 0.963, -0.038],
   ];
-  const rings = curveRings(pts, () => [0.023, 0.0085], 120, {
+  const rings = curveRings(pts, () => [0.019, 0.0072], 150, {
     tension: 0.4,
-    profile: (a, t) => 1 + 0.16 * Math.sin(a * 2.0 + t * 86.0),  // braided relief
+    profile: (a, t) => 1 + 0.085 * Math.sin(a * 3.0 + t * 52.0)
+                     + 0.045 * Math.sin(a * 6.0 - t * 84.0),  // braided relief
   });
   return sweep(rings, {
-    sides: 24,
+    sides: 28,
     // width across the chest, thickness along the outward radial — otherwise the
     // parallel-transport frame twists the ribbon into a rope
     frameFn: (p, tan) => {
@@ -215,7 +216,7 @@ export function buildWristWraps(rig) {
     // overlaps the sleeve cuff above and the bare arm below, so no black slot shows
     const rings = curveRings([at(0.700), at(0.80), at(0.90), at(0.965)], (t) =>
       0.0505 - 0.011 * t - 0.012 * Math.max(0, Math.abs(t - 0.5) * 2 - 0.80)
-      + 0.0022 * Math.sin(t * 22.0), 24, { tension: 0.4 });
+      + 0.0011 * Math.sin(t * 13.0), 24, { tension: 0.4 });
     parts.push(sweep(rings, { sides: 20 }));
   }
   return parts;
