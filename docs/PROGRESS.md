@@ -4,67 +4,67 @@
 https://claude.ai/code/artifact/14637ddd-070e-40ea-926e-df6f773c0d92
 
 **Branch:** `claude/argonian-threejs-character-j1wpzp` · **Rule 0: commit + push after
-every step, the container restarts without warning.**
+every step.** · **Rule 1: the only exit is a critic PASS.**
 
 ---
 
 ## Where the loop is
 
-**Critic round 2 is in flight.** Round 1 returned FAIL with 14 defects; iterations 5
-and 6 worked all 14. When round 2's report lands, work its list and hand back again.
-**The only exit from this loop is VERDICT: PASS** (CLAUDE.md rule 1).
+**Critic round 3 returned FAIL** (report text is in the git log / the round-3 agent
+result; evidence PNGs are in `critic/latest/`). Iteration 8 worked most of its list.
+Next: keep running the INNER loop (`npm run build && npm run capture && npm run compare`,
+then LOOK) until you believe the bar is met, then hand off for critic round 4.
 
-Note: the `argonian-critic` subagent type is registered at session start. If it is not
-available in a fresh session, launch a `general-purpose` agent and tell it to read and
-follow `.claude/agents/argonian-critic.md`.
-
-**Do not edit `src/` while a critic agent is running** — it builds from source and a
-half-applied edit will corrupt its render.
+**Read `CLAUDE.md` "The loop" first — there are TWO loops and the critic is the audit,
+not the feedback loop.** Several inner-loop iterations per critic round is correct.
 
 ## State of the build
 
-Working: geometry pipeline, rig, auto-skinning, garments, materials, capture harness,
-winding audit. `npm run build && npm run capture` is green. ~545k tris, ~4.7 s build.
+~635k tris, ~11 s build, ~3 min capture. `npm run capture` is green (winding audit,
+framing assert). `npm run compare` builds reference/render side-by-side sheets — this
+is by far the most useful diagnostic in the project; use it every iteration.
+
+## What round 3 measured (the numbers to converge)
+
+Normalised to muzzle-top so exposure cancels. **Reference: every head point except the
+crown spike is DARKER than the muzzle top (0.14–0.86).** Before iteration 8 ours were
+mostly brighter (0.60–1.90) — the value hierarchy was inverted. Also: render median was
++0.85 stop hot and 1.6× oversaturated; reference belt saturation is 0.07 (near-grey),
+ours was 0.71; reference head hues run 41–71°, ours never left 19–37°.
+
+Iteration 8 addressed all of that. **Re-measure before assuming it converged.**
 
 ## Next actions
 
-Work the round-2 report when it lands. My own standing observations from the
-iteration-6 captures, for cross-reference:
-
-- **Eyes still read as dark beads**, not the reference's bright amber focal point.
-  The aperture and iris coverage are now correct; the problem is that the brow shadows
-  them. Likely fix: raise the eye material's `emissiveIntensity` well above 0.42 so
-  they self-illuminate in the dim key, and brighten the amber.
-- The mouth line is too thick and too black — it reads as a drawn-on stripe.
-- Nostrils sit on the side of the snout rather than the top of the tip.
-- The near-black skull plate has receded again relative to the maroon brow band.
-- The snout tip is squared off a little too abruptly.
-
-### Round 1 defects (all worked in iterations 5–6)
-
-1. **Defect 9 — hands.** Palm is a flat rectangular paddle with four straight parallel
-   rods; fingers need per-finger length variation and real curl in the `curveRings`
-   control points (`parts/features.js buildFingers`). The **detached floating thumb**
-   the critic photographed is the thumb tip poking through the tunic skirt while the
-   palm sits inside it — iteration 5 widened the arms, VERIFY it is actually gone
-   before closing this. Wrist wraps (`cloth7`) are an open zero-thickness shell with a
-   negative signed volume; give them real thickness.
-2. **Defect 8 — clothing has no fabric.** Fold amplitudes are near the voxel size and
-   get smoothed away: tunic `folds(0.0082)` against `cell: 0.0055`. Raise to
-   ~`folds(0.020, 9)` and drop the tunic cell to ~0.004. Undershirt coverage box is
-   too tall — halve its height so it only shows at the collar. Separate the values of
-   tunic / trousers / belt, which currently merge into one brown mass. Add seams.
-3. **Defect 12 — lighting.** Below the belt is crushed to black while the throat is
-   the brightest thing on the model. Widen or re-place the key spot, lift
-   `floorBounce`, raise `toneMappingExposure` ~0.95 → 1.15, and bring `rimWarm` round
-   to ~45° off back-left and above head height so it catches the horns and shoulders.
-4. **Defect 13/14 — tail, legs, feet** (plausibility only, not in the references).
-   Tail needs an S-curve away from the body and a dorsal scute ridge. Legs need a knee
-   break; shoes need a distinct sole; close the gap between trouser hem and shoe.
-5. Re-check defect 5: the maroon brow now carries cream claw streaks — confirm they
-   read at normal viewing distance and are not just noise.
+1. **Horns are still too long in profile** — the reference tip sits about over the
+   occiput; ours projects well past it. Shorten again in `parts/features.js buildHorn()`.
+2. **Clothing is still the weakest area** and round 3 barely moved it: no collar
+   structure, no shoulder yoke seam, no front opening slot, no cuffs. See round 3
+   defect 4 for the concrete plan.
+3. **The sash floats off the body** — round 3 defect 5. It must be projected onto the
+   built tunic surface with `raySurface`, not authored in world space.
+4. Hands: fingers still too uniform; claws need seating 1–2 mm inside the fingertip.
+5. Tail/feet/legs — plausibility only, lowest priority.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
+
+### Iteration 8 — critic round 3 + a proper inner loop
+- Added **`npm run compare`** (reference/render side-by-side sheets). Looking at these
+  immediately exposed things single renders had hidden for several iterations: the head
+  was a wide box where the reference is a narrow wedge, the muzzle was ~75% of head
+  width instead of ~50%, and the hide was sandy gold instead of dark grey-olive.
+- **Fixed the inverted value hierarchy.** Exposure down ~0.85 stop, rim cooled and
+  halved (it was the source of the orange cast), cloth desaturated toward neutral,
+  green kept in the hide, maroon brow cut from 3.5–5.5× too bright.
+- **Cranial plate gaps made LIGHTER, not darker** — the reference has cream mortar
+  lines between plates; a generic crevice darkening is exactly backwards there.
+- Enlarged the glossy blue-black orbital/temple mass; domed the occiput (it was a flat
+  vertical wall); tapered the snout in height as well as width; tapered the mouth
+  crease to nothing at both ends instead of leaving hard rectangular corners.
+- Crown and jaw spikes roughly doubled with the seating inset cut to 4 mm — blend
+  inflation was swallowing half of them. Added the reference's forward-swept brow pair.
+- **Overcorrected twice and caught it in the inner loop** (too dark, orbital mass too
+  large and wet-looking, brow band vanished) — that is the loop working.
 
 ### Iteration 5 — critic round 1 fixes
 - **Eye** rebuilt: the socket is now a LENS-shaped cut (narrow in y) so the skin above
