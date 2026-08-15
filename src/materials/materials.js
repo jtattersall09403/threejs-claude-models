@@ -299,7 +299,11 @@ const SKIN_FRAG = /* glsl */`
   // Scalloped along its length: the reference mouth is broken by lip scutes, and a
   // single clean line of constant thickness reads as a painted-on dash.
   float scute = 0.72 + 0.28 * abs(sin(H.z * 118.0));
-  float lip = ss(0.0165 * scute, 0.0030, abs(H.y - lipY))
+  // THIN. debugMasks(6) showed the mask was active and correctly placed but ~33 mm
+  // wide — a uniformly dark band that broad over already-dark hide has nothing to
+  // contrast against and reads as no mouth at all. The reference mouth is a crisp
+  // line. Widening the paint was the wrong instinct three times running.
+  float lip = ss(0.0042 * scute, 0.0008, abs(H.y - lipY))
             * ss(0.168, 0.157, H.z) * ss(0.006, 0.026, H.z);
   col = mix(col, vec3(0.0016, 0.0014, 0.0013), lip * 0.99);
 
@@ -319,7 +323,7 @@ const SKIN_FRAG = /* glsl */`
   // exact opposite, so on the head it is damped hard and this runs on top of it.
   // suppressed along the mouth: the bright net was filling the crease back in
   float mortar = (1.0 - ss(0.14, 0.34, h)) * headMask * (1.0 - cap * 0.92)
-               * (1.0 - ss(0.030, 0.010, abs(H.y - (LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE))));
+               * (1.0 - ss(0.012, 0.004, abs(H.y - (LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE))));
   col = mix(col, boneCol * 0.46, mortar * 0.62);
   // darker AND warmer: the jaw was not merely bright, it was the greenest thing on
   // the head, where the reference jaw is its most neutral, most shadowed area
@@ -336,7 +340,7 @@ const SKIN_FRAG = /* glsl */`
   gRoughOut = clamp(rough + (mottle - 0.5) * 0.12, 0.28, 0.98);
 
   // uDebug: 1 = cap/brow/socket as R/G/B, 2 = ventral/bandZone/bands, 3 = rest-space
-  // normal, 4 = ventral ALONE in greyscale, 5 = head-space H.y banded every 10 mm
+  // normal, 4 = ventral ALONE, 5 = head-space H.y banded every 10 mm, 6 = lip mask
   // with a red stripe at 1.60. Set via window.argonian.debugMasks(n).
   //
   // Mode 5 is the one to reach for first: nearly every mis-placed mask in this
@@ -349,6 +353,14 @@ const SKIN_FRAG = /* glsl */`
     else if (uDebug < 2.5) dbg = vec3(ventral, bandZone, bands);
     else if (uDebug < 3.5) dbg = Nr * 0.5 + 0.5;
     else if (uDebug < 4.5) dbg = vec3(ventral);
+    else if (uDebug < 6.5) {
+      // 6 = the lip mask alone, with the lip CURVE drawn in green regardless of the
+      // mask. If the green curve is on the surface but the white mask is not, the
+      // failure is the mask's own gates, not the curve's placement.
+      float lipY6 = LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE;
+      dbg = vec3(lip);
+      dbg.g += ss(0.0015, 0.0, abs(H.y - lipY6));
+    }
     else {
       float band = fract((H.y - 1.50) * 100.0);
       dbg = vec3(step(0.5, band) * 0.7 + 0.15);
