@@ -4036,8 +4036,6 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
 
   // dorsal scute ridge down the tail \u2014 a plain taper reads as a rubber tube
   float tailZone = ss(-0.10, -0.16, P.z) * ss(1.02, 0.94, P.y);
-  // the tail was rendering a cooler blue-green than the head; bring it back in line
-  col = mix(col, col * vec3(1.16, 0.98, 0.84), ss(-0.12, -0.20, P.z) * 0.80);
   float tailTop = tailZone * ss(0.15, 0.62, Nr.y) * ss(0.030, 0.012, abs(P.x));
   float tailScute = ss(0.30, 0.85, abs(sin(P.z * 62.0 + P.y * 26.0)));
 
@@ -4109,6 +4107,11 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
   float jawEdge = ss(0.0085, 0.0018, abs(H.y - 1.6145)) * ss(-0.03, 0.02, H.z)
                 * ss(0.158, 0.134, H.z);
   col = mix(col, col * 1.55, jawEdge * 0.55);
+
+  // The tail was rendering a distinctly cooler blue-green than the head. The
+  // references never show it, so this is internal consistency only \u2014 but the two
+  // visible skin areas have to agree in hue or the tail pulls the eye.
+  col = mix(col, col * vec3(1.16, 0.98, 0.84), ss(-0.12, -0.20, P.z) * 0.80);
 
   // Rust-red hands. In the reference the hands are markedly warmer than the green
   // forearms \u2014 one of the few strong hue breaks anywhere on the character, and its
