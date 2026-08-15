@@ -110,10 +110,10 @@ export function buildJawSpikes(field) {
     // clearly separated spikes a side, angled out and down so they break the
     // silhouette from the front as well as in profile.
     const jaw = [
-      [s * 0.0385, 1.6035, 0.016, 0.0455, 0.0118],
-      [s * 0.0360, 1.5990, 0.056, 0.0415, 0.0108],
-      [s * 0.0315, 1.5955, 0.094, 0.0355, 0.0094],
-      [s * 0.0255, 1.5935, 0.128, 0.0285, 0.0077],
+      [s * 0.0385, 1.6105, 0.016, 0.0455, 0.0118],
+      [s * 0.0360, 1.6060, 0.056, 0.0415, 0.0108],
+      [s * 0.0315, 1.6025, 0.094, 0.0355, 0.0094],
+      [s * 0.0255, 1.6005, 0.128, 0.0285, 0.0077],
     ];
     for (const [x, y, z, len, r] of jaw) {
       // Lateral AND swept back, as in the references. Angled down-and-back they
@@ -125,7 +125,7 @@ export function buildJawSpikes(field) {
     // cheek / jaw-hinge spikes
     for (const [p, dir, len, r] of [
       [[s * 0.0605, 1.6395, -0.016], [s * 0.62, -0.1, -0.78], 0.026, 0.0088],
-      [[s * 0.0570, 1.6110, 0.008], [s * 0.6, -0.4, -0.7], 0.022, 0.0074],
+      [[s * 0.0570, 1.6180, 0.008], [s * 0.6, -0.4, -0.7], 0.022, 0.0074],
     ]) {
       out.push(spike(seat(field, p, dir), dir, len, r, { taper: 0.7, sides: 8, steps: 6 }));
     }

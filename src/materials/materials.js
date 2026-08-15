@@ -160,7 +160,7 @@ const SKIN_FRAG = /* glsl */`
   // the largest scales on the animal and markedly darker than the muzzle
   // the Z gate has to reach past the front of the chin (H.z ~0.168) or it closes on
   // exactly the part of the jaw that reads too pale
-  float chinZone = ss(1.620, 1.570, H.y) * ss(0.196, 0.172, H.z) * headMask;
+  float chinZone = ss(1.627, 1.577, H.y) * ss(0.196, 0.172, H.z) * headMask;
   float plateMix = clamp(sizeMix + crownZone * 0.8 + chinZone * 0.7, 0.0, 1.0);
   gNormal = normalize(mix(fine.xyz, plateD.xyz, plateMix));
   float h = mix(fine.w, plateD.w, plateMix);
@@ -266,11 +266,11 @@ const SKIN_FRAG = /* glsl */`
   // neck rather than continuing into it. NOT gated by headMask — headMask fades out
   // across 1.535..1.585, which is precisely the band this is trying to darken, so
   // multiplying by it cancels the effect exactly where it is wanted.
-  float jawShadow = ss(1.606, 1.552, H.y) * ss(1.462, 1.508, H.y) * ss(-0.05, 0.01, H.z);
+  float jawShadow = ss(1.612, 1.558, H.y) * ss(1.468, 1.514, H.y) * ss(-0.05, 0.01, H.z);
   col *= mix(1.0, 0.34, jawShadow);
   // ...and a lit edge right along the jawline itself, so the boundary reads as an
   // edge the light catches rather than only as a gradient
-  float jawEdge = ss(0.0085, 0.0018, abs(H.y - 1.6075)) * ss(-0.03, 0.02, H.z)
+  float jawEdge = ss(0.0085, 0.0018, abs(H.y - 1.6145)) * ss(-0.03, 0.02, H.z)
                 * ss(0.176, 0.150, H.z);
   col = mix(col, col * 1.55, jawEdge * 0.55);
 

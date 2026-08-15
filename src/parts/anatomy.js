@@ -40,7 +40,7 @@ export const EYE_WORLD = headPoint(EYE.c);
 
 // The mouth line. The geometry cut and the shader's lip paint MUST share this or
 // the dark line drifts off the groove and smears onto the cheek.
-export const LIP = { y0: 1.6145, z0: 0.166, slope: 0.165 };
+export const LIP = { y0: 1.6215, z0: 0.166, slope: 0.165 };
 
 export const BODY_BOUNDS = [-0.35, -0.03, -0.62, 0.35, 1.55, 0.24];
 const HEAD_BOX = [-0.15, 1.40, -0.16, 0.15, 1.82, 0.28];
@@ -110,9 +110,9 @@ export function buildHeadField() {
   const f = new Field();
 
   // ---- braincase: tall and domed, widest at the temples -----------------------
-  f.add(ellipsoid([0, 1.684, -0.010], [0.0638, 0.072, 0.101], { k: 0.055 }));
-  f.add(ellipsoid([0, 1.668, -0.052], [0.047, 0.054, 0.052], { k: 0.05 }));  // domed occiput
-  f.add(ellipsoid([0, 1.742, -0.014], [0.043, 0.023, 0.066], { k: 0.030 })); // raised crown plate
+  f.add(ellipsoid([0, 1.6905, -0.010], [0.0638, 0.072, 0.101], { k: 0.055 }));
+  f.add(ellipsoid([0, 1.6735, -0.052], [0.047, 0.054, 0.052], { k: 0.05 }));  // domed occiput
+  f.add(ellipsoid([0, 1.7505, -0.014], [0.043, 0.023, 0.066], { k: 0.030 })); // raised crown plate
 
   // ---- brow / eye ridges -------------------------------------------------------
   for (const s of [1, -1]) {
@@ -133,10 +133,10 @@ export function buildHeadField() {
   // ---- lower jaw: deep and straight, turning up at a visible hinge --------------
   // Narrower than the upper muzzle at every station, so the jaw tucks under the lip
   // instead of squaring off flush with it.
-  f.add(roundBox([0, 1.5935, 0.076], [0.0225, 0.020, 0.032], 0.014, { k: 0.046 }));
-  f.add(roundBox([0, 1.5950, 0.124], [0.0175, 0.018, 0.024], 0.0118, { k: 0.032 }));
-  f.add(roundBox([0, 1.5960, 0.158], [0.0122, 0.014, 0.017], 0.0098, { k: 0.024 }));
-  f.add(ellipsoid([0, 1.6010, 0.160], [0.016, 0.016, 0.017], { k: 0.014 }));   // chin
+  f.add(roundBox([0, 1.6005, 0.076], [0.0225, 0.020, 0.032], 0.014, { k: 0.046 }));
+  f.add(roundBox([0, 1.6020, 0.124], [0.0175, 0.018, 0.024], 0.0118, { k: 0.032 }));
+  f.add(roundBox([0, 1.6030, 0.158], [0.0122, 0.014, 0.017], 0.0098, { k: 0.024 }));
+  f.add(ellipsoid([0, 1.6080, 0.160], [0.016, 0.016, 0.017], { k: 0.014 }));   // chin
   // The cheeks are the whole reason the head reads as a box or as a snouted skull.
   // Kept narrow and swept BACK: in the reference the face steps in hard below the
   // eyes, so the muzzle — not the jaw — is what you see from the front.
@@ -154,7 +154,7 @@ export function buildHeadField() {
   // jawline: the jaw, throat and neck fused into one continuous expanse of scale,
   // which is exactly what the references do NOT show — there the jaw is a distinct
   // mass with a hard lower edge and the neck sits shadowed underneath it.
-  f.add(ellipsoid([0, 1.5520, 0.014], [0.046, 0.032, 0.044], { k: 0.018 }));
+  f.add(ellipsoid([0, 1.5590, 0.014], [0.046, 0.032, 0.044], { k: 0.018 }));
   f.add(capsule([0, 1.448, -0.014], [0, 1.532, 0.008], 0.068, 0.048, { k: 0.04 }));
 
   // ---- cuts ------------------------------------------------------------------
