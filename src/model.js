@@ -137,10 +137,12 @@ export function buildArgonian(opts = {}) {
     if (!byRegion.has(region)) byRegion.set(region, new MeshBuilder());
     byRegion.get(region).add(part, skinPart(part), region);
   };
-  for (const g of clothingFields(bodyField)) {
+  const garments = clothingFields(bodyField);
+  for (const g of garments) {
     push(g.region, smoothPositions(bakeField(g.field, g.bounds, g.cell), 2));
   }
-  push(REGION.SASH, buildStrap(bodyField));
+  const tunicField = (garments.find((g) => g.tunic) || {}).field;
+  push(REGION.SASH, buildStrap(tunicField));
   for (const p of buildBelt()) push(REGION.BELT, p);
   for (const p of buildWristWraps(rig)) push(REGION.WRAP, p);
 

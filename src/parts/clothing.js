@@ -100,7 +100,7 @@ export function clothingFields(body) {
     // rolled collar band around the opening, so the edge reads as a hem
     f.add(capsule([0, 1.408, 0.034], [0, 1.442, 0.026], 0.092, 0.090, { k: 0.018 }));
     f.sub(capsule([0, 1.39, 0.05], [0, 1.62, 0.020], 0.064, 0.092, { k: 0.020 }));
-    out.push({ field: f, bounds, cell: 0.004, region: REGION.TUNIC });
+    out.push({ field: f, bounds, cell: 0.004, region: REGION.TUNIC, tunic: true });
   }
 
   // ---- trousers ---------------------------------------------------------------
@@ -144,7 +144,7 @@ export function clothingFields(body) {
  * side it detaches and hangs in mid-air, and from the front you see its shadowed
  * underside, so it reads as a slash in the cloth rather than a strap lying on it.
  */
-export function buildStrap(body, TUNIC_OFFSET = 0.028, lift = 0.0035) {
+export function buildStrap(tunicField, lift = 0.006) {
   const raw = [
     [-0.160, 1.438, -0.058],
     [-0.190, 1.412, 0.050],
@@ -154,29 +154,35 @@ export function buildStrap(body, TUNIC_OFFSET = 0.028, lift = 0.0035) {
     [0.183, 1.006, 0.068],
     [0.198, 0.963, -0.038],
   ];
-  // ride on top of the tunic: body surface + tunic offset + half the strap thickness
+  // sit ON the coat: march out to the tunic surface, then lift by half the strap
+  // thickness so it rests on the cloth instead of hovering over it or sinking in
   const pts = raw.map((p) => {
     const outward = [p[0], (p[1] - 1.16) * 0.25, p[2]];
     const l = Math.hypot(outward[0], outward[1], outward[2]) || 1;
     const dir = [outward[0] / l, outward[1] / l, outward[2] / l];
-    const hit = body ? raySurface(body, p, dir, { start: -0.14, max: 0.16 }) : p;
-    const push = TUNIC_OFFSET + lift;
-    return [hit[0] + dir[0] * push, hit[1] + dir[1] * push, hit[2] + dir[2] * push];
+    if (!tunicField) return p;
+    const hit = raySurface(tunicField, p, dir, { start: -0.16, max: 0.14 });
+    return [hit[0] + dir[0] * lift, hit[1] + dir[1] * lift, hit[2] + dir[2] * lift];
   });
 
-  const rings = curveRings(pts, () => [0.0165, 0.0042], 150, {
+  const rings = curveRings(pts, () => [0.0115, 0.0052], 150, {
     tension: 0.4,
-    profile: (a, t) => 1 + 0.13 * Math.sin(a * 3.0 + t * 44.0)
-                     + 0.06 * Math.sin(a * 6.0 - t * 70.0),  // braided relief
+    profile: (a, t) => 1 + 0.20 * Math.sin(a * 3.0 + t * 40.0)
+                     + 0.09 * Math.sin(a * 6.0 - t * 62.0),  // braided cord relief
   });
   return sweep(rings, {
     sides: 28,
     // width across the chest, thickness along the outward radial — otherwise the
     // parallel-transport frame twists the ribbon into a rope
     frameFn: (p, tan) => {
-      const out = [p[0], 0, p[2] - 0.02];
-      const l = Math.hypot(out[0], out[2]) || 1;
-      const v = [out[0] / l, 0.12, out[2] / l];
+      // v = outward normal, ORTHOGONALISED against the tangent. Without the
+      // orthogonalisation the ring basis is sheared and the ribbon renders as a
+      // fin standing edge-on to the chest rather than a band lying flat on it.
+      let v = [p[0], (p[1] - 1.16) * 0.28, p[2] - 0.01];
+      const d = v[0] * tan[0] + v[1] * tan[1] + v[2] * tan[2];
+      v = [v[0] - tan[0] * d, v[1] - tan[1] * d, v[2] - tan[2] * d];
+      const vl = Math.hypot(v[0], v[1], v[2]) || 1;
+      v = [v[0] / vl, v[1] / vl, v[2] / vl];
       const u = [tan[1] * v[2] - tan[2] * v[1], tan[2] * v[0] - tan[0] * v[2], tan[0] * v[1] - tan[1] * v[0]];
       const ul = Math.hypot(u[0], u[1], u[2]) || 1;
       return [[u[0] / ul, u[1] / ul, u[2] / ul], v];
@@ -201,8 +207,11 @@ export function buildBelt() {
   parts.push(sweep(ring, {
     sides: 16, capStart: false, capEnd: false,
     frameFn: (p, tan) => {
-      const l = Math.hypot(p[0], p[2] - 0.004) || 1;
-      const v = [p[0] / l, 0, (p[2] - 0.004) / l];
+      let v = [p[0], 0, p[2] - 0.004];
+      const d = v[0] * tan[0] + v[1] * tan[1] + v[2] * tan[2];
+      v = [v[0] - tan[0] * d, v[1] - tan[1] * d, v[2] - tan[2] * d];
+      const vl = Math.hypot(v[0], v[1], v[2]) || 1;
+      v = [v[0] / vl, v[1] / vl, v[2] / vl];
       const u = [tan[1] * v[2] - tan[2] * v[1], tan[2] * v[0] - tan[0] * v[2], tan[0] * v[1] - tan[1] * v[0]];
       const ul = Math.hypot(u[0], u[1], u[2]) || 1;
       return [[u[0] / ul, u[1] / ul, u[2] / ul], v];
