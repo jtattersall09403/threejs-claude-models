@@ -54,13 +54,13 @@ export function clothingFields(body) {
 
   // ---- undershirt: thin, only visible at the collar and the V of the tunic ----
   {
-    const bounds = [-0.26, 1.02, -0.22, 0.26, 1.5, 0.22];
+    const bounds = [-0.26, 1.16, -0.22, 0.26, 1.5, 0.22];
     // coverage only bounds the EXTENT of the garment; it must be generously wider
     // than the offset body surface or the intersection lands inside the skin
     const cover = coverage([
-      roundBox([0, 1.252, 0.005], [0.30, 0.188, 0.28], 0.02),
+      roundBox([0, 1.328, 0.005], [0.30, 0.112, 0.28], 0.02),
     ]);
-    const f = garment(body, 0.009, cover, bounds, 0.014, folds(0.0035, 20));
+    const f = garment(body, 0.010, cover, bounds, 0.014, folds(0.0075, 18));
     f.sub(capsule([0, 1.4, -0.02], [0, 1.6, 0.014], 0.084, 0.082, { k: 0.018 })); // neck hole
     out.push({ field: f, bounds, cell: 0.0055, region: REGION.UNDERSHIRT });
   }
@@ -76,47 +76,48 @@ export function clothingFields(body) {
       capsule([-0.188, 1.40, 0], [-0.211, 1.128, -0.006], 0.15, 0.079),
       capsule([0.188, 1.40, 0], [0.211, 1.128, -0.006], 0.15, 0.079),
     ]);
-    const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0082));
+    const f = garment(body, 0.028, cover, bounds, 0.016, folds(0.019, 9));
     // the skirt hangs clear of the body, so it is added rather than offset
     f.add(capsule([0, 1.0, 0.0], [0, 0.782, -0.012], 0.15, 0.152, { k: 0.04, scale: [1, 1, 0.88] }));
-    f.add(ellipsoid([0, 0.784, -0.012], [0.154, 0.014, 0.132], { k: 0.016 }));  // hem roll
+    f.add(ellipsoid([0, 0.786, -0.012], [0.148, 0.012, 0.128], { k: 0.022 }));  // hem roll
     for (const s of [1, -1]) {
       f.add(ellipsoid([s * 0.2115, 1.052, -0.008], [0.054, 0.017, 0.054], { k: 0.015 })); // cuff
     }
     // Neckline: one tilted opening that dips at the front. Cutting a separate hole
     // for the undershirt reads as a disc stuck on the chest — don't.
-    f.sub(capsule([0, 1.372, 0.052], [0, 1.60, 0.022], 0.088, 0.10, { k: 0.034 }));
+    f.sub(capsule([0, 1.398, 0.048], [0, 1.60, 0.022], 0.068, 0.098, { k: 0.028 }));
     // rolled collar band around the opening, so the edge reads as a hem
-    f.add(capsule([0, 1.398, 0.036], [0, 1.436, 0.028], 0.104, 0.101, { k: 0.02 }));
-    f.sub(capsule([0, 1.36, 0.056], [0, 1.62, 0.020], 0.082, 0.094, { k: 0.022 }));
-    out.push({ field: f, bounds, cell: 0.0055, region: REGION.TUNIC });
+    f.add(capsule([0, 1.408, 0.034], [0, 1.442, 0.026], 0.092, 0.090, { k: 0.018 }));
+    f.sub(capsule([0, 1.39, 0.05], [0, 1.62, 0.020], 0.064, 0.092, { k: 0.020 }));
+    out.push({ field: f, bounds, cell: 0.004, region: REGION.TUNIC });
   }
 
   // ---- trousers ---------------------------------------------------------------
   {
-    const bounds = [-0.23, 0.13, -0.22, 0.23, 1.04, 0.22];
+    const bounds = [-0.23, 0.11, -0.22, 0.23, 1.04, 0.22];
     const cover = coverage([
       roundBox([0, 0.925, 0.0], [0.26, 0.078, 0.24], 0.02),
-      capsule([-0.09, 0.96, 0], [-0.1, 0.245, -0.008], 0.19, 0.078),
-      capsule([0.09, 0.96, 0], [0.1, 0.245, -0.008], 0.19, 0.078),
+      capsule([-0.09, 0.96, 0], [-0.1, 0.222, -0.008], 0.19, 0.082),
+      capsule([0.09, 0.96, 0], [0.1, 0.222, -0.008], 0.19, 0.082),
     ]);
-    const f = garment(body, 0.014, cover, bounds, 0.014, folds(0.0072, 15));
+    const f = garment(body, 0.015, cover, bounds, 0.014, folds(0.0135, 12));
     for (const s of [1, -1]) {
-      f.add(ellipsoid([s * 0.1, 0.172, -0.012], [0.052, 0.014, 0.052], { k: 0.016 })); // cuff
+      f.add(ellipsoid([s * 0.1, 0.152, -0.012], [0.055, 0.016, 0.055], { k: 0.016 })); // cuff
     }
-    out.push({ field: f, bounds, cell: 0.0055, region: REGION.TROUSERS });
+    out.push({ field: f, bounds, cell: 0.0045, region: REGION.TROUSERS });
   }
 
   // ---- shoes ------------------------------------------------------------------
   {
     const bounds = [-0.19, -0.02, -0.15, 0.19, 0.175, 0.19];
     const cover = coverage([
-      roundBox([-0.101, 0.05, 0.03], [0.09, 0.062, 0.15], 0.02),
-      roundBox([0.101, 0.05, 0.03], [0.09, 0.062, 0.15], 0.02),
+      roundBox([-0.101, 0.045, 0.028], [0.07, 0.052, 0.125], 0.02),
+      roundBox([0.101, 0.045, 0.028], [0.07, 0.052, 0.125], 0.02),
     ]);
-    const f = garment(body, 0.012, cover, bounds, 0.012);
+    const f = garment(body, 0.009, cover, bounds, 0.012);
     for (const s of [1, -1]) {
-      f.add(roundBox([s * 0.101, 0.022, 0.022], [0.04, 0.009, 0.1], 0.014, { k: 0.016 })); // sole
+      f.add(roundBox([s * 0.101, 0.019, 0.022], [0.043, 0.008, 0.104], 0.012, { k: 0.012 })); // sole
+      f.add(roundBox([s * 0.101, 0.026, -0.052], [0.036, 0.014, 0.026], 0.010, { k: 0.012 })); // heel
       f.add(ellipsoid([s * 0.101, 0.122, -0.026], [0.05, 0.028, 0.056], { k: 0.03 }));     // ankle collar
     }
     out.push({ field: f, bounds, cell: 0.0045, region: REGION.LEATHER });
@@ -203,8 +204,10 @@ export function buildWristWraps(rig) {
     const el = rig.restPos.get('elbow' + (s > 0 ? '.L' : '.R'));
     const wr = rig.restPos.get('wrist' + (s > 0 ? '.L' : '.R'));
     const at = (t) => [el[0] + (wr[0] - el[0]) * t, el[1] + (wr[1] - el[1]) * t, el[2] + (wr[2] - el[2]) * t];
-    const rings = curveRings([at(0.80), at(0.88), at(0.965)], (t) => 0.0405 - 0.004 * t, 14, { tension: 0.4 });
-    parts.push(sweep(rings, { sides: 16, capStart: false, capEnd: false }));
+    // closed shell: an open tube shows its zero-thickness edges and audits negative
+    const rings = curveRings([at(0.775), at(0.86), at(0.955)], (t) =>
+      0.0425 - 0.004 * t - 0.010 * Math.max(0, Math.abs(t - 0.5) * 2 - 0.82), 18, { tension: 0.4 });
+    parts.push(sweep(rings, { sides: 18 }));
   }
   return parts;
 }

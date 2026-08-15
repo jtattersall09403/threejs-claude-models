@@ -98,7 +98,9 @@ export function buildTeeth() {
 }
 
 const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
-const FINGER_R = { thumb: 0.0145, index: 0.0125, middle: 0.013, ring: 0.0118, pinky: 0.0102 };
+const FINGER_R = { thumb: 0.0150, index: 0.0128, middle: 0.0134, ring: 0.0122, pinky: 0.0104 };
+// relaxed curl: each joint bends a little forward, so the hand is not a garden fork
+const FINGER_CURL = { thumb: 0.006, index: 0.012, middle: 0.014, ring: 0.012, pinky: 0.009 };
 
 /** Fingers swept along their bones, each finished with a claw. */
 export function buildFingers(rig) {
@@ -110,8 +112,10 @@ export function buildFingers(rig) {
       const p3 = rig.restPos.get(name + '3' + sfx);
       const r = FINGER_R[name];
       // start inside the palm so the join is hidden
-      const root = [p1[0] + (p1[0] - p2[0]) * 0.7, p1[1] + (p1[1] - p2[1]) * 0.7, p1[2] + (p1[2] - p2[2]) * 0.7];
-      const rings = curveRings([root, p1, p2, p3], (t) => {
+      const root = [p1[0] + (p1[0] - p2[0]) * 0.95, p1[1] + (p1[1] - p2[1]) * 0.95, p1[2] + (p1[2] - p2[2]) * 0.95];
+      const c = FINGER_CURL[name];
+      const curl = (q, amt) => [q[0], q[1], q[2] + amt];
+      const rings = curveRings([root, p1, curl(p2, c), curl(p3, c * 2.4)], (t) => {
         const taper = 1 - 0.32 * t;
         const knuckle = 1 + 0.1 * Math.exp(-Math.pow((t - 0.34) * 7, 2)) + 0.08 * Math.exp(-Math.pow((t - 0.66) * 8, 2));
         return r * taper * knuckle;

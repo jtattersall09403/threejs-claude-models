@@ -98,7 +98,7 @@ export function createViewer(container) {
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.95;
+  renderer.toneMappingExposure = 1.0;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
@@ -106,7 +106,7 @@ export function createViewer(container) {
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x07070a, 0.055);
   scene.environment = environmentMap(renderer);
-  scene.environmentIntensity = 0.34;
+  scene.environmentIntensity = 0.28;
   scene.add(backdrop());
   scene.add(ground());
 
@@ -123,9 +123,9 @@ export function createViewer(container) {
   controls.update();
 
   // ---- lights ---------------------------------------------------------------
-  const key = new THREE.SpotLight(0xffe3c2, 36, 16, 0.8, 0.62, 2);
-  key.position.set(2.2, 3.1, 2.6);
-  key.target.position.set(0, 1.15, 0);
+  const key = new THREE.SpotLight(0xffdcb4, 34, 20, 1.0, 0.58, 1.6);
+  key.position.set(2.5, 3.0, 2.9);
+  key.target.position.set(0, 0.98, 0);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
   key.shadow.camera.near = 0.5;
@@ -135,12 +135,12 @@ export function createViewer(container) {
   key.shadow.radius = 2.5;
   scene.add(key, key.target);
 
-  const fill = new THREE.DirectionalLight(0x7f96bb, 0.44);
+  const fill = new THREE.DirectionalLight(0x7f96bb, 0.30);
   fill.position.set(-2.8, 1.6, 1.4);
   scene.add(fill);
 
-  const rimWarm = new THREE.DirectionalLight(0xffc08a, 1.0);
-  rimWarm.position.set(-1.5, 2.0, -2.8);
+  const rimWarm = new THREE.DirectionalLight(0xffc697, 1.15);
+  rimWarm.position.set(-2.4, 2.6, -2.4);
   scene.add(rimWarm);
 
   const rimCool = new THREE.DirectionalLight(0x9dbbe4, 0.92);
@@ -151,7 +151,7 @@ export function createViewer(container) {
   scene.add(bounce);
 
   // low warm bounce off the floor, so the legs and hem do not fall into black
-  const floorBounce = new THREE.DirectionalLight(0x9d7a58, 0.14);
+  const floorBounce = new THREE.DirectionalLight(0x8f6c4c, 0.20);
   floorBounce.position.set(0.8, -1.0, 1.6);
   scene.add(floorBounce);
 
