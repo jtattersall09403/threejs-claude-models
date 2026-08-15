@@ -10,9 +10,10 @@ every step, the container restarts without warning.**
 
 ## Where the loop is
 
-**Critic round 1 is in flight** (launched at the end of iteration 4). When its report
-lands, read `critic/latest/REPORT.md`, work its ranked defect list top-down, then hand
-back for critic round 2. Repeat until it returns PASS.
+**Critic round 1 returned FAIL** with 14 ranked defects — the full report is in
+`critic/latest/REPORT.md` with zoomed evidence images. Iteration 5 worked defects
+1–7, 10 and 11. **Defects 8, 9, 12, 13, 14 are still open** (see Next actions).
+When those are done, re-run the critic for round 2.
 
 Note: the `argonian-critic` subagent type is only registered at session start. In a
 session where it is not yet available, launch a `general-purpose` agent and tell it to
@@ -23,20 +24,52 @@ read and follow `.claude/agents/argonian-critic.md`.
 Working: geometry pipeline, rig, auto-skinning, garments, materials, capture harness,
 winding audit. `npm run build && npm run capture` is green. ~545k tris, ~4.7 s build.
 
-## Next actions
+## Next actions — open critic defects, in priority order
 
-**Wait for the critic report, then work its ranked list.** My own outstanding list,
-for cross-reference:
+Read `critic/latest/REPORT.md` for the full text and evidence images.
 
-- Muzzle still reads slightly bulbous/rounded at the tip vs the reference's squarer
-  snout; the nasal ridge could be more pronounced.
-- Neck is long and cylindrical; throat scutes are present but faint.
-- Cloth folds exist but the tunic still lacks seams, and the shoulders have no seam
-  definition.
-- Hands are largely hidden behind the tunic skirt in front views.
-- Feet read as blocks.
+1. **Defect 9 — hands.** Palm is a flat rectangular paddle with four straight parallel
+   rods; fingers need per-finger length variation and real curl in the `curveRings`
+   control points (`parts/features.js buildFingers`). The **detached floating thumb**
+   the critic photographed is the thumb tip poking through the tunic skirt while the
+   palm sits inside it — iteration 5 widened the arms, VERIFY it is actually gone
+   before closing this. Wrist wraps (`cloth7`) are an open zero-thickness shell with a
+   negative signed volume; give them real thickness.
+2. **Defect 8 — clothing has no fabric.** Fold amplitudes are near the voxel size and
+   get smoothed away: tunic `folds(0.0082)` against `cell: 0.0055`. Raise to
+   ~`folds(0.020, 9)` and drop the tunic cell to ~0.004. Undershirt coverage box is
+   too tall — halve its height so it only shows at the collar. Separate the values of
+   tunic / trousers / belt, which currently merge into one brown mass. Add seams.
+3. **Defect 12 — lighting.** Below the belt is crushed to black while the throat is
+   the brightest thing on the model. Widen or re-place the key spot, lift
+   `floorBounce`, raise `toneMappingExposure` ~0.95 → 1.15, and bring `rimWarm` round
+   to ~45° off back-left and above head height so it catches the horns and shoulders.
+4. **Defect 13/14 — tail, legs, feet** (plausibility only, not in the references).
+   Tail needs an S-curve away from the body and a dorsal scute ridge. Legs need a knee
+   break; shoes need a distinct sole; close the gap between trouser hem and shoe.
+5. Re-check defect 5: the maroon brow now carries cream claw streaks — confirm they
+   read at normal viewing distance and are not just noise.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
+
+### Iteration 5 — critic round 1 fixes
+- **Eye** rebuilt: the socket is now a LENS-shaped cut (narrow in y) so the skin above
+  and below forms lids, with a smaller ball set deeper and the iris filling the
+  aperture. The glassy emissive glow is gone.
+- **Neck** shortened ~5 cm. `HEAD_XF` gained an `offset` translation so the head can
+  move as a unit without invalidating every head-space constant in the shader.
+- **Horn ring band now visible.** It was being drawn at `t=0.16`, but the horn root is
+  seated ~0.024 m *below* the skull surface, so the first ~20% of the run is inside the
+  head. Moved to `t=0.34`.
+- **Muzzle and jaw rebuilt from `roundBox` blocks.** Capsules produced a drooping bulb;
+  the reference snout is a box with a level top line and a deep straight jaw.
+- Removed the dorsal neck spike row and the protruding tusks — neither appears in any
+  reference crop.
+- **Feature seating bug:** `raySurface` must run against the authoring-space head field
+  *before* the head transform. Seating against the transformed field buried every crown
+  spike inside the skull.
+- Corrected `docs/REFERENCE.md`: the sash runs the character's right shoulder to left
+  hip. The doc had it mirrored; the render was right.
 
 ### Iteration 4
 - Clothing: garments given real geometric **folds** (noise displacement of the offset

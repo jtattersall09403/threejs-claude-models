@@ -44,7 +44,9 @@ if a new reading of the references proves a detail wrong.
 
 - Coarse brown/umber long-sleeved tunic over a lighter grey-green undershirt visible at
   the collar and centre chest.
-- **Diagonal braided strap/sash**, left shoulder → right hip.
+- **Diagonal braided strap/sash**, the character's RIGHT shoulder → LEFT hip.
+  (In the front-view screenshot it runs from upper-left of frame to lower-right; since
+  we see the character from the front, that is their right shoulder to their left hip.)
 - Wide cloth **belt** at the waist with a knotted hanging end at the front.
 - Sleeves end mid-forearm with **pale cloth wrist wraps**; forearms and hands bare.
 - Trousers/skirt below the belt, darker; worn leather shoes.
