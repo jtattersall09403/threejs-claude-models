@@ -171,7 +171,11 @@ const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 const FINGER_R = { thumb: 0.0132, index: 0.0112, middle: 0.0118, ring: 0.0106, pinky: 0.0092 };
 // Relaxed curl: each joint bends forward, so the hand is not a garden fork. Whatever
 // this is, the claw MUST be placed off the curled tip — see buildFingers.
-const FINGER_CURL = { thumb: 0.030, index: 0.062, middle: 0.070, ring: 0.062, pinky: 0.048 };
+// NOTE: the tip is offset by c * TIP_CURL below, so the effective displacement is
+// ~2x these numbers. Raising c 3-4x on top of that multiplier swept the fingers
+// forward into long curved tentacles.
+const FINGER_CURL = { thumb: 0.013, index: 0.026, middle: 0.030, ring: 0.026, pinky: 0.020 };
+const TIP_CURL = 1.9;
 
 /** Fingers swept along their bones, each finished with a claw. */
 export function buildFingers(rig) {
@@ -190,10 +194,11 @@ export function buildFingers(rig) {
       // Deriving the claw from the uncurled p2/p3 leaves it hanging in mid-air a
       // couple of centimetres off the fingertip.
       const p2c = curl(p2, c);
-      const p3c = curl(p3, c * 2.4);
+      const p3c = curl(p3, c * TIP_CURL);
       const rings = curveRings([root, p1, p2c, p3c], (t) => {
-        const taper = 1 - 0.55 * t;
-        const knuckle = 1 + 0.1 * Math.exp(-Math.pow((t - 0.34) * 7, 2)) + 0.08 * Math.exp(-Math.pow((t - 0.66) * 8, 2));
+        const taper = 1 - 0.42 * t;
+        const knuckle = 1 + 0.20 * Math.exp(-Math.pow((t - 0.34) * 7, 2))
+                          + 0.16 * Math.exp(-Math.pow((t - 0.66) * 8, 2));
         return r * taper * knuckle;
       }, 16, { tension: 0.4 });
       parts.push({ geom: sweep(rings, { sides: 12, capEnd: false }), region: 'skin' });
