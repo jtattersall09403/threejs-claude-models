@@ -147,6 +147,7 @@ const SKIN_FRAG = /* glsl */`
   // --- masks -------------------------------------------------------------
   float ventral = ss(0.05, 0.62, dot(Nr, normalize(vec3(0.0, -0.80, 0.60))));
   ventral = max(ventral, ss(0.15, -0.5, Nr.y) * ss(1.70, 1.58, H.y));
+  ventral *= 1.0 - 0.55 * ss(1.58, 1.65, H.y);   // not on the muzzle itself
 
   // armoured skull cap: top of the braincase, wrapping down over the temples
   // covers the whole cranium from the brow back, wrapping down behind the eyes —
@@ -162,7 +163,7 @@ const SKIN_FRAG = /* glsl */`
 
   // maroon plate over the brow ridges and between the eyes
   float browD = length((J - vec3(0.038, 1.7145, 0.040)) * vec3(0.72, 2.3, 0.95));
-  float brow = ss(0.072, 0.014, browD) * ss(-0.35, 0.20, Nr.y) * step(1.640, H.y);
+  float brow = ss(0.082, 0.016, browD) * ss(-0.55, 0.10, Nr.y) * step(1.632, H.y);
 
   // dorsal scute ridge down the tail — a plain taper reads as a rubber tube
   float tailZone = ss(-0.10, -0.16, P.z) * ss(1.02, 0.94, P.y);
@@ -184,7 +185,7 @@ const SKIN_FRAG = /* glsl */`
   vec3 warmOl   = vec3(0.0505, 0.0530, 0.0290);
   vec3 belly    = vec3(0.0480, 0.0500, 0.0295);
   vec3 plate    = vec3(0.0046, 0.0048, 0.0052);
-  vec3 maroon   = vec3(0.0425, 0.0128, 0.0098);
+  vec3 maroon   = vec3(0.0560, 0.0148, 0.0110);
   vec3 boneCol  = vec3(0.088, 0.078, 0.055);
 
   vec3 col = mix(dorsal2, dorsal, ss(0.30, 0.72, mottle * 0.6 + blotch * 0.7));
@@ -195,7 +196,7 @@ const SKIN_FRAG = /* glsl */`
   col = mix(col, mix(dorsal2, plate, 0.5), tailTop * (0.35 + 0.5 * tailScute));
   col = mix(col, plate, cap * 0.97);
   col = mix(col, plate * vec3(1.15, 1.20, 1.55), socket * 0.98);
-  col = mix(col, maroon, brow * 0.95);
+  col = mix(col, maroon, brow * 0.98);
   // three cream claw-mark streaks across the maroon brow band
   float streak = ss(0.72, 0.97, abs(sin((J.x - 0.010) * 150.0)));
   col = mix(col, boneCol * 0.72, brow * streak * ss(0.014, 0.048, abs(J.x)) * 0.85);
