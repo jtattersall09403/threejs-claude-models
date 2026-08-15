@@ -59,10 +59,14 @@ export function buildBodyField() {
   // ---- torso ----------------------------------------------------------------
   f.add(ellipsoid([0, 0.985, 0.005], [0.138, 0.108, 0.1], { k: K }));      // pelvis
   f.add(ellipsoid([0, 1.095, 0.012], [0.126, 0.095, 0.097], { k: K }));    // waist
-  f.add(ellipsoid([0, 1.245, 0.008], [0.158, 0.135, 0.111], { k: K }));    // ribcage
-  f.add(ellipsoid([0, 1.345, 0.0], [0.152, 0.09, 0.103], { k: K }));       // upper chest
-  f.add(capsule([-0.155, 1.392, -0.004], [0.155, 1.392, -0.004], 0.076, 0.076, { k: 0.045 }));
-  f.add(ellipsoid([0, 1.386, -0.055], [0.134, 0.086, 0.066], { k: 0.06 })); // trapezius mass
+  // Depth, not just width. In profile the torso was a slab: the chest and the belly sat
+  // in the same plane as the back, so from the side the figure had no barrel to it and
+  // the coat hung off a plank.
+  f.add(ellipsoid([0, 1.245, 0.012], [0.158, 0.135, 0.122], { k: K }));    // ribcage
+  f.add(ellipsoid([0, 1.330, 0.030], [0.130, 0.072, 0.098], { k: 0.05 })); // pectoral shelf
+  f.add(ellipsoid([0, 1.345, 0.0], [0.152, 0.09, 0.112], { k: K }));       // upper chest
+  f.add(capsule([-0.168, 1.400, -0.004], [0.168, 1.400, -0.004], 0.078, 0.078, { k: 0.045 }));
+  f.add(ellipsoid([0, 1.386, -0.055], [0.140, 0.086, 0.070], { k: 0.06 })); // trapezius mass
   f.add(ellipsoid([0, 0.95, -0.062], [0.146, 0.09, 0.07], { k: K }));      // glutes
 
   // ---- neck (continues up into the head bake) --------------------------------
@@ -70,29 +74,38 @@ export function buildBodyField() {
 
   // ---- arms ------------------------------------------------------------------
   for (const s of [1, -1]) {
-    f.add(ellipsoid([s * 0.186, 1.392, -0.004], [0.062, 0.072, 0.064], { k: 0.03 })); // deltoid
-    f.add(capsule([s * 0.192, 1.388, 0], [s * 0.211, 1.145, -0.014], 0.05, 0.039, { k: 0.026 }));
-    f.add(ellipsoid([s * 0.199, 1.275, -0.005], [0.047, 0.068, 0.048], { k: 0.03 }));  // biceps
-    f.add(capsule([s * 0.211, 1.145, -0.014], [s * 0.228, 0.892, 0.012], 0.044, 0.029, { k: 0.026 }));
-    f.add(ellipsoid([s * 0.216, 1.074, -0.008], [0.041, 0.06, 0.043], { k: 0.03 }));   // forearm swell
+    // The deltoid is the shoulder CORNER: it has to sit outboard of and slightly above
+    // the joint, so the top line runs out flat from the neck and then turns down.
+    f.add(ellipsoid([s * 0.198, 1.402, -0.004], [0.066, 0.070, 0.068], { k: 0.03 })); // deltoid
+    f.add(capsule([s * 0.203, 1.396, 0], [s * 0.222, 1.145, -0.014], 0.05, 0.039, { k: 0.026 }));
+    f.add(ellipsoid([s * 0.210, 1.275, -0.005], [0.047, 0.068, 0.048], { k: 0.03 }));  // biceps
+    f.add(capsule([s * 0.222, 1.145, -0.014], [s * 0.239, 0.892, 0.012], 0.044, 0.029, { k: 0.026 }));
+    f.add(ellipsoid([s * 0.227, 1.074, -0.008], [0.041, 0.06, 0.043], { k: 0.03 }));   // forearm swell
     // palm: a mitten; individual fingers are swept separately at higher detail
     // A flattened WEDGE, not a ball. At half-extent 0.024 plus a 0.024 round radius the
     // palm was 9.6 cm deep before smooth-min even inflated it, and the hand read as a
     // scaly knuckle-ball with cylinders radiating out of it.
-    f.add(roundBox([s * 0.229, 0.828, 0.006], [0.0085, 0.028, 0.010], 0.012, { k: 0.012 }));
-    f.add(ellipsoid([s * 0.2225, 0.842, 0.026], [0.013, 0.026, 0.017], { k: 0.012 })); // thenar
-    f.add(capsule([s * 0.2265, 0.842, 0.018], [s * 0.222, 0.828, 0.040], 0.017, 0.014, { k: 0.024 })); // thumb metacarpal
-    f.add(capsule([s * 0.231, 0.800, 0.040], [s * 0.2265, 0.796, -0.040], 0.0110, 0.0092, { k: 0.010 })); // knuckles
+    f.add(roundBox([s * 0.240, 0.828, 0.006], [0.0085, 0.028, 0.010], 0.012, { k: 0.012 }));
+    f.add(ellipsoid([s * 0.2335, 0.842, 0.026], [0.013, 0.026, 0.017], { k: 0.012 })); // thenar
+    f.add(capsule([s * 0.2375, 0.842, 0.018], [s * 0.233, 0.828, 0.040], 0.017, 0.014, { k: 0.024 })); // thumb metacarpal
+    f.add(capsule([s * 0.242, 0.800, 0.040], [s * 0.2375, 0.796, -0.040], 0.0110, 0.0092, { k: 0.010 })); // knuckles
   }
 
   // ---- legs ------------------------------------------------------------------
+  // Thighs are narrowed in x and deepened in z rather than simply slimmed: the mass has
+  // to stay (this is a heavy figure) but it cannot cross the centreline, or smooth-min
+  // fuses the two legs into a single column. `scale` squashes the distance field in x
+  // only, so the section becomes an oval standing front-to-back.
   for (const s of [1, -1]) {
-    f.add(capsule([s * 0.078, 0.955, 0], [s * 0.086, 0.53, 0.012], 0.091, 0.056, { k: 0.05 }));
-    f.add(ellipsoid([s * 0.082, 0.78, 0.012], [0.079, 0.13, 0.083], { k: 0.06 }));   // quad
-    f.add(capsule([s * 0.086, 0.53, 0.012], [s * 0.089, 0.105, -0.012], 0.058, 0.033, { k: 0.045 }));
-        f.add(ellipsoid([s * 0.086, 0.522, 0.020], [0.052, 0.038, 0.050], { k: 0.035 }));   // knee
-    f.add(ellipsoid([s * 0.089, 0.432, -0.034], [0.049, 0.082, 0.048], { k: 0.05 }));     // calf
-    f.add(roundBox([s * 0.090, 0.048, 0.028], [0.032, 0.022, 0.085], 0.028, { k: 0.04 })); // foot
+    f.add(capsule([s * 0.090, 0.955, 0], [s * 0.100, 0.53, 0.012], 0.088, 0.056,
+      { k: 0.05, scale: [0.88, 1, 1.04] }));
+    f.add(ellipsoid([s * 0.096, 0.78, 0.012], [0.075, 0.13, 0.088], { k: 0.06 }));   // quad
+    f.add(capsule([s * 0.100, 0.53, 0.012], [s * 0.104, 0.105, -0.012], 0.058, 0.033, { k: 0.045 }));
+    f.add(ellipsoid([s * 0.100, 0.522, 0.020], [0.052, 0.038, 0.050], { k: 0.035 }));   // knee
+    f.add(ellipsoid([s * 0.104, 0.432, -0.034], [0.049, 0.082, 0.048], { k: 0.05 }));     // calf
+    // Narrower and longer. At 12 cm across and 22.6 cm long the foot was a clog, and
+    // the shoe built on top of it read as a wooden block from every low angle.
+    f.add(roundBox([s * 0.105, 0.048, 0.034], [0.026, 0.022, 0.098], 0.024, { k: 0.04 })); // foot
   }
 
   // ---- tail ------------------------------------------------------------------

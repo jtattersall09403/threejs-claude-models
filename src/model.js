@@ -5,6 +5,7 @@ import { polygonise } from './core/mc.js';
 import { computeSkinning } from './core/skin.js';
 import { MeshBuilder, scalePartAbout } from './core/geom.js';
 import { createSkeleton, buildSegments } from './rig/skeleton.js';
+import { applyStance } from './rig/pose.js';
 import {
   buildBodyField, buildHeadField, transformHeadField, BODY_BOUNDS, HEAD_BOUNDS, HEAD_XF,
 } from './parts/anatomy.js';
@@ -175,6 +176,12 @@ export function buildArgonian(opts = {}) {
   group.name = 'argonian';
   group.add(rig.root);
   for (const m of Object.values(meshes)) group.add(m);
+
+  // The display stance, applied only now — every mesh above is bound in the REST pose
+  // and THREE.Skeleton has already snapshotted its bind inverses, so posing here is a
+  // pure deformation rather than something baked into the geometry. Do it earlier and
+  // the stance is applied twice.
+  if (opts.stance !== false) applyStance(rig);
 
   let tris = 0;
   for (const m of Object.values(meshes)) tris += m.geometry.index.count / 3;

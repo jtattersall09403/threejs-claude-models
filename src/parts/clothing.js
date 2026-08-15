@@ -63,7 +63,7 @@ export function clothingFields(body) {
 
   // ---- undershirt: thin, only visible at the collar and the V of the tunic ----
   {
-    const bounds = [-0.26, 1.12, -0.30, 0.26, 1.68, 0.24];
+    const bounds = [-0.28, 1.12, -0.30, 0.28, 1.68, 0.24];
     // coverage only bounds the EXTENT of the garment; it must be generously wider
     // than the offset body surface or the intersection lands inside the skin
     const cover = coverage([
@@ -91,39 +91,46 @@ export function clothingFields(body) {
 
   // ---- tunic: torso + sleeves to mid-forearm + a skirt to above the knee -------
   {
-    const bounds = [-0.33, 0.72, -0.27, 0.33, 1.52, 0.28];
+    // The bake box has to CLEAR the skirt, not clip it. The skirt capsule below bulges
+    // to y 0.639 through its bottom cap; with the box floored at 0.72 marching cubes
+    // sealed it off with a flat plate, and from any low angle you saw a bare disc under
+    // the hem instead of a hem. The dome is cut off deliberately further down instead.
+    const bounds = [-0.33, 0.60, -0.27, 0.33, 1.52, 0.28];
     const cover = coverage([
       // waisted: wide at the chest, pinched at the waist, flaring again at the hips
-      capsule([0, 1.415, 0.0], [0, 1.24, 0.008], 0.245, 0.235),
-      capsule([0, 1.24, 0.008], [0, 1.10, 0.01], 0.235, 0.198),
+      capsule([0, 1.415, 0.0], [0, 1.24, 0.008], 0.300, 0.245),
+      capsule([0, 1.24, 0.008], [0, 1.10, 0.01], 0.245, 0.198),
       capsule([0, 1.10, 0.01], [0, 0.985, 0.005], 0.198, 0.212),
       // The sleeve coverage capsule must START INBOARD, inside the torso volume.
       // Anchored out over the deltoid its end cap is the outermost coverage surface
       // at the shoulder, and since the garment is a smooth intersection with this
       // volume, that cap prints straight through as a balloon — a leg-of-mutton
       // sleeve with a seam ring around the upper arm.
-      capsule([-0.105, 1.425, 0], [-0.211, 1.128, -0.006], 0.115, 0.086),
-      capsule([0.105, 1.425, 0], [0.211, 1.128, -0.006], 0.115, 0.086),
+      capsule([-0.110, 1.425, 0], [-0.222, 1.128, -0.006], 0.115, 0.086),
+      capsule([0.110, 1.425, 0], [0.222, 1.128, -0.006], 0.115, 0.086),
     ]);
     const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0105, 16));
     // a cut-free copy of the same shell, used only as a projection target for the
     // sash and medallion
     const shell = garment(body, 0.026, cover, bounds, 0.016, folds(0.0105, 16));
     // the skirt hangs clear of the body, so it is added rather than offset
-    f.add(capsule([0, 1.0, 0.0], [0, 0.788, -0.012], 0.15, 0.149, { k: 0.055, scale: [1, 1, 0.9] }));
-        // hem broken up so it does not end in a hard horizontal CSG cut
-    for (let i = 0; i < 14; i++) {
-      const a = (i / 14) * Math.PI * 2;
-      f.add(ellipsoid([Math.cos(a) * 0.126, 0.790 + Math.sin(a * 3) * 0.009, Math.sin(a) * 0.109 - 0.012],
-        [0.036, 0.011, 0.034], { k: 0.038 }));
+    // A coat skirt, not a peplum: it reaches mid-thigh and FLARES, so the figure gets a
+    // waist. Stopping it just under the belt left the hips as the widest thing in the
+    // silhouette and the whole figure read pear-shaped.
+    f.add(capsule([0, 1.0, 0.0], [0, 0.700, -0.016], 0.148, 0.170, { k: 0.055, scale: [1, 1, 0.9] }));
+    // hem roll, waved so the border is not a dead-level line
+    for (let i = 0; i < 16; i++) {
+      const a = (i / 16) * Math.PI * 2;
+      f.add(ellipsoid([Math.cos(a) * 0.146, 0.706 + Math.sin(a * 3) * 0.010, Math.sin(a) * 0.126 - 0.016],
+        [0.038, 0.013, 0.036], { k: 0.038 }));
     }
     for (const s of [1, -1]) {
-      f.add(ellipsoid([s * 0.2095, 1.098, -0.008], [0.0560, 0.024, 0.0560], { k: 0.010 })); // rolled cuff
-      f.add(ellipsoid([s * 0.2093, 1.127, -0.008], [0.0530, 0.0085, 0.0530], { k: 0.008 })); // cuff seam
+      f.add(ellipsoid([s * 0.2205, 1.098, -0.008], [0.0560, 0.024, 0.0560], { k: 0.010 })); // rolled cuff
+      f.add(ellipsoid([s * 0.2203, 1.127, -0.008], [0.0530, 0.0085, 0.0530], { k: 0.008 })); // cuff seam
       // shoulder yoke: a raised rolled seam over the deltoid, so sleeve and torso
       // read as separate pieces instead of one continuous moulded mass
-      f.add(capsule([s * 0.076, 1.412, 0.056], [s * 0.172, 1.376, -0.052], 0.0215, 0.0185, { k: 0.0075 }));
-      f.add(capsule([s * 0.172, 1.376, -0.052], [s * 0.196, 1.330, -0.030], 0.0185, 0.0155, { k: 0.0075 }));
+      f.add(capsule([s * 0.080, 1.420, 0.058], [s * 0.180, 1.384, -0.054], 0.0215, 0.0185, { k: 0.0075 }));
+      f.add(capsule([s * 0.180, 1.384, -0.054], [s * 0.207, 1.336, -0.030], 0.0185, 0.0155, { k: 0.0075 }));
     }
     // front opening: a narrow vertical slot down the chest centre, with a raised hem
     // roll either side, so the undershirt shows through a placket rather than a hole
@@ -138,38 +145,42 @@ export function clothingFields(body) {
     // rolled collar band around the opening, so the edge reads as a hem
     f.add(capsule([0, 1.408, 0.034], [0, 1.438, 0.026], 0.082, 0.080, { k: 0.018 }));
     f.sub(capsule([0, 1.39, 0.05], [0, 1.62, 0.020], 0.064, 0.092, { k: 0.020 }));
+    // The hem. A garment edge is a real edge — cloth stops. Cut it flat and let the
+    // ring of hem ellipsoids above roll over the cut, so it reads as a hemmed border
+    // rather than as a sawn plane or as a closed dome.
+    f.sub(roundBox([0, 0.46, -0.006], [0.6, 0.222, 0.6], 0.012, { k: 0.016 }));
     out.push({ field: f, bounds, cell: 0.004, region: REGION.TUNIC, tunic: true, shell });
   }
 
   // ---- trousers ---------------------------------------------------------------
   {
-    const bounds = [-0.23, 0.11, -0.22, 0.23, 1.04, 0.22];
+    const bounds = [-0.25, 0.11, -0.22, 0.25, 1.04, 0.22];
     const cover = coverage([
-      roundBox([0, 0.925, 0.0], [0.26, 0.078, 0.24], 0.02),
-      capsule([-0.08, 0.96, 0], [-0.089, 0.222, -0.008], 0.19, 0.082),
-      capsule([0.08, 0.96, 0], [0.089, 0.222, -0.008], 0.19, 0.082),
+      roundBox([0, 0.925, 0.0], [0.27, 0.078, 0.24], 0.02),
+      capsule([-0.090, 0.96, 0], [-0.104, 0.222, -0.008], 0.19, 0.082),
+      capsule([0.090, 0.96, 0], [0.104, 0.222, -0.008], 0.19, 0.082),
     ]);
     const f = garment(body, 0.015, cover, bounds, 0.014, folds(0.0080, 18));
     for (const s of [1, -1]) {
-      f.add(ellipsoid([s * 0.089, 0.152, -0.012], [0.055, 0.016, 0.055], { k: 0.016 })); // cuff
+      f.add(ellipsoid([s * 0.104, 0.152, -0.012], [0.055, 0.016, 0.055], { k: 0.016 })); // cuff
     }
     out.push({ field: f, bounds, cell: 0.0045, region: REGION.TROUSERS });
   }
 
   // ---- shoes ------------------------------------------------------------------
   {
-    const bounds = [-0.19, -0.02, -0.15, 0.19, 0.175, 0.19];
+    const bounds = [-0.21, -0.02, -0.15, 0.21, 0.175, 0.19];
     const cover = coverage([
-      roundBox([-0.090, 0.045, 0.028], [0.07, 0.052, 0.125], 0.02),
-      roundBox([0.090, 0.045, 0.028], [0.07, 0.052, 0.125], 0.02),
+      roundBox([-0.105, 0.045, 0.028], [0.07, 0.052, 0.125], 0.02),
+      roundBox([0.105, 0.045, 0.028], [0.07, 0.052, 0.125], 0.02),
     ]);
     const f = garment(body, 0.009, cover, bounds, 0.012);
     for (const s of [1, -1]) {
       // The sole has to be WIDER than the shoe upper or it sits inside the offset
       // surface and contributes nothing: the upper reaches ~0.069 half-width here.
-      f.add(roundBox([s * 0.090, 0.014, 0.024], [0.066, 0.009, 0.112], 0.008, { k: 0.005 })); // sole
-      f.add(roundBox([s * 0.090, 0.026, -0.056], [0.058, 0.020, 0.034], 0.008, { k: 0.005 })); // heel
-      f.add(ellipsoid([s * 0.090, 0.122, -0.026], [0.05, 0.028, 0.056], { k: 0.03 }));     // ankle collar
+      f.add(roundBox([s * 0.105, 0.014, 0.030], [0.054, 0.008, 0.118], 0.010, { k: 0.005 })); // sole
+      f.add(roundBox([s * 0.105, 0.026, -0.052], [0.048, 0.018, 0.032], 0.008, { k: 0.005 })); // heel
+      f.add(ellipsoid([s * 0.105, 0.122, -0.026], [0.05, 0.028, 0.056], { k: 0.03 }));     // ankle collar
     }
     out.push({ field: f, bounds, cell: 0.0045, region: REGION.LEATHER });
   }
