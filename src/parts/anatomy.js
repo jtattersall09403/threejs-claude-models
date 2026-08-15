@@ -14,9 +14,11 @@ import { Field, capsule, ellipsoid, roundBox, creaseSlot } from '../core/sdf.js'
 import { TAIL_SPINE } from '../rig/skeleton.js';
 
 export const EYE = {
-  c: [0.0468, 1.6975, 0.0705],   // mirrored on x
-  r: 0.0152,
-  gaze: [0.16, 0.0, 0.987],      // outward/forward gaze axis for the left(+x) eye
+  c: [0.0468, 1.6975, 0.0658],   // mirrored on x
+  r: 0.0138,   // small and seated DEEP: any free sphere edge inside the socket reads
+               // as a ball sitting loose in a hole rather than as a lidded eye
+  gaze: [0.055, 0.0, 0.9985],    // near-forward. At 0.16 outward the iris sat off to
+                                 // one side and the front view showed a plain blob.
 };
 
 // One knob for overall head size. Head anatomy, horns, spikes, teeth and eyes are

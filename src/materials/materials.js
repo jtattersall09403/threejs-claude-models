@@ -309,13 +309,16 @@ const SKIN_FRAG = /* glsl */`
   // On the head the darkening is damped, because the head gets the opposite
   // treatment immediately below.
   col *= mix(mix(0.52, 1.04, ss(0.02, 0.55, h)),
-             mix(0.82, 1.04, ss(0.02, 0.55, h)), headMask);
+             mix(0.92, 1.03, ss(0.02, 0.55, h)), headMask);
   // The reference hide's signature marking: over the whole head the gaps between
   // scales are LIGHTER than the scales, giving a pale reticulated mesh — the exact
   // opposite of a generic crevice darkening. Previously applied to the cranial
   // plates only, which left the muzzle looking like plain pebbled rubber.
-  float mortar = (1.0 - ss(0.10, 0.30, h)) * headMask * (1.0 - cap * 0.92);
-  col = mix(col, boneCol * 0.30, mortar * 0.42);
+  // The single most characteristic surface feature of the reference head: a BRIGHT
+  // reticulated net dividing large flat plates. Generic crevice darkening is the
+  // exact opposite, so on the head it is damped hard and this runs on top of it.
+  float mortar = (1.0 - ss(0.14, 0.34, h)) * headMask * (1.0 - cap * 0.92);
+  col = mix(col, boneCol * 0.46, mortar * 0.62);
   // darker AND warmer: the jaw was not merely bright, it was the greenest thing on
   // the head, where the reference jaw is its most neutral, most shadowed area
   col = mix(col, col * vec3(0.60, 0.53, 0.52), chinZone * 0.88);
@@ -424,12 +427,14 @@ const EYE_FRAG = /* glsl */`
   vec3 iris = mix(amber, amberHot, fibers * 0.85);
   iris *= 0.86 + 0.42 * ss(0.05, 0.55, r);
 
-  vec3 col = mix(iris, vec3(0.008, 0.006, 0.005), ss(0.62, 0.78, r));
+  // The iris must fill the ENTIRE visible aperture. Fading it early leaves a grey
+  // sclera ring, and a reptile eye has no visible sclera.
+  vec3 col = mix(iris, vec3(0.006, 0.005, 0.004), ss(0.88, 0.99, r));
   // vertical slit pupil
   float slit = length(vec2(x / 0.150, y / 0.92));
   col = mix(vec3(0.004, 0.0035, 0.003), col, ss(0.92, 1.02, slit));
   // limbal ring
-  col *= 1.0 - 0.55 * ss(0.62, 0.76, r) * (1.0 - ss(0.76, 0.9, r));
+  col *= 1.0 - 0.42 * ss(0.74, 0.90, r);   // limbal darkening at the very rim
 
   diffuseColor.rgb = col;
   gRoughOut = mix(0.26, 0.62, ss(0.55, 0.80, r));
