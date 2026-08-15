@@ -137,6 +137,30 @@ rather than reasoning from a bad image.
     large relative to the ring count turns a strap into a jagged rope. Keep the
     per-ring phase step well under a radian and prefer more lobes around (`a*3`+) over
     a fast twist.
+11. **Head masks must use head space `H`, never world `P`.** `headMask` was driven
+    from `P.y` and so read ~0 across the whole lower jaw, which was then shaded as
+    *body*. Three separate attempts to fix "the pale jaw" by tuning the ventral mask
+    were chasing the wrong cause. **`debugMasks(5)` paints head-space Y in 10 mm bands
+    with a red stripe at 1.60** — reach for it first, it settles where a threshold
+    actually lands in one look rather than one rebuild per hypothesis.
+12. **Garment fold noise must be non-negative AND smooth.** It displaces the garment's
+    *offset from the skin*, so a zero-mean version goes negative in the valleys and
+    the body erupts through the cloth. And a ridged (folded-absolute) version has a
+    kink in its gradient that the voxel bake cannot represent — marching cubes turns
+    it into hard faceted plateaus that read as peeling paint. Keep baked folds smooth
+    and low-amplitude; shade fine creases in `CLOTH_FRAG`, where no bake resolution is
+    involved.
+13. **Coverage volumes print through at their end caps.** The garment is a *smooth
+    intersection* with the coverage volume, so wherever the coverage surface is the
+    outermost one it becomes the garment's shape. A sleeve capsule anchored out over
+    the deltoid made its spherical cap the outermost surface at the shoulder and
+    rendered a leg-of-mutton puff sleeve. Start coverage capsules **inboard**, inside
+    the neighbouring volume.
+14. **Project straps per-ring, not per-control-point.** Projecting 7 control points
+    onto the cloth and then interpolating draws a smooth curve between distant
+    anchors, which cuts straight through the folds in between: the strap surfaces only
+    in patches and reads as torn geometry. Project every ring centre, smooth the
+    resulting polyline lightly, and make the lift exceed the fold depth.
 
 ## Commands
 
