@@ -302,7 +302,7 @@ export function buildMedallion(tunicField) {
  * showing, which reads as a blade stuck through the coat — or just outside it, where
  * the belt becomes a hoop floating clear of the body with a hard flat underside.
  */
-export function buildBelt(tunicField, lift = 0.011) {
+export function buildBelt(tunicField, lift = 0.019) {
   const parts = [];
   const ring = [];
   const N = 72;
@@ -318,13 +318,29 @@ export function buildBelt(tunicField, lift = 0.011) {
     }
     ring.push({
       p,
-      r: [0.040, 0.0160],
+      r: [0.035, 0.0135],
       profile: (t) => 1 + 0.10 * Math.sin(t * 5) + 0.05 * Math.sin(t * 11),
     });
   }
+  // light smoothing: projecting onto folded cloth returns a slightly noisy ring
+  for (let pass = 0; pass < 2; pass++) {
+    for (let i = 1; i < ring.length - 1; i++) {
+      for (let c = 0; c < 3; c++) {
+        ring[i].p[c] = ring[i].p[c] * 0.5 + (ring[i - 1].p[c] + ring[i + 1].p[c]) * 0.25;
+      }
+    }
+  }
   parts.push(sweep(ring, {
     sides: 16, capStart: false, capEnd: false,
-    frameFn: bandFrame((p) => [p[0], 0, p[2] - 0.004]),
+    // An EXPLICIT frame, not bandFrame. bandFrame derives the width axis from the
+    // ring's tangent, and once the ring is projected onto folded cloth that tangent
+    // is noisy enough to tilt the band out of vertical — the belt then reads as a
+    // wedge tapering to a point rather than a band of constant height. Around a
+    // waist the frame is known exactly: width straight up, thickness straight out.
+    frameFn: (p) => {
+      const l = Math.hypot(p[0], p[2] - 0.004) || 1;
+      return [[0, 1, 0], [p[0] / l, 0, (p[2] - 0.004) / l]];
+    },
   }));
 
   // Knot and hanging ends. Kept small and narrow: oversized they read as a mushroom
