@@ -27,6 +27,21 @@ This environment can be reclaimed at any moment and **anything uncommitted is lo
 
 ---
 
+## RULE 1 — DO NOT STOP LOOPING UNTIL THE CRITIC PASSES.
+
+The **only** end condition is: the harsh critic subagent returns **VERDICT: PASS**.
+
+- A critic FAIL is not a stopping point. It is the input to the next iteration.
+  Work its ranked defect list, re-render, re-hand-off, repeat.
+- Running out of things *you* can see is not a stopping point either — hand off to the
+  critic and let it find more.
+- Do not stop to ask whether to continue, do not stop to summarise progress, and do not
+  treat "I've done a lot this session" as done. Keep the loop turning.
+- Only surface to the user when the critic passes, or when you are genuinely blocked on
+  something only they can decide.
+
+---
+
 ## The loop (this is the whole job)
 
 ```
@@ -44,6 +59,7 @@ This environment can be reclaimed at any moment and **anything uncommitted is lo
     evidence into critic/latest/.
  7. Critic not satisfied? → back to 1, factoring in its evidence.
     Repeat the meta-loop until the critic is completely satisfied.
+    THERE IS NO OTHER EXIT FROM THIS LOOP. See RULE 1.
 ```
 
 **Never skip step 5.** Reading the capture PNGs with the Read tool *is* the
