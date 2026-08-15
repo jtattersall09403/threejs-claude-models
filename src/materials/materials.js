@@ -342,7 +342,7 @@ const HORN_FRAG = /* glsl */`
   // region 3 is the claws: dark horn, not the pale bone of the head spikes. Left the
   // same value they caught the light and the hand read as a fistful of ivory talons.
   if (vRegion > 2.5) {
-    col *= vec3(0.36, 0.34, 0.32);
+    col *= vec3(0.26, 0.245, 0.235);
     gRoughOut = clamp(gRoughOut - 0.12, 0.24, 0.9);
   }
   // region 2 is the metal cuff: tarnished dark bronze, and actually metallic, so it
@@ -521,7 +521,7 @@ export function createMaterials() {
     // neutral tan it was, which read as canvas rather than as a dyed woollen tunic
     tunic: clothMat('tunic', [0.0232, 0.0190, 0.0162], 0.95, 9.0, cloth),
     undershirt: clothMat('undershirt', [0.0330, 0.0345, 0.0315], 0.95, 12.0, cloth),
-    trousers: clothMat('trousers', [0.0196, 0.0184, 0.0172], 0.95, 9.0, cloth),
+    trousers: clothMat('trousers', [0.0242, 0.0226, 0.0208], 0.95, 9.0, cloth),
     wrap: clothMat('wrap', [0.0455, 0.0458, 0.0420], 0.96, 14.0, cloth),
     leather: clothMat('leather', [0.030, 0.020, 0.013], 0.68, 22.0, leather),
     // sash and belt sit only a little above the tunic. Pushed further apart they

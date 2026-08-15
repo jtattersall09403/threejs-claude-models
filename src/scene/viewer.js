@@ -151,7 +151,7 @@ export function createViewer(container) {
   scene.add(bounce);
 
   // low warm bounce off the floor, so the legs and hem do not fall into black
-  const floorBounce = new THREE.DirectionalLight(0x7a5c40, 0.055);
+  const floorBounce = new THREE.DirectionalLight(0x7a5c40, 0.135);
   floorBounce.position.set(0.8, -1.0, 1.6);
   scene.add(floorBounce);
 

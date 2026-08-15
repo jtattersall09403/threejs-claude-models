@@ -183,7 +183,7 @@ export function buildFingers(rig) {
       const d = [dir[0] / l, dir[1] / l, dir[2] / l];
       const clawBase = [p3c[0] - d[0] * 0.008, p3c[1] - d[1] * 0.008, p3c[2] - d[2] * 0.008];
       parts.push({
-        geom: spike(clawBase, d, 0.012, r * 0.62, {
+        geom: spike(clawBase, d, 0.0095, r * 0.66, {
           taper: 0.62, sides: 8, steps: 7,
           bend: [d[2] * 0.004, -0.007, -d[0] * 0.004],
         }),
