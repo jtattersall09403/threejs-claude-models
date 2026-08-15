@@ -69,6 +69,18 @@ float fbm(vec3 p) {
   return 0.5333 * vnoise(p) + 0.2667 * vnoise(p * 2.03) + 0.1333 * vnoise(p * 4.01)
        + 0.0667 * vnoise(p * 8.03);
 }
+
+/**
+ * Drape creases for cloth: ridged noise, stretched vertically so the folds hang.
+ * This lives in the shader because the garment bake (4 mm cells) cannot resolve
+ * creases this fine — pushing the SDF hard enough to try produces faceted plateaus,
+ * and pushing it further drives the garment inside the body.
+ */
+float clothCrease(vec3 p) {
+  float d = fbm(vec3(p.x * 26.0, p.y * 7.5, p.z * 26.0));
+  float c = 1.0 - abs(d * 2.0 - 1.0);
+  return pow(clamp(c, 0.0, 1.0), 2.0);
+}
 `;
 
 const VERTEX_HEAD = /* glsl */`
@@ -352,6 +364,18 @@ const CLOTH_FRAG = /* glsl */`
   // wide range: the reference cloth is coarse and strongly self-shadowed, and at a
   // narrow range the garments render as one smooth latex bodysuit
   col *= mix(0.46, 1.14, ss(0.1, 0.75, h));
+
+  // drape creases — shaded, not baked. Bend the normal into the crease as well as
+  // darkening it, or the folds read as a painted-on pattern rather than as relief.
+  float cr = clothCrease(vRest);
+  const float E = 0.005;
+  vec3 gr = vec3(clothCrease(vRest + vec3(E, 0.0, 0.0)),
+                 clothCrease(vRest + vec3(0.0, E, 0.0)),
+                 clothCrease(vRest + vec3(0.0, 0.0, E))) - cr;
+  gr -= Nr * dot(gr, Nr);              // keep the perturbation tangential
+  float gl = length(gr);
+  if (gl > 1e-5) gNormal = normalize(gNormal - (gr / gl) * (0.55 * cr));
+  col *= mix(1.07, 0.58, cr);
   col *= 0.94 + 0.11 * wear;
   // grime settles low on the garment
   col *= mix(0.72, 1.0, ss(0.75, 1.15, vRest.y));

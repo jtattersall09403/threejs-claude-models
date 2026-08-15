@@ -43,18 +43,18 @@ function garment(body, offset, cover, bounds, edge = 0.014, wrinkle = null) {
  */
 function folds(amp, freq = 13, drape = 0.42) {
   return (x, y, z) => {
-    // RIDGED noise, not plain fbm. Plain fbm displaces the offset smoothly and the
-    // garment comes out gently lumpy — from any distance it still reads as a
-    // shrink-wrapped bodysuit. Cloth creases: sharp valleys, rounded crests, which
-    // is what folding the noise about its midpoint gives.
-    const a = fbm3(x * freq, y * freq * drape, z * freq, 3);
-    const b = fbm3(x * freq * 2.7 + 17, y * freq * drape * 2.7, z * freq * 2.7, 2);
-    const ridge = 1 - Math.abs(a * 2 - 1);
-    const fine = 1 - Math.abs(b * 2 - 1);
-    // STRICTLY NON-NEGATIVE. This displaces the garment's offset from the skin, so a
-    // zero-mean version drives the offset negative in every valley and the body
-    // erupts through the cloth in patches. Folds may only ever push outwards.
-    return amp * (ridge * 0.78 + fine * 0.30);
+    // SMOOTH fbm, and STRICTLY NON-NEGATIVE.
+    //  - non-negative because this displaces the garment's offset from the skin: a
+    //    zero-mean version drives the offset negative in every valley and the body
+    //    erupts through the cloth in patches.
+    //  - smooth because a ridged (folded-absolute) version has a kink in its
+    //    gradient that the voxel bake cannot represent, and marching cubes turns it
+    //    into hard-edged faceted plateaus that read as peeling paint.
+    // Creases fine enough to read as cloth are shaded in CLOTH_FRAG instead, where
+    // no bake resolution is involved.
+    const big = fbm3(x * freq, y * freq * drape, z * freq, 3);
+    const fine = fbm3(x * freq * 3.1 + 17, y * freq * drape * 3.1, z * freq * 3.1, 2);
+    return amp * (big * 0.72 + fine * 0.34);
   };
 }
 
@@ -69,7 +69,7 @@ export function clothingFields(body) {
     const cover = coverage([
       roundBox([0, 1.352, 0.005], [0.30, 0.156, 0.28], 0.02),
     ]);
-    const f = garment(body, 0.010, cover, bounds, 0.020, folds(0.0060, 30));
+    const f = garment(body, 0.010, cover, bounds, 0.020, folds(0.0038, 24));
     // A wrapped cloth cowl that rises to just under the jaw. It used to stop ~6 cm
     // short, leaving a bare column of neck almost as wide as the skull — head and
     // neck then fused into one box and the jaw line disappeared. In the references
@@ -92,10 +92,10 @@ export function clothingFields(body) {
       capsule([-0.188, 1.40, 0], [-0.211, 1.128, -0.006], 0.15, 0.079),
       capsule([0.188, 1.40, 0], [0.211, 1.128, -0.006], 0.15, 0.079),
     ]);
-    const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0175, 18));
+    const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0105, 16));
     // a cut-free copy of the same shell, used only as a projection target for the
     // sash and medallion
-    const shell = garment(body, 0.026, cover, bounds, 0.016, folds(0.0175, 18));
+    const shell = garment(body, 0.026, cover, bounds, 0.016, folds(0.0105, 16));
     // the skirt hangs clear of the body, so it is added rather than offset
     f.add(capsule([0, 1.0, 0.0], [0, 0.788, -0.012], 0.15, 0.149, { k: 0.055, scale: [1, 1, 0.9] }));
         // hem broken up so it does not end in a hard horizontal CSG cut
@@ -136,7 +136,7 @@ export function clothingFields(body) {
       capsule([-0.08, 0.96, 0], [-0.089, 0.222, -0.008], 0.19, 0.082),
       capsule([0.08, 0.96, 0], [0.089, 0.222, -0.008], 0.19, 0.082),
     ]);
-    const f = garment(body, 0.015, cover, bounds, 0.014, folds(0.0125, 22));
+    const f = garment(body, 0.015, cover, bounds, 0.014, folds(0.0080, 18));
     for (const s of [1, -1]) {
       f.add(ellipsoid([s * 0.089, 0.152, -0.012], [0.055, 0.016, 0.055], { k: 0.016 })); // cuff
     }
