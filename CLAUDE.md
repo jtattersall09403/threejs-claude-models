@@ -29,7 +29,9 @@ This environment can be reclaimed at any moment and **anything uncommitted is lo
 
 ## RULE 1 — DO NOT STOP LOOPING UNTIL THE CRITIC PASSES.
 
-The **only** end condition is: the harsh critic subagent returns **VERDICT: PASS**.
+The **only** end condition is: the critic subagent returns **VERDICT: PASS**.
+That bar is real but reachable — the critic is asked to sign off when it genuinely
+cannot find a way the build falls short of the references, not to object forever.
 
 - A critic FAIL is not a stopping point. It is the input to the next iteration.
   Work its ranked defect list, re-render, re-hand-off, repeat.
@@ -57,28 +59,33 @@ outer one brings in a fresh pair of eyes. **Do not collapse them into one.**
  │    npm run compare  builds the comparison sheets for you.              │
  │ 6. Not yet at the bar? → back to 1. Loop again. And again.             │
  └───────────────────────────────────────────────────────────────────────┘
-            ↓ ONLY once **you** believe the bar is met
+            ↓ ONLY once **you** believe NOTHING is left wrong
  ┌─ OUTER LOOP ──────────────────────────────────────────────────────────┐
- │ 7. Hand off to the harsh critic subagent. It sees only the reference   │
- │    images and the artifact, and finds what you could not see yourself. │
+ │ 7. Hand off to the critic. Fresh eyes, no attachment: it decides for   │
+ │    itself what to check and whether this is production-ready.          │
  │ 8. Critic FAIL? → work its ranked list, then GO BACK TO THE INNER LOOP │
- │    and iterate on your own until you again think the bar is met.       │
+ │    and iterate on your own until nothing looks wrong to you again.     │
  │    Only then hand off for the next critic round.                       │
  └───────────────────────────────────────────────────────────────────────┘
 ```
 
-**The critic is not your feedback loop — it is your audit.** Handing off after a single
-pass of fixes wastes a round: the critic burns ~25 minutes rendering and comes back with
-things you would have caught yourself by looking. Its value is finding what you are
-*blind* to, and you only get that value once you have already fixed everything you can
-*see*. Expect several inner-loop iterations per critic round.
+**The critic is not your feedback loop — it is a fresh pair of eyes.** You hand off
+**only when you believe there is nothing left wrong**. Not "nothing left that I have
+time for", not "nothing left on the critic's last list" — nothing you can find, having
+genuinely looked. That is the whole point of the split: the critic's value is finding
+what you are *blind* to, and you only get that value once you have already fixed
+everything you can *see*. Expect many inner-loop iterations per critic round.
 
 Concretely, before every hand-off:
 - Run a full `npm run capture` and actually read the orbit frames, the head close-ups
   and the detail shots — not one hero angle.
 - Run `npm run compare` and study the reference/render pairs side by side.
-- Write down what still looks wrong. If the list is non-empty, you are not ready to
-  hand off — go fix it.
+- List everything that still looks wrong to you. **If that list is not empty, do not
+  hand off — go fix it, and look again.** You hand off when the list comes back empty.
+
+Then the critic looks at it cold: not checking whether you did what you intended, but
+asking whether the thing in front of it is production-ready against the references, and
+thinking for itself about what to examine.
 
 **Never skip step 5.** Reading the capture PNGs with the Read tool *is* the
 quality gate. Text-only reasoning about the model is not a substitute.
