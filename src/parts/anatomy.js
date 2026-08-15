@@ -153,12 +153,16 @@ export function buildHeadField() {
 
   // ---- brow / eye ridges -------------------------------------------------------
   for (const s of [1, -1]) {
-    f.add(ellipsoid([s * 0.0462, 1.7180, 0.072], [0.032, 0.0182, 0.050], { k: 0.026 }));  // brow shelf, outer
-    f.add(ellipsoid([s * 0.0252, 1.7086, 0.088], [0.024, 0.0165, 0.042], { k: 0.024 })); // ...dipping inboard
+    // The brow's UNDERSIDE must clear the eye APERTURE, not merely sit above the eye's
+    // centre. At y 1.7268 with a half-height of 0.0175 its underside was 1.7093, below
+    // the aperture's top at 1.7117 — so the shelf ate the eye and the face read as a
+    // visored helmet with two orange slits in it.
+    f.add(ellipsoid([s * 0.0468, 1.7345, 0.070], [0.032, 0.0175, 0.048], { k: 0.026 }));  // brow shelf, outer
+    f.add(ellipsoid([s * 0.0256, 1.7255, 0.086], [0.024, 0.0158, 0.040], { k: 0.024 })); // ...dipping inboard
     f.add(ellipsoid([s * 0.0575, 1.6905, 0.022], [0.016, 0.054, 0.055], { k: 0.035 }));  // temple
   }
 
-  f.add(capsule([-0.030, 1.7118, 0.086], [0.030, 1.7118, 0.086], 0.0140, 0.0140,
+  f.add(capsule([-0.030, 1.7285, 0.084], [0.030, 1.7285, 0.084], 0.0136, 0.0136,
     { k: 0.020, scale: [1, 0.72, 1] }));   // brow bar, bridging the two shelves
 
   // ---- snout ------------------------------------------------------------------
@@ -188,7 +192,7 @@ export function buildHeadField() {
   // the first snout station left a concave notch at the bridge, and the user's pink
   // trace of the reference profile is one CONVEX sweep from lip to crown with no notch
   // in it at all.
-  f.add(capsule([0, 1.7115, 0.074], [0, 1.6490, 0.128], 0.0168, 0.0080,
+  f.add(capsule([0, 1.7270, 0.074], [0, 1.6490, 0.128], 0.0168, 0.0080,
     { k: 0.026, scale: [1, 0.62, 1] }));
   f.add(ellipsoid([0, 1.6408, 0.1495], [0.0152, 0.0132, 0.0122], { k: 0.016 })); // nose pad
 

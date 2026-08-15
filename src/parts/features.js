@@ -99,7 +99,7 @@ export function buildFrontHorns(field) {
   const out = [];
   for (const s of [1, -1]) {
     const dir = [s * 0.26, 0.955, 0.14];
-    out.push(spike(seat(field, [s * 0.0420, 1.7280, 0.030], dir, 0.006), dir, 0.105, 0.0112, {
+    out.push(spike(seat(field, [s * 0.0448, 1.7420, 0.024], dir, 0.008), dir, 0.076, 0.0102, {
       taper: 0.70, sides: 12, steps: 9, bend: [s * 0.004, 0.003, -0.022],
     }));
   }
@@ -183,9 +183,9 @@ export function buildJawSpikes(field) {
     // spines lying back along the brow ridge, and they carry a lot of the face's
     // character. Angled back rather than out, so they read against the skull.
     for (const [p, dir, len, r] of [
-      [[s * 0.0262, 1.7300, 0.0800], [s * 0.18, 0.38, 0.91], 0.0380, 0.0075],
-      [[s * 0.0412, 1.7290, 0.0740], [s * 0.38, 0.36, 0.85], 0.0355, 0.0070],
-      [[s * 0.0542, 1.7230, 0.0620], [s * 0.58, 0.32, 0.75], 0.0320, 0.0064],
+      [[s * 0.0268, 1.7452, 0.0780], [s * 0.18, 0.38, 0.91], 0.0355, 0.0072],
+      [[s * 0.0418, 1.7442, 0.0720], [s * 0.38, 0.36, 0.85], 0.0330, 0.0068],
+      [[s * 0.0548, 1.7382, 0.0600], [s * 0.58, 0.32, 0.75], 0.0300, 0.0062],
     ]) {
       out.push(spike(seat(field, p, dir, 0.003), dir, len, r, {
         taper: 0.9, flat: 0.38, sides: 10, steps: 7, bend: [0, 0.004, -0.010],
