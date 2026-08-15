@@ -140,8 +140,8 @@ export function buildArgonian(opts = {}) {
   for (const g of clothingFields(bodyField)) {
     push(g.region, smoothPositions(bakeField(g.field, g.bounds, g.cell), 2));
   }
-  push(REGION.LEATHER, buildStrap());
-  for (const p of buildBelt()) push(REGION.LEATHER, p);
+  push(REGION.SASH, buildStrap());
+  for (const p of buildBelt()) push(REGION.BELT, p);
   for (const p of buildWristWraps(rig)) push(REGION.WRAP, p);
 
   const matForRegion = {
@@ -150,6 +150,8 @@ export function buildArgonian(opts = {}) {
     [REGION.TROUSERS]: materials.trousers,
     [REGION.LEATHER]: materials.leather,
     [REGION.WRAP]: materials.wrap,
+    [REGION.SASH]: materials.sash,
+    [REGION.BELT]: materials.belt,
   };
   for (const [region, builder] of byRegion) {
     const key = 'cloth' + region;

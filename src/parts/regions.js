@@ -8,4 +8,6 @@ export const REGION = {
   LEATHER: 5,   // shoulder strap, belt, shoes
   TROUSERS: 6,
   WRAP: 7,      // pale wrist wraps
+  SASH: 8,      // braided shoulder strap — lighter than the tunic it lies on
+  BELT: 9,
 };

@@ -6,7 +6,7 @@
 // need no tangents.
 import * as THREE from 'three';
 import { makeScaleTexture, makeClothTexture, makeLeatherTexture } from './textures.js';
-import { EYE, HEAD_XF } from '../parts/anatomy.js';
+import { EYE, HEAD_XF, LIP } from '../parts/anatomy.js';
 
 const COMMON = /* glsl */`
 varying vec3 vRest;
@@ -151,14 +151,14 @@ const SKIN_FRAG = /* glsl */`
   // armoured skull cap: top of the braincase, wrapping down over the temples
   // covers the whole cranium from the brow back, wrapping down behind the eyes —
   // driven by position, not by normal, so it does not fade out on the flanks
-  float cap = ss(1.652, 1.676, J.y) * ss(0.168, 0.124, J.z);
+  float cap = ss(1.648, 1.672, J.y) * ss(0.198, 0.122, J.z);
   cap = max(cap, ss(1.612, 1.658, J.y) * ss(-0.005, -0.075, J.z));  // occiput
-  cap *= ss(0.132, 0.106, abs(J.x));                                 // not the very flanks
+  cap *= ss(0.148, 0.120, abs(J.x));                                 // not the very flanks
   cap = max(cap, ss(1.682, 1.702, J.y) * ss(0.140, 0.106, J.z));     // crown, full width
 
   // dark scaled band around the eye socket and temple
-  float eyeD = length((J - vec3(EYE_X, EYE_Y, EYE_Z)) * vec3(0.85, 1.5, 1.0));
-  float socket = ss(0.062, 0.028, eyeD) * step(1.60, H.y);
+  float eyeD = length((J - vec3(EYE_X, EYE_Y, EYE_Z)) * vec3(0.72, 1.35, 0.62));
+  float socket = ss(0.112, 0.040, eyeD) * step(1.598, H.y);
 
   // maroon plate over the brow ridges and between the eyes
   float browD = length((J - vec3(0.042, 1.7185, 0.042)) * vec3(0.80, 2.6, 1.05));
@@ -171,7 +171,7 @@ const SKIN_FRAG = /* glsl */`
 
   // banded scutes on throat and belly
   float bands = ss(0.22, 0.95, abs(sin(P.y * 78.0 + P.z * 9.0)));
-  float bandZone = ventral * ss(1.44, 1.585, H.y) * ss(1.685, 1.60, H.y);
+  float bandZone = ventral * ss(1.40, 1.47, H.y) * ss(1.66, 1.60, H.y);
   bandZone = max(bandZone, ventral * ss(1.35, 1.25, P.y) * ss(0.80, 0.95, P.y));
 
   // --- colour ------------------------------------------------------------
@@ -183,7 +183,7 @@ const SKIN_FRAG = /* glsl */`
   vec3 dorsal2  = vec3(0.011, 0.015, 0.007);
   vec3 warmOl   = vec3(0.066, 0.060, 0.030);
   vec3 belly    = vec3(0.086, 0.082, 0.046);
-  vec3 plate    = vec3(0.0062, 0.0066, 0.0064);
+  vec3 plate    = vec3(0.0046, 0.0048, 0.0052);
   vec3 maroon   = vec3(0.115, 0.026, 0.020);
   vec3 boneCol  = vec3(0.145, 0.126, 0.084);
 
@@ -191,20 +191,20 @@ const SKIN_FRAG = /* glsl */`
   col = mix(col, warmOl, ss(0.45, 0.88, blotch));
   col = mix(col, col * 0.46, ss(0.42, 0.72, macro) * 0.55);
   col = mix(col, belly, ventral * 0.88);
-  col = mix(col, belly * vec3(1.22, 1.10, 0.86), bandZone * bands * 0.75);
+  col = mix(col, belly * vec3(1.30, 1.14, 0.84), bandZone * bands * 0.95);
   col = mix(col, mix(dorsal2, plate, 0.5), tailTop * (0.35 + 0.5 * tailScute));
   col = mix(col, plate, cap * 0.97);
-  col = mix(col, plate * 1.35, socket * 0.95);
+  col = mix(col, plate * vec3(1.15, 1.20, 1.55), socket * 0.98);
   col = mix(col, maroon, brow * 0.95);
   // three cream claw-mark streaks across the maroon brow band
   float streak = ss(0.62, 0.95, abs(sin((J.x - 0.012) * 128.0)));
   col = mix(col, boneCol, brow * streak * ss(0.020, 0.055, abs(J.x)) * 0.7);
 
   // dark closed lip line along the mouth crease
-  float lipY = 1.6118 + (0.205 - H.z) * 0.082;
-  float lip = ss(0.0092, 0.0022, abs(H.y - lipY))
-            * ss(0.222, 0.196, H.z) * ss(0.028, 0.055, H.z);
-  col = mix(col, vec3(0.0055, 0.0048, 0.0044), lip * 0.92);
+  float lipY = LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE;
+  float lip = ss(0.0105, 0.0028, abs(H.y - lipY))
+            * ss(0.210, 0.188, H.z) * ss(0.024, 0.048, H.z);
+  col = mix(col, vec3(0.0032, 0.0028, 0.0026), lip * 0.99);
 
   // crevices between scales go dark
   col *= mix(0.30, 1.10, ss(0.04, 0.60, h));
@@ -235,8 +235,8 @@ const HORN_FRAG = /* glsl */`
   float h = det.w;
 
   float t = vRun.y;
-  vec3 bone  = vec3(0.205, 0.180, 0.121);
-  vec3 tip   = vec3(0.126, 0.106, 0.072);
+  vec3 bone  = vec3(0.150, 0.132, 0.092);
+  vec3 tip   = vec3(0.094, 0.079, 0.054);
   vec3 dark  = vec3(0.022, 0.018, 0.015);
 
   vec3 col = mix(bone, tip, ss(0.45, 1.0, t));
@@ -245,7 +245,7 @@ const HORN_FRAG = /* glsl */`
   // banded ring on the big horns only
   // t < ~0.2 is inside the skull (the root is seated below the surface), so the
   // band has to sit further out to be visible at all
-  float ring = step(0.5, vRegion) * ss(0.105, 0.05, abs(t - 0.34));
+  float ring = step(0.5, vRegion) * ss(0.058, 0.034, abs(t - 0.32));
   col = mix(col, dark * 0.55, ring * 0.97);
 
   float grime = fbm(vRest * 60.0);
@@ -264,28 +264,28 @@ const EYE_FRAG = /* glsl */`
   float x = dot(d, rt), y = dot(d, up);
   float r = length(vec2(x, y));
 
-  vec3 amber = vec3(0.680, 0.340, 0.030);
-  vec3 amberHot = vec3(0.980, 0.640, 0.095);
+  vec3 amber = vec3(0.600, 0.500, 0.110);
+  vec3 amberHot = vec3(0.950, 0.900, 0.440);
   float fibers = fbm(vec3(atan(y, x) * 5.0, r * 26.0, 0.0));
   vec3 iris = mix(amber, amberHot, fibers * 0.85);
   iris *= 0.86 + 0.42 * ss(0.05, 0.55, r);
 
   vec3 col = mix(iris, vec3(0.011, 0.008, 0.005), ss(0.74, 0.88, r));
   // vertical slit pupil
-  float slit = length(vec2(x / 0.135, y / 0.52));
-  col = mix(vec3(0.006, 0.005, 0.004), col, ss(0.86, 1.06, slit));
+  float slit = length(vec2(x / 0.150, y / 0.92));
+  col = mix(vec3(0.004, 0.0035, 0.003), col, ss(0.92, 1.02, slit));
   // limbal ring
   col *= 1.0 - 0.55 * ss(0.62, 0.76, r) * (1.0 - ss(0.76, 0.9, r));
 
   diffuseColor.rgb = col;
   gRoughOut = mix(0.26, 0.62, ss(0.55, 0.80, r));
   // confine the glow to the iris ring, and kill it inside the pupil
-  gEmissive = col * (1.0 - ss(0.60, 0.86, r)) * ss(0.86, 1.06, slit);
+  gEmissive = col * (1.0 - ss(0.60, 0.86, r)) * ss(0.92, 1.02, slit);
 `;
 
 const CLOTH_FRAG = /* glsl */`
   vec3 Nr = normalize(vRestN);
-  vec4 det = triDetail(vRest, Nr, uWeave, 1.0);
+  vec4 det = triDetail(vRest, Nr, uWeave, 2.2);
   gNormal = det.xyz;
   float h = det.w;
   float dirt = fbm(vRest * 7.5);
@@ -315,6 +315,7 @@ function defines() {
     HEAD_S: HEAD_XF.scale.toFixed(5),
     HEAD_PX: HEAD_XF.pivot[0].toFixed(5), HEAD_PY: HEAD_XF.pivot[1].toFixed(5), HEAD_PZ: HEAD_XF.pivot[2].toFixed(5),
     HEAD_OX: HEAD_XF.offset[0].toFixed(5), HEAD_OY: HEAD_XF.offset[1].toFixed(5), HEAD_OZ: HEAD_XF.offset[2].toFixed(5),
+    LIP_Y0: LIP.y0.toFixed(5), LIP_Z0: LIP.z0.toFixed(5), LIP_SLOPE: LIP.slope.toFixed(5),
   };
 }
 
@@ -366,7 +367,7 @@ export function createMaterials() {
 
   const eye = mk('argonianEye', {
     roughness: 0.30, metalness: 0.0,
-    emissive: new THREE.Color(0x6d3a08), emissiveIntensity: 1.25,
+    emissive: new THREE.Color(0x8a7a24), emissiveIntensity: 0.95,
   }, EYE_FRAG, { uDetail: { value: scale } }, false);
 
   const clothMat = (name, base, rough, weave, tex) => mk(name, { roughness: rough }, CLOTH_FRAG, {
@@ -380,11 +381,13 @@ export function createMaterials() {
     skin,
     horn,
     eye,
-    tunic: clothMat('tunic', [0.056, 0.042, 0.032], 0.94, 30.0, cloth),
-    undershirt: clothMat('undershirt', [0.058, 0.062, 0.050], 0.95, 44.0, cloth),
-    trousers: clothMat('trousers', [0.026, 0.023, 0.020], 0.94, 26.0, cloth),
+    tunic: clothMat('tunic', [0.048, 0.042, 0.036], 0.94, 30.0, cloth),
+    undershirt: clothMat('undershirt', [0.052, 0.056, 0.046], 0.95, 44.0, cloth),
+    trousers: clothMat('trousers', [0.028, 0.025, 0.022], 0.94, 26.0, cloth),
     wrap: clothMat('wrap', [0.082, 0.079, 0.066], 0.96, 52.0, cloth),
     leather: clothMat('leather', [0.030, 0.020, 0.013], 0.68, 22.0, leather),
+    sash: clothMat('sash', [0.086, 0.066, 0.043], 0.78, 26.0, leather),
+    belt: clothMat('belt', [0.062, 0.050, 0.038], 0.88, 24.0, cloth),
     textures: { scale, cloth, leather },
   };
 }

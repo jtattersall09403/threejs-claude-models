@@ -65,7 +65,7 @@ function ground() {
   const geo = new THREE.CircleGeometry(7, 64);
   geo.rotateX(-Math.PI / 2);
   const mat = new THREE.MeshStandardMaterial({
-    color: 0x14120f, roughness: 0.95, metalness: 0.0,
+    color: 0x0b0a08, roughness: 0.97, metalness: 0.0,
   });
   mat.onBeforeCompile = (shader) => {
     shader.vertexShader = shader.vertexShader.replace(
@@ -80,7 +80,7 @@ function ground() {
     ).replace('#include <color_fragment>', `#include <color_fragment>
       float g = n2(vWP.xz*7.0)*0.55 + n2(vWP.xz*23.0)*0.3 + n2(vWP.xz*61.0)*0.15;
       float r = length(vWP.xz);
-      diffuseColor.rgb *= 0.45 + g*1.1;
+      diffuseColor.rgb *= 0.30 + g*0.85;
       diffuseColor.rgb *= 1.0 - smoothstep(1.6, 6.8, r);`)
       .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
       roughnessFactor = clamp(0.98 - g*0.22, 0.6, 1.0);`);
@@ -98,7 +98,7 @@ export function createViewer(container) {
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.0;
+  renderer.toneMappingExposure = 1.08;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
@@ -106,7 +106,7 @@ export function createViewer(container) {
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x07070a, 0.055);
   scene.environment = environmentMap(renderer);
-  scene.environmentIntensity = 0.28;
+  scene.environmentIntensity = 0.20;
   scene.add(backdrop());
   scene.add(ground());
 
@@ -123,7 +123,7 @@ export function createViewer(container) {
   controls.update();
 
   // ---- lights ---------------------------------------------------------------
-  const key = new THREE.SpotLight(0xffdcb4, 34, 20, 1.0, 0.58, 1.6);
+  const key = new THREE.SpotLight(0xffd7a8, 42, 20, 0.78, 0.5, 1.7);
   key.position.set(2.5, 3.0, 2.9);
   key.target.position.set(0, 0.98, 0);
   key.castShadow = true;
@@ -135,23 +135,23 @@ export function createViewer(container) {
   key.shadow.radius = 2.5;
   scene.add(key, key.target);
 
-  const fill = new THREE.DirectionalLight(0x7f96bb, 0.30);
+  const fill = new THREE.DirectionalLight(0x7f96bb, 0.17);
   fill.position.set(-2.8, 1.6, 1.4);
   scene.add(fill);
 
-  const rimWarm = new THREE.DirectionalLight(0xffc697, 1.15);
-  rimWarm.position.set(-2.4, 2.6, -2.4);
+  const rimWarm = new THREE.DirectionalLight(0xffbe86, 1.75);
+  rimWarm.position.set(-2.6, 3.0, -1.9);
   scene.add(rimWarm);
 
   const rimCool = new THREE.DirectionalLight(0x9dbbe4, 0.92);
   rimCool.position.set(2.2, 1.7, -2.4);
   scene.add(rimCool);
 
-  const bounce = new THREE.HemisphereLight(0x2b3042, 0x0f0c07, 0.16);
+  const bounce = new THREE.HemisphereLight(0x2b3042, 0x0f0c07, 0.09);
   scene.add(bounce);
 
   // low warm bounce off the floor, so the legs and hem do not fall into black
-  const floorBounce = new THREE.DirectionalLight(0x8f6c4c, 0.20);
+  const floorBounce = new THREE.DirectionalLight(0x8f6c4c, 0.13);
   floorBounce.position.set(0.8, -1.0, 1.6);
   scene.add(floorBounce);
 

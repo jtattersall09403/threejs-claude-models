@@ -27,7 +27,8 @@ export function buildHorn(side, field) {
   pts[0] = root;
   const rings = curveRings(pts, (t) => {
     const base = 0.0298 * Math.pow(1 - t, 0.6) + 0.0018;
-    const ridge = 1 + 0.105 * Math.sin(t * 26) * Math.min(1, t * 4) * (1 - t);
+    // ridging must run the FULL length; a (1-t) falloff leaves the horn a smooth tube
+    const ridge = 1 + 0.14 * Math.sin(t * 24) * Math.min(1, t * 4);
     return base * ridge;
   }, 34, {
     tension: 0.5,
@@ -128,7 +129,7 @@ export function buildFingers(rig) {
       const d = [dir[0] / l, dir[1] / l, dir[2] / l];
       const clawBase = [p3[0] - d[0] * 0.006, p3[1] - d[1] * 0.006, p3[2] - d[2] * 0.006];
       parts.push({
-        geom: spike(clawBase, d, 0.019, r * 0.72, {
+        geom: spike(clawBase, d, 0.012, r * 0.62, {
           taper: 0.62, sides: 8, steps: 7,
           bend: [d[2] * 0.004, -0.007, -d[0] * 0.004],
         }),
