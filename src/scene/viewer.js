@@ -98,7 +98,7 @@ export function createViewer(container) {
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMappingExposure = 0.95;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
@@ -106,7 +106,7 @@ export function createViewer(container) {
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x07070a, 0.055);
   scene.environment = environmentMap(renderer);
-  scene.environmentIntensity = 0.32;
+  scene.environmentIntensity = 0.42;
   scene.add(backdrop());
   scene.add(ground());
 
@@ -123,7 +123,7 @@ export function createViewer(container) {
   controls.update();
 
   // ---- lights ---------------------------------------------------------------
-  const key = new THREE.SpotLight(0xffcf9a, 11, 14, 0.62, 0.75, 2);
+  const key = new THREE.SpotLight(0xffe2bd, 34, 14, 0.62, 0.7, 2);
   key.position.set(2.0, 3.0, 2.5);
   key.target.position.set(0, 1.15, 0);
   key.castShadow = true;
@@ -135,23 +135,23 @@ export function createViewer(container) {
   key.shadow.radius = 2.5;
   scene.add(key, key.target);
 
-  const fill = new THREE.DirectionalLight(0x6c86ad, 0.12);
+  const fill = new THREE.DirectionalLight(0x6c86ad, 0.28);
   fill.position.set(-2.8, 1.6, 1.4);
   scene.add(fill);
 
-  const rimWarm = new THREE.DirectionalLight(0xffb173, 0.55);
+  const rimWarm = new THREE.DirectionalLight(0xffc08a, 1.0);
   rimWarm.position.set(-1.5, 2.0, -2.8);
   scene.add(rimWarm);
 
-  const rimCool = new THREE.DirectionalLight(0x87a6cf, 0.30);
+  const rimCool = new THREE.DirectionalLight(0x9dbbe4, 0.72);
   rimCool.position.set(2.2, 1.7, -2.4);
   scene.add(rimCool);
 
-  const bounce = new THREE.HemisphereLight(0x2a2a33, 0x151009, 0.14);
+  const bounce = new THREE.HemisphereLight(0x33384a, 0x120e08, 0.22);
   scene.add(bounce);
 
   // a small warm practical near the face, like a candle just off-frame
-  const practical = new THREE.PointLight(0xff9d4a, 0.5, 3.2, 2);
+  const practical = new THREE.PointLight(0xffab63, 0.55, 3.0, 2);
   practical.position.set(0.85, 1.42, 0.95);
   scene.add(practical);
 

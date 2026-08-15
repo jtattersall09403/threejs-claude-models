@@ -126,7 +126,7 @@ const SKIN_FRAG = /* glsl */`
   vec3 H = (P - HP) / HEAD_S + HP;
   vec3 A = vec3(abs(H.x), H.y, H.z);
 
-  float headMask = ss(1.50, 1.58, P.y);
+  float headMask = ss(1.53, 1.61, P.y);
   float freq = mix(25.0, 46.0, headMask);
   vec4 det = triDetail(P, Nr, freq, mix(1.2, 1.0, headMask));
   gNormal = det.xyz;
@@ -138,35 +138,35 @@ const SKIN_FRAG = /* glsl */`
 
   // --- masks -------------------------------------------------------------
   float ventral = ss(0.10, -0.55, dot(Nr, normalize(vec3(0.0, -0.80, 0.60))));
-  ventral = max(ventral, ss(0.15, -0.5, Nr.y) * ss(1.66, 1.55, H.y));
+  ventral = max(ventral, ss(0.15, -0.5, Nr.y) * ss(1.70, 1.58, H.y));
 
   // armoured skull cap: top of the braincase, wrapping down over the temples
-  float cap = ss(1.628, 1.672, J.y) * ss(-0.25, 0.35, Nr.y) * ss(0.155, 0.055, J.z);
-  cap = max(cap, ss(1.598, 1.648, J.y) * ss(-0.02, -0.09, J.z) * ss(-0.35, 0.15, Nr.y));
+  float cap = ss(1.672, 1.716, J.y) * ss(-0.25, 0.35, Nr.y) * ss(0.15, 0.05, J.z);
+  cap = max(cap, ss(1.638, 1.692, J.y) * ss(-0.02, -0.09, J.z) * ss(-0.35, 0.15, Nr.y));
 
   // dark scaled band around the eye socket and temple
   float eyeD = length((J - vec3(EYE_X, EYE_Y, EYE_Z)) * vec3(0.85, 1.5, 1.0));
-  float socket = ss(0.055, 0.026, eyeD) * step(1.56, H.y);
+  float socket = ss(0.056, 0.026, eyeD) * step(1.60, H.y);
 
   // maroon plate over the brow ridges and between the eyes
-  float browD = length((J - vec3(0.040, 1.6815, 0.048)) * vec3(0.80, 2.6, 1.05));
-  float brow = ss(0.062, 0.016, browD) * ss(-0.15, 0.30, Nr.y) * step(1.605, H.y);
+  float browD = length((J - vec3(0.042, 1.7185, 0.042)) * vec3(0.80, 2.6, 1.05));
+  float brow = ss(0.064, 0.016, browD) * ss(-0.15, 0.30, Nr.y) * step(1.645, H.y);
 
   // banded scutes on throat and belly
   float bands = ss(0.30, 0.92, abs(sin(P.y * 92.0 + P.z * 10.0)));
-  float bandZone = ventral * ss(1.49, 1.56, H.y) * ss(1.66, 1.60, H.y);
+  float bandZone = ventral * ss(1.50, 1.57, H.y) * ss(1.68, 1.61, H.y);
   bandZone = max(bandZone, ventral * ss(1.35, 1.25, P.y) * ss(0.80, 0.95, P.y));
 
   // --- colour ------------------------------------------------------------
   float mottle = fbm(P * 19.0);
   float blotch = fbm(P * 5.6 + 11.0);
 
-  vec3 dorsal   = vec3(0.084, 0.093, 0.043);
-  vec3 dorsal2  = vec3(0.044, 0.050, 0.024);
-  vec3 warmOl   = vec3(0.121, 0.115, 0.051);
-  vec3 belly    = vec3(0.196, 0.183, 0.104);
-  vec3 plate    = vec3(0.021, 0.021, 0.020);
-  vec3 maroon   = vec3(0.098, 0.030, 0.026);
+  vec3 dorsal   = vec3(0.055, 0.079, 0.028);
+  vec3 dorsal2  = vec3(0.026, 0.039, 0.014);
+  vec3 warmOl   = vec3(0.104, 0.113, 0.040);
+  vec3 belly    = vec3(0.163, 0.166, 0.078);
+  vec3 plate    = vec3(0.016, 0.017, 0.016);
+  vec3 maroon   = vec3(0.108, 0.026, 0.021);
 
   vec3 col = mix(dorsal2, dorsal, ss(0.30, 0.72, mottle * 0.6 + blotch * 0.7));
   col = mix(col, warmOl, ss(0.45, 0.88, blotch));
@@ -326,11 +326,11 @@ export function createMaterials() {
     skin,
     horn,
     eye,
-    tunic: clothMat('tunic', [0.128, 0.098, 0.070], 0.92, 30.0, cloth),
-    undershirt: clothMat('undershirt', [0.150, 0.150, 0.121], 0.95, 44.0, cloth),
-    trousers: clothMat('trousers', [0.088, 0.076, 0.062], 0.94, 26.0, cloth),
-    wrap: clothMat('wrap', [0.196, 0.196, 0.160], 0.96, 52.0, cloth),
-    leather: clothMat('leather', [0.075, 0.055, 0.040], 0.70, 22.0, leather),
+    tunic: clothMat('tunic', [0.104, 0.066, 0.040], 0.92, 30.0, cloth),
+    undershirt: clothMat('undershirt', [0.132, 0.130, 0.104], 0.95, 44.0, cloth),
+    trousers: clothMat('trousers', [0.055, 0.045, 0.034], 0.94, 26.0, cloth),
+    wrap: clothMat('wrap', [0.170, 0.164, 0.134], 0.96, 52.0, cloth),
+    leather: clothMat('leather', [0.042, 0.028, 0.018], 0.70, 22.0, leather),
     textures: { scale, cloth, leather },
   };
 }

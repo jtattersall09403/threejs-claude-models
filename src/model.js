@@ -92,9 +92,11 @@ export function buildArgonian(opts = {}) {
 
   // ---- hide -----------------------------------------------------------------
   log('baking body');
-  const body = smoothPositions(bakeField(buildBodyField(), BODY_BOUNDS, 0.0062), 2);
+  const bodyField = buildBodyField();
+  const headField = buildHeadField();
+  const body = smoothPositions(bakeField(bodyField, BODY_BOUNDS, 0.0062), 2);
   log('baking head');
-  const head = smoothPositions(bakeField(buildHeadField(), HEAD_BOUNDS, 0.0031), 1);
+  const head = smoothPositions(bakeField(headField, HEAD_BOUNDS, 0.0031), 1);
 
   const skinB = new MeshBuilder();
   skinB.add(body, skinPart(body), REGION.SKIN);
@@ -109,10 +111,10 @@ export function buildArgonian(opts = {}) {
   const toHead = (p) => scalePartAbout(p, HEAD_XF.scale, HEAD_XF.pivot);
   const hornB = new MeshBuilder();
   for (const s of [1, -1]) {
-    const h = toHead(buildHorn(s));
+    const h = toHead(buildHorn(s, headField));
     hornB.add(h, skinPart(h), 1);           // region 1 => banded ring in the shader
   }
-  for (const p of [...buildCrownSpikes(), ...buildJawSpikes(), ...buildTeeth()]) {
+  for (const p of [...buildCrownSpikes(headField), ...buildJawSpikes(headField), ...buildTeeth()]) {
     const q = toHead(p);
     hornB.add(q, skinPart(q), 0);
   }
@@ -134,7 +136,7 @@ export function buildArgonian(opts = {}) {
     if (!byRegion.has(region)) byRegion.set(region, new MeshBuilder());
     byRegion.get(region).add(part, skinPart(part), region);
   };
-  for (const g of clothingFields()) {
+  for (const g of clothingFields(bodyField)) {
     push(g.region, smoothPositions(bakeField(g.field, g.bounds, g.cell), 2));
   }
   push(REGION.LEATHER, buildStrap());

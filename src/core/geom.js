@@ -12,7 +12,8 @@ function cross(a, b) {
 function dot(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
 
 /**
- * Sweep a ring profile along a poly-line.
+ * Sweep a ring profile along a poly-line. Triangles wind counter-clockwise seen
+ * from outside; see the winding note in core/mc.js.
  * rings: [{ p:[x,y,z], r:number|[rx,ry], twist?:number, profile?:(angle)=>number }]
  * opts: { sides=16, capStart=true, capEnd=true, tipEnd=false }
  */
@@ -78,7 +79,7 @@ export function sweep(rings, opts = {}) {
       const s2 = (s + 1) % sides;
       const a = i * sides + s, b = i * sides + s2;
       const c = (i + 1) * sides + s, d = (i + 1) * sides + s2;
-      indices.push(a, c, b, b, c, d);
+      indices.push(a, b, c, b, d, c);
     }
   }
 
@@ -90,7 +91,7 @@ export function sweep(rings, opts = {}) {
     for (let s = 0; s < sides; s++) {
       const s2 = (s + 1) % sides;
       const a = idx * sides + s, b = idx * sides + s2;
-      if (flip) indices.push(ci, a, b); else indices.push(ci, b, a);
+      if (flip) indices.push(ci, b, a); else indices.push(ci, a, b);
     }
   };
   if (opts.capStart !== false) capRing(0, true);
@@ -131,7 +132,7 @@ export function spike(base, dir, length, radius, opts = {}) {
       r: radius * Math.pow(1 - t, opts.taper || 0.75) * (opts.swell ? 1 + 0.12 * Math.sin(t * Math.PI) : 1),
     });
   }
-  return sweep(rings, { sides: opts.sides || 10, capEnd: false });
+  return sweep(rings, { sides: opts.sides || 10, capEnd: false, capStart: opts.capStart !== false });
 }
 
 /** Uniformly scale a generated part about a pivot (normals are scale-invariant). */

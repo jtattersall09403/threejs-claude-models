@@ -57,6 +57,20 @@ if (pageErrors.length || consoleErrors.length) {
   process.exit(1);
 }
 
+// Winding/solidity audit: catches the inverted-triangle bug that makes surfaces
+// look see-through instead of solid.
+const audit = await tab.evaluate('window.__meshAudit()');
+const bad = audit.filter((m) => m.agree < 0.9 || m.doubleSided);
+for (const m of audit) {
+  console.log(`  ${m.name.padEnd(9)} vol=${m.volume.toFixed(5)} outwardFaces=${(m.agree * 100).toFixed(1)}%`);
+}
+if (bad.length) {
+  console.error('MESH AUDIT FAILED (inverted winding / non-opaque):\n' +
+    bad.map((m) => `  ${m.name}: outwardFaces=${(m.agree * 100).toFixed(1)}% doubleSided=${m.doubleSided}`).join('\n'));
+  await browser.close();
+  process.exit(1);
+}
+
 await tab.evaluate('window.__pauseLoop()');
 const info = await tab.evaluate('document.getElementById("hud").textContent');
 console.log(info);

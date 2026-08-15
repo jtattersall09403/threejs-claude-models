@@ -4,13 +4,13 @@
 
 const EPS = 1e-6;
 
-function smin(a, b, k) {
+export function smin(a, b, k) {
   if (k <= 0) return Math.min(a, b);
   const h = Math.max(0, Math.min(1, 0.5 + (0.5 * (b - a)) / k));
   return b * (1 - h) + a * h - k * h * (1 - h);
 }
 
-function smax(a, b, k) {
+export function smax(a, b, k) {
   if (k <= 0) return Math.max(a, b);
   const h = Math.max(0, Math.min(1, 0.5 - (0.5 * (b - a)) / k));
   return b * (1 - h) + a * h + k * h * (1 - h);
@@ -104,6 +104,53 @@ export function halfSpace(point, normal, opts = {}) {
   };
 }
 
+/**
+ * The surface of an existing field, pushed out by `offset`. This is how garments
+ * are built: smooth-min blending inflates the body well past its own primitives, so
+ * anything authored from primitive radii alone ends up buried inside the skin.
+ * Offsetting the *baked surface* guarantees a garment always clears the body.
+ */
+export function offsetSurface(field, offset, aabb, k = 0.01) {
+  return {
+    k,
+    aabb: [aabb[0], aabb[1], aabb[2], aabb[3], aabb[4], aabb[5]],
+    d(px, py, pz) { return field.sample(px, py, pz) - offset; },
+  };
+}
+
+/** Smooth intersection of two primitives — used to trim a garment to its coverage. */
+export function isect(a, b, k = 0.012) {
+  const bb = [
+    Math.max(a.aabb[0], b.aabb[0]), Math.max(a.aabb[1], b.aabb[1]), Math.max(a.aabb[2], b.aabb[2]),
+    Math.min(a.aabb[3], b.aabb[3]), Math.min(a.aabb[4], b.aabb[4]), Math.min(a.aabb[5], b.aabb[5]),
+  ];
+  return {
+    k: 0.0,
+    aabb: bb,
+    d(px, py, pz) { return smax(a.d(px, py, pz), b.d(px, py, pz), k); },
+  };
+}
+
+/** Find where the field's surface lies along a ray, so features can sit ON the skin. */
+export function raySurface(field, origin, dir, opts = {}) {
+  const max = opts.max || 0.25;
+  const l = Math.hypot(dir[0], dir[1], dir[2]) || 1;
+  const d = [dir[0] / l, dir[1] / l, dir[2] / l];
+  let t = opts.start !== undefined ? opts.start : -0.12;
+  let prev = field.sample(origin[0] + d[0] * t, origin[1] + d[1] * t, origin[2] + d[2] * t);
+  const step = 0.002;
+  for (t += step; t < max; t += step) {
+    const v = field.sample(origin[0] + d[0] * t, origin[1] + d[1] * t, origin[2] + d[2] * t);
+    if (prev < 0 && v >= 0) {
+      const f = prev / (prev - v);
+      const hit = t - step + step * f;
+      return [origin[0] + d[0] * hit, origin[1] + d[1] * hit, origin[2] + d[2] * hit];
+    }
+    prev = v;
+  }
+  return [...origin];
+}
+
 export class Field {
   constructor() {
     this.adds = [];
@@ -112,6 +159,12 @@ export class Field {
   add(prim) { this.adds.push(prim); return this; }
   sub(prim) { this.subs.push(prim); return this; }
   addAll(list) { list.forEach((p) => this.add(p)); return this; }
+
+  /** Expose this whole field as a single primitive, for use in isect()/offsetSurface(). */
+  asPrimitive(aabb, k = 0.01) {
+    const self = this;
+    return { k, aabb, d(px, py, pz) { return self.sample(px, py, pz); } };
+  }
 
   /**
    * Uniformly scale everything already added, about a pivot. Lets a whole region

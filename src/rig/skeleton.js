@@ -9,15 +9,15 @@ const L = 1, R = -1;
 const SPEC = [
   ['root', null, [0, 0, 0]],
   ['hips', 'root', [0, 0.965, 0]],
-  ['spine', 'hips', [0, 1.075, 0.01]],
-  ['chest', 'spine', [0, 1.2, 0.005]],
-  ['upperChest', 'chest', [0, 1.325, 0]],
-  ['neckBase', 'upperChest', [0, 1.418, -0.008]],
-  ['neck', 'neckBase', [0, 1.487, 0.004]],
+  ['spine', 'hips', [0, 1.088, 0.01]],
+  ['chest', 'spine', [0, 1.225, 0.005]],
+  ['upperChest', 'chest', [0, 1.368, 0]],
+  ['neckBase', 'upperChest', [0, 1.455, -0.01]],
+  ['neck', 'neckBase', [0, 1.516, 0.002]],
   ['head', 'neck', [0, 1.578, 0.018]],
-  ['headTop', 'head', [0, 1.702, 0.022]],
-  ['jaw', 'head', [0, 1.606, 0.022]],   // hinge, at the back of the lower jaw
-  ['jawTip', 'jaw', [0, 1.576, 0.247]],
+  ['headTop', 'head', [0, 1.762, 0.01]],
+  ['jaw', 'head', [0, 1.645, 0.006]],   // hinge, at the back of the lower jaw
+  ['jawTip', 'jaw', [0, 1.6, 0.222]],
 
   ['tail1', 'hips', [0, 0.985, -0.085]],
   ['tail2', 'tail1', [0, 0.925, -0.215]],
@@ -28,27 +28,27 @@ const SPEC = [
 ];
 
 const MIRROR = [
-  ['clavicle', 'upperChest', [0.045, 1.362, 0.015]],
-  ['shoulder', 'clavicle', [0.176, 1.366, 0]],
-  ['elbow', 'shoulder', [0.196, 1.105, -0.012]],
-  ['wrist', 'elbow', [0.206, 0.856, 0.018]],
-  ['hand', 'wrist', [0.207, 0.8, 0.012]],
+  ['clavicle', 'upperChest', [0.05, 1.406, 0.015]],
+  ['shoulder', 'clavicle', [0.189, 1.409, 0]],
+  ['elbow', 'shoulder', [0.208, 1.142, -0.014]],
+  ['wrist', 'elbow', [0.216, 0.89, 0.016]],
+  ['hand', 'wrist', [0.217, 0.834, 0.01]],
 
-  ['thumb1', 'hand', [0.196, 0.792, 0.048]],
-  ['thumb2', 'thumb1', [0.19, 0.763, 0.074]],
-  ['thumb3', 'thumb2', [0.187, 0.744, 0.091]],
-  ['index1', 'hand', [0.207, 0.757, 0.042]],
-  ['index2', 'index1', [0.208, 0.714, 0.048]],
-  ['index3', 'index2', [0.208, 0.677, 0.052]],
-  ['middle1', 'hand', [0.208, 0.756, 0.014]],
-  ['middle2', 'middle1', [0.209, 0.711, 0.02]],
-  ['middle3', 'middle2', [0.209, 0.672, 0.025]],
-  ['ring1', 'hand', [0.207, 0.756, -0.013]],
-  ['ring2', 'ring1', [0.208, 0.713, -0.007]],
-  ['ring3', 'ring2', [0.208, 0.677, -0.002]],
-  ['pinky1', 'hand', [0.205, 0.754, -0.039]],
-  ['pinky2', 'pinky1', [0.205, 0.719, -0.034]],
-  ['pinky3', 'pinky2', [0.205, 0.691, -0.03]],
+  ['thumb1', 'hand', [0.206, 0.826, 0.046]],
+  ['thumb2', 'thumb1', [0.2, 0.797, 0.072]],
+  ['thumb3', 'thumb2', [0.197, 0.778, 0.089]],
+  ['index1', 'hand', [0.217, 0.791, 0.04]],
+  ['index2', 'index1', [0.218, 0.748, 0.046]],
+  ['index3', 'index2', [0.218, 0.711, 0.05]],
+  ['middle1', 'hand', [0.218, 0.79, 0.012]],
+  ['middle2', 'middle1', [0.219, 0.745, 0.018]],
+  ['middle3', 'middle2', [0.219, 0.706, 0.023]],
+  ['ring1', 'hand', [0.217, 0.79, -0.015]],
+  ['ring2', 'ring1', [0.218, 0.747, -0.009]],
+  ['ring3', 'ring2', [0.218, 0.711, -0.004]],
+  ['pinky1', 'hand', [0.215, 0.788, -0.041]],
+  ['pinky2', 'pinky1', [0.215, 0.753, -0.036]],
+  ['pinky3', 'pinky2', [0.215, 0.725, -0.032]],
 
   ['hip', 'hips', [0.088, 0.945, 0]],
   ['knee', 'hip', [0.098, 0.525, 0.015]],
@@ -119,10 +119,10 @@ export function createSkeleton() {
 // Bones whose auto-generated span sits in the wrong flesh get hand-authored spans
 // instead. Without these the upper muzzle binds to the jaw and opens with it.
 const EXTRA_SEGMENTS = [
-  { bone: 'head', a: [0, 1.641, 0.072], b: [0, 1.630, 0.234] },   // upper muzzle
-  { bone: 'head', a: [-0.055, 1.655, 0.012], b: [0.055, 1.655, 0.012] }, // temples
-  { bone: 'head', a: [0, 1.578, 0.018], b: [0, 1.702, 0.022] },   // braincase
-  { bone: 'jaw', a: [0, 1.5975, 0.098], b: [0, 1.5895, 0.216] },  // lower jaw only
+  { bone: 'head', a: [0, 1.668, 0.070], b: [0, 1.652, 0.212] },   // upper muzzle
+  { bone: 'head', a: [-0.062, 1.686, 0.010], b: [0.062, 1.686, 0.010] }, // temples
+  { bone: 'head', a: [0, 1.590, 0.005], b: [0, 1.756, 0.005] },   // braincase
+  { bone: 'jaw', a: [0, 1.606, 0.100], b: [0, 1.601, 0.194] },    // lower jaw only
 ];
 const SUPPRESS_AUTO = new Set(['jaw', 'jawTip', 'headTop']);
 

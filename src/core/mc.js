@@ -18,6 +18,11 @@ const EDGE = [
 const EDGE_AXIS = [0, 1, 0, 1, 0, 1, 0, 1, 2, 2, 2, 2];
 
 /**
+ * Winding: triangles are emitted counter-clockwise when viewed from OUTSIDE the
+ * surface. Getting this backwards culls the front faces and you end up seeing the
+ * inside of the far side of the mesh — which reads as an eerie translucency rather
+ * than as an obvious error. tools/capture.mjs asserts signed volume > 0 to catch it.
+ *
  * @param {Float32Array} field  density values, high = inside, size nx*ny*nz
  * @param {object} grid  {nx,ny,nz, min:[x,y,z], cell}
  * @param {number} iso
@@ -78,7 +83,7 @@ export function polygonise(field, grid, iso = 0) {
           const b = eIdx[triTable[o + i + 1]];
           const c = eIdx[triTable[o + i + 2]];
           if (a === b || b === c || a === c) continue;
-          indices.push(a, c, b);
+          indices.push(a, b, c);
         }
       }
     }

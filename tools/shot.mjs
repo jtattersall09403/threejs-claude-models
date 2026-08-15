@@ -15,7 +15,7 @@ if (!name) {
 const browser = await chromium.launch({
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
 });
-const ctx = await browser.newContext({ viewport: { width: +w, height: +h }, deviceScaleFactor: 2 });
+const ctx = await browser.newContext({ viewport: { width: +w, height: +h }, deviceScaleFactor: +(process.env.DPR || 1) });
 const tab = await ctx.newPage();
 await tab.goto(pathToFileURL(resolve(root, 'dist/argonian.html')).href);
 await tab.waitForFunction('window.__ready === true', null, { timeout: 180000 });
@@ -24,6 +24,6 @@ await tab.evaluate(([a, e, d, t, f]) => window.__setCamera(a, e, d, t, f),
 await tab.waitForTimeout(80);
 const out = resolve(root, 'captures/adhoc');
 mkdirSync(out, { recursive: true });
-await tab.screenshot({ path: resolve(out, `${name}.png`) });
+await tab.screenshot({ path: resolve(out, `${name}.png`), timeout: 180000 });
 console.log(`captures/adhoc/${name}.png`);
 await browser.close();
