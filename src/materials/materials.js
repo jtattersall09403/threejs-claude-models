@@ -321,13 +321,13 @@ const EYE_FRAG = /* glsl */`
 
   // Deep amber-orange, not the near-white yellow it was: in the references the eye
   // is a dark jewel set in a black socket, and it must not out-glow the horns.
-  vec3 amber = vec3(0.420, 0.276, 0.052);
-  vec3 amberHot = vec3(0.760, 0.612, 0.186);
+  vec3 amber = vec3(0.480, 0.330, 0.062);
+  vec3 amberHot = vec3(0.860, 0.700, 0.220);
   float fibers = fbm(vec3(atan(y, x) * 5.0, r * 26.0, 0.0));
   vec3 iris = mix(amber, amberHot, fibers * 0.85);
   iris *= 0.86 + 0.42 * ss(0.05, 0.55, r);
 
-  vec3 col = mix(iris, vec3(0.009, 0.007, 0.005), ss(0.60, 0.75, r));
+  vec3 col = mix(iris, vec3(0.009, 0.007, 0.005), ss(0.70, 0.84, r));
   // vertical slit pupil
   float slit = length(vec2(x / 0.150, y / 0.92));
   col = mix(vec3(0.004, 0.0035, 0.003), col, ss(0.92, 1.02, slit));
@@ -342,14 +342,16 @@ const EYE_FRAG = /* glsl */`
 
 const CLOTH_FRAG = /* glsl */`
   vec3 Nr = normalize(vRestN);
-  vec4 det = triDetail(vRest, Nr, uWeave, 2.2);
+  vec4 det = triDetail(vRest, Nr, uWeave, 3.2);
   gNormal = det.xyz;
   float h = det.w;
   float dirt = fbm(vRest * 7.5);
   float wear = fbm(vRest * 24.0);
-  vec3 col = uBase * (0.86 + 0.26 * dirt);
-  col = mix(col, uBase * 0.66, ss(0.58, 0.92, fbm(vRest * 3.1 + 5.0)));
-  col *= mix(0.58, 1.08, ss(0.1, 0.75, h));
+  vec3 col = uBase * (0.82 + 0.34 * dirt);
+  col = mix(col, uBase * 0.60, ss(0.58, 0.92, fbm(vRest * 3.1 + 5.0)));
+  // wide range: the reference cloth is coarse and strongly self-shadowed, and at a
+  // narrow range the garments render as one smooth latex bodysuit
+  col *= mix(0.46, 1.14, ss(0.1, 0.75, h));
   col *= 0.94 + 0.11 * wear;
   // grime settles low on the garment
   col *= mix(0.72, 1.0, ss(0.75, 1.15, vRest.y));
@@ -429,7 +431,7 @@ export function createMaterials() {
 
   const eye = mk('argonianEye', {
     roughness: 0.30, metalness: 0.0,
-    emissive: new THREE.Color(0x8a7a24), emissiveIntensity: 0.52,
+    emissive: new THREE.Color(0x8a7a24), emissiveIntensity: 0.70,
   }, EYE_FRAG, { uDetail: { value: scale } }, false);
 
   const clothMat = (name, base, rough, weave, tex) => mk(name, { roughness: rough }, CLOTH_FRAG, {
@@ -443,13 +445,16 @@ export function createMaterials() {
     skin,
     horn,
     eye,
-    tunic: clothMat('tunic', [0.0182, 0.0176, 0.0168], 0.95, 30.0, cloth),
-    undershirt: clothMat('undershirt', [0.0298, 0.0312, 0.0272], 0.95, 44.0, cloth),
-    trousers: clothMat('trousers', [0.0142, 0.0138, 0.0132], 0.95, 26.0, cloth),
-    wrap: clothMat('wrap', [0.0665, 0.0670, 0.0605], 0.96, 52.0, cloth),
+    // Values are separated deliberately. Authored close together they collapsed into
+    // one flat brown mass in which tunic, trousers, belt and sash were indistinguishable
+    // — the reference reads as separate garments before you resolve any detail.
+    tunic: clothMat('tunic', [0.0285, 0.0262, 0.0232], 0.95, 22.0, cloth),
+    undershirt: clothMat('undershirt', [0.0330, 0.0345, 0.0315], 0.95, 36.0, cloth),
+    trousers: clothMat('trousers', [0.0208, 0.0198, 0.0186], 0.95, 20.0, cloth),
+    wrap: clothMat('wrap', [0.0520, 0.0522, 0.0480], 0.96, 42.0, cloth),
     leather: clothMat('leather', [0.030, 0.020, 0.013], 0.68, 22.0, leather),
-    sash: clothMat('sash', [0.0475, 0.0420, 0.0345], 0.80, 26.0, leather),
-    belt: clothMat('belt', [0.0392, 0.0388, 0.0368], 0.90, 24.0, cloth),
+    sash: clothMat('sash', [0.0745, 0.0690, 0.0585], 0.82, 22.0, leather),
+    belt: clothMat('belt', [0.0605, 0.0592, 0.0552], 0.90, 20.0, cloth),
     textures: { scale, cloth, leather },
   };
 }
