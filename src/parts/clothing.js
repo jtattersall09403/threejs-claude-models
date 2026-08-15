@@ -137,9 +137,9 @@ export function buildStrap() {
     [0.176, 1.006, 0.064],
     [0.19, 0.964, -0.038],
   ];
-  const rings = curveRings(pts, () => [0.0215, 0.0058], 96, {
+  const rings = curveRings(pts, () => [0.0132, 0.0072], 120, {
     tension: 0.4,
-    profile: (a, t) => 1 + 0.055 * Math.sin(a * 4.0 + t * 38.0),  // braided relief
+    profile: (a, t) => 1 + 0.20 * Math.sin(a * 2.0 + t * 96.0),  // braided relief
   });
   return sweep(rings, {
     sides: 22,
