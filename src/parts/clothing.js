@@ -154,6 +154,41 @@ export function clothingFields(body) {
 }
 
 /**
+ * A frame for a flat band lying on the body: `v` is the outward radial, `u` the
+ * width direction across the band.
+ *
+ * The orthogonalisation needs a guard. Where the band wraps — over the shoulder,
+ * around the hip — the tangent swings parallel to the outward direction, `v`
+ * collapses towards zero length, and normalising it flips the ring basis from one
+ * step to the next. The sweep then renders as a fragmented row of triangular
+ * slivers: it looks like torn geometry, not like a twisted strap, so it is easy to
+ * misread as a bake or winding problem. Falling back to the previous ring's frame
+ * across the degenerate stretch keeps the band continuous.
+ */
+function bandFrame(outwardOf) {
+  let prevV = null;
+  return (p, tan) => {
+    let v = outwardOf(p);
+    const d = v[0] * tan[0] + v[1] * tan[1] + v[2] * tan[2];
+    v = [v[0] - tan[0] * d, v[1] - tan[1] * d, v[2] - tan[2] * d];
+    let vl = Math.hypot(v[0], v[1], v[2]);
+    if (vl < 0.22 && prevV) {
+      // re-project the previous frame instead of normalising near-zero noise
+      const pd = prevV[0] * tan[0] + prevV[1] * tan[1] + prevV[2] * tan[2];
+      v = [prevV[0] - tan[0] * pd, prevV[1] - tan[1] * pd, prevV[2] - tan[2] * pd];
+      vl = Math.hypot(v[0], v[1], v[2]) || 1;
+    }
+    vl = vl || 1;
+    v = [v[0] / vl, v[1] / vl, v[2] / vl];
+    prevV = v;
+    const u = [tan[1] * v[2] - tan[2] * v[1], tan[2] * v[0] - tan[0] * v[2],
+               tan[0] * v[1] - tan[1] * v[0]];
+    const ul = Math.hypot(u[0], u[1], u[2]) || 1;
+    return [[u[0] / ul, u[1] / ul, u[2] / ul], v];
+  };
+}
+
+/**
  * Braided strap, the character's right shoulder to left hip.
  * The control points are PROJECTED ONTO THE BODY SURFACE and pushed out past the
  * tunic. Authored in world space the strap drifts in and out of the coat — from the
@@ -192,19 +227,7 @@ export function buildStrap(tunicField, lift = 0.006) {
     sides: 28,
     // width across the chest, thickness along the outward radial — otherwise the
     // parallel-transport frame twists the ribbon into a rope
-    frameFn: (p, tan) => {
-      // v = outward normal, ORTHOGONALISED against the tangent. Without the
-      // orthogonalisation the ring basis is sheared and the ribbon renders as a
-      // fin standing edge-on to the chest rather than a band lying flat on it.
-      let v = [p[0], (p[1] - 1.16) * 0.28, p[2] - 0.01];
-      const d = v[0] * tan[0] + v[1] * tan[1] + v[2] * tan[2];
-      v = [v[0] - tan[0] * d, v[1] - tan[1] * d, v[2] - tan[2] * d];
-      const vl = Math.hypot(v[0], v[1], v[2]) || 1;
-      v = [v[0] / vl, v[1] / vl, v[2] / vl];
-      const u = [tan[1] * v[2] - tan[2] * v[1], tan[2] * v[0] - tan[0] * v[2], tan[0] * v[1] - tan[1] * v[0]];
-      const ul = Math.hypot(u[0], u[1], u[2]) || 1;
-      return [[u[0] / ul, u[1] / ul, u[2] / ul], v];
-    },
+    frameFn: bandFrame((p) => [p[0], (p[1] - 1.16) * 0.28, p[2] - 0.01]),
   });
 }
 
@@ -245,16 +268,7 @@ export function buildBelt() {
   }
   parts.push(sweep(ring, {
     sides: 16, capStart: false, capEnd: false,
-    frameFn: (p, tan) => {
-      let v = [p[0], 0, p[2] - 0.004];
-      const d = v[0] * tan[0] + v[1] * tan[1] + v[2] * tan[2];
-      v = [v[0] - tan[0] * d, v[1] - tan[1] * d, v[2] - tan[2] * d];
-      const vl = Math.hypot(v[0], v[1], v[2]) || 1;
-      v = [v[0] / vl, v[1] / vl, v[2] / vl];
-      const u = [tan[1] * v[2] - tan[2] * v[1], tan[2] * v[0] - tan[0] * v[2], tan[0] * v[1] - tan[1] * v[0]];
-      const ul = Math.hypot(u[0], u[1], u[2]) || 1;
-      return [[u[0] / ul, u[1] / ul, u[2] / ul], v];
-    },
+    frameFn: bandFrame((p) => [p[0], 0, p[2] - 0.004]),
   }));
 
   // Knot and hanging ends. Kept small and narrow: oversized they read as a mushroom

@@ -448,13 +448,15 @@ export function createMaterials() {
     // Values are separated deliberately. Authored close together they collapsed into
     // one flat brown mass in which tunic, trousers, belt and sash were indistinguishable
     // — the reference reads as separate garments before you resolve any detail.
-    tunic: clothMat('tunic', [0.0285, 0.0262, 0.0232], 0.95, 22.0, cloth),
-    undershirt: clothMat('undershirt', [0.0330, 0.0345, 0.0315], 0.95, 36.0, cloth),
-    trousers: clothMat('trousers', [0.0208, 0.0198, 0.0186], 0.95, 20.0, cloth),
-    wrap: clothMat('wrap', [0.0520, 0.0522, 0.0480], 0.96, 42.0, cloth),
+    tunic: clothMat('tunic', [0.0285, 0.0262, 0.0232], 0.95, 13.0, cloth),
+    undershirt: clothMat('undershirt', [0.0330, 0.0345, 0.0315], 0.95, 22.0, cloth),
+    trousers: clothMat('trousers', [0.0208, 0.0198, 0.0186], 0.95, 12.0, cloth),
+    wrap: clothMat('wrap', [0.0455, 0.0458, 0.0420], 0.96, 26.0, cloth),
     leather: clothMat('leather', [0.030, 0.020, 0.013], 0.68, 22.0, leather),
-    sash: clothMat('sash', [0.0745, 0.0690, 0.0585], 0.82, 22.0, leather),
-    belt: clothMat('belt', [0.0605, 0.0592, 0.0552], 0.90, 20.0, cloth),
+    // sash and belt sit only a little above the tunic. Pushed further apart they
+    // stopped reading as cloth and became bright metal blades laid across the chest.
+    sash: clothMat('sash', [0.0448, 0.0412, 0.0356], 0.90, 18.0, leather),
+    belt: clothMat('belt', [0.0402, 0.0392, 0.0364], 0.94, 15.0, cloth),
     textures: { scale, cloth, leather },
   };
 }
