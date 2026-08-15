@@ -142,12 +142,17 @@ export function buildJawSpikes(field) {
     }
     // brow scutes: three flat claw-like plates lying back along the brow ridge,
     // one of the most recognisable markings on the reference face
+    // Longer and sharper than mere scutes: in the references these are proper
+    // spines lying back along the brow ridge, and they carry a lot of the face's
+    // character. Angled back rather than out, so they read against the skull.
     for (const [p, dir, len, r] of [
-      [[s * 0.0300, 1.7305, 0.0460], [s * 0.26, 0.34, 0.90], 0.030, 0.0055],
-      [[s * 0.0435, 1.7285, 0.0390], [s * 0.48, 0.30, 0.82], 0.027, 0.0051],
-      [[s * 0.0545, 1.7220, 0.0285], [s * 0.70, 0.26, 0.66], 0.023, 0.0046],
+      [[s * 0.0292, 1.7325, 0.0470], [s * 0.20, 0.44, 0.88], 0.0405, 0.0062],
+      [[s * 0.0432, 1.7305, 0.0400], [s * 0.42, 0.40, 0.81], 0.0375, 0.0058],
+      [[s * 0.0552, 1.7240, 0.0290], [s * 0.64, 0.36, 0.68], 0.0330, 0.0053],
     ]) {
-      out.push(spike(seat(field, p, dir, 0.003), dir, len, r, { taper: 0.85, sides: 8, steps: 6 }));
+      out.push(spike(seat(field, p, dir, 0.003), dir, len, r, {
+        taper: 0.9, sides: 8, steps: 7, bend: [0, 0.004, -0.010],
+      }));
     }
   }
   return out;

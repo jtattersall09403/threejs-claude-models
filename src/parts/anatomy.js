@@ -163,9 +163,13 @@ export function buildHeadField() {
     // the upper and lower lids, so the eyeball is clipped the way a real eye is.
     f.sub(ellipsoid([s * EYE.c[0], EYE.c[1] + 0.0015, EYE.c[2] + 0.008],
       [0.0238, 0.0152, 0.0272], { k: 0.006 }));
-    // a lid rim above and below, so the opening reads as lidded rather than as a crater
-    f.add(ellipsoid([s * 0.0490, 1.7150, 0.0620], [0.0270, 0.0070, 0.0245], { k: 0.007 }));
-    f.add(ellipsoid([s * 0.0482, 1.6800, 0.0630], [0.0250, 0.0058, 0.0225], { k: 0.007 }));
+    // Lid rims above and below, so the opening reads as lidded rather than as a
+    // crater. The upper lid is built from two lobes at different heights — outer
+    // high, inner low — so the eye slants down toward the snout. The references'
+    // whole expression comes from that angle; a level lid reads placid.
+    f.add(ellipsoid([s * 0.0592, 1.7192, 0.0530], [0.0165, 0.0068, 0.0210], { k: 0.007 }));
+    f.add(ellipsoid([s * 0.0388, 1.7098, 0.0672], [0.0180, 0.0066, 0.0215], { k: 0.007 }));
+    f.add(ellipsoid([s * 0.0482, 1.6798, 0.0630], [0.0250, 0.0058, 0.0225], { k: 0.007 }));
   }
   // mouth crease — rises toward the jaw hinge like a real reptile jaw line
   // x-extent follows the muzzle's own half-width, narrowing toward the snout, so the
