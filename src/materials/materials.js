@@ -365,7 +365,7 @@ const EYE_FRAG = /* glsl */`
 
 const CLOTH_FRAG = /* glsl */`
   vec3 Nr = normalize(vRestN);
-  vec4 det = triDetail(vRest, Nr, uWeave, 3.2);
+  vec4 det = triDetail(vRest, Nr, uWeave, 2.0);
   gNormal = det.xyz;
   float h = det.w;
   float dirt = fbm(vRest * 7.5);
@@ -385,8 +385,10 @@ const CLOTH_FRAG = /* glsl */`
                  clothCrease(vRest + vec3(0.0, 0.0, E))) - cr;
   gr -= Nr * dot(gr, Nr);              // keep the perturbation tangential
   float gl = length(gr);
-  if (gl > 1e-5) gNormal = normalize(gNormal - (gr / gl) * (0.42 * cr));
-  col *= mix(1.04, 0.82, cr);
+  if (gl > 1e-5) gNormal = normalize(gNormal - (gr / gl) * (0.30 * cr));
+  // Subtle. Pushed hard this stops reading as folds and becomes blotchy damage —
+  // the reference tunic is mostly smooth, with drape shown by broad soft shading.
+  col *= mix(1.02, 0.90, cr);
   col *= 0.94 + 0.11 * wear;
   // grime settles low on the garment
   col *= mix(0.72, 1.0, ss(0.75, 1.15, vRest.y));
@@ -485,15 +487,15 @@ export function createMaterials() {
     // — the reference reads as separate garments before you resolve any detail.
     // warm dark brown with a maroon undertone, per the full-body reference — not the
     // neutral tan it was, which read as canvas rather than as a dyed woollen tunic
-    tunic: clothMat('tunic', [0.0246, 0.0202, 0.0172], 0.95, 13.0, cloth),
-    undershirt: clothMat('undershirt', [0.0330, 0.0345, 0.0315], 0.95, 22.0, cloth),
-    trousers: clothMat('trousers', [0.0208, 0.0198, 0.0186], 0.95, 12.0, cloth),
-    wrap: clothMat('wrap', [0.0455, 0.0458, 0.0420], 0.96, 26.0, cloth),
+    tunic: clothMat('tunic', [0.0232, 0.0190, 0.0162], 0.95, 7.0, cloth),
+    undershirt: clothMat('undershirt', [0.0330, 0.0345, 0.0315], 0.95, 12.0, cloth),
+    trousers: clothMat('trousers', [0.0196, 0.0184, 0.0172], 0.95, 7.0, cloth),
+    wrap: clothMat('wrap', [0.0455, 0.0458, 0.0420], 0.96, 14.0, cloth),
     leather: clothMat('leather', [0.030, 0.020, 0.013], 0.68, 22.0, leather),
     // sash and belt sit only a little above the tunic. Pushed further apart they
     // stopped reading as cloth and became bright metal blades laid across the chest.
     sash: clothMat('sash', [0.0448, 0.0412, 0.0356], 0.90, 18.0, leather),
-    belt: clothMat('belt', [0.0402, 0.0392, 0.0364], 0.94, 15.0, cloth),
+    belt: clothMat('belt', [0.0402, 0.0392, 0.0364], 0.94, 9.0, cloth),
     textures: { scale, cloth, leather },
   };
 }
