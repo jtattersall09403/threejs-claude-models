@@ -560,7 +560,7 @@ export function createMaterials() {
 
   const eye = mk('argonianEye', {
     roughness: 0.30, metalness: 0.0,
-    emissive: new THREE.Color(0x8a7a24), emissiveIntensity: 0.42,
+    emissive: new THREE.Color(0x8a7a24), emissiveIntensity: 0.62,
   }, EYE_FRAG, { uDetail: { value: scale } }, false);
 
   const clothMat = (name, base, rough, weave, tex) => mk(name, { roughness: rough }, CLOTH_FRAG, {

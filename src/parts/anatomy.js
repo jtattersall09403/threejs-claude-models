@@ -14,9 +14,10 @@ import { Field, capsule, ellipsoid, roundBox, creaseSlot } from '../core/sdf.js'
 import { TAIL_SPINE } from '../rig/skeleton.js';
 
 export const EYE = {
-  c: [0.0468, 1.6975, 0.0658],   // mirrored on x
-  r: 0.0138,   // small and seated DEEP: any free sphere edge inside the socket reads
-               // as a ball sitting loose in a hole rather than as a lidded eye
+  c: [0.0468, 1.6975, 0.0688],   // mirrored on x
+  r: 0.0163,   // The ball stays a decent size; what stops a free sphere edge showing
+               // is the APERTURE being clearly smaller than the ball, below. Shrinking
+               // and sinking the ball instead just makes the eye vanish.
   gaze: [0.055, 0.0, 0.9985],    // near-forward. At 0.16 outward the iris sat off to
                                  // one side and the front view showed a plain blob.
 };
@@ -169,7 +170,7 @@ export function buildHeadField() {
         // A LENS-shaped cut, not a round crater: the skin left above and below forms
     // the upper and lower lids, so the eyeball is clipped the way a real eye is.
     f.sub(ellipsoid([s * EYE.c[0], EYE.c[1] + 0.0015, EYE.c[2] + 0.008],
-      [0.0238, 0.0152, 0.0272], { k: 0.006 }));
+      [0.0226, 0.0128, 0.0252], { k: 0.006 }));
     // Lid rims above and below, so the opening reads as lidded rather than as a
     // crater. The upper lid is built from two lobes at different heights — outer
     // high, inner low — so the eye slants down toward the snout. The references'
