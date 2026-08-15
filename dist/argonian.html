@@ -4212,8 +4212,13 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
   // happened to sit high the hide jumped to a pale wash that read as a lighting error.
   // On the head the darkening is damped, because the head gets the opposite
   // treatment immediately below.
+  // The head's damping used to be 0.92..1.03 \u2014 a five per cent swing \u2014 on the theory
+  // that the bright reticulation below would supply the contrast instead. Once that net
+  // was narrowed back to crevice lines, the head was left with essentially NO scale
+  // value contrast at all, and the muzzle rendered as a large smooth pale expanse next
+  // to a reference muzzle that is dark and densely patterned. Damped, but not erased.
   col *= mix(mix(0.52, 1.04, ss(0.02, 0.55, h)),
-             mix(0.92, 1.03, ss(0.02, 0.55, h)), headMask);
+             mix(0.68, 1.06, ss(0.02, 0.55, h)), headMask);
   // The reference hide's signature marking: over the whole head the gaps between
   // scales are LIGHTER than the scales, giving a pale reticulated mesh \u2014 the exact
   // opposite of a generic crevice darkening. Previously applied to the cranial
@@ -4231,7 +4236,7 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
   // The reticulation is a PALE OLIVE net, not a cream one. Painted with boneCol it
   // covered most of the head in warm bone at 80% and was the main reason the head
   // still read brown next to a green tail after the base hide had been corrected.
-  col = mix(col, vec3(0.0585, 0.0655, 0.0392), mortar * 0.92);
+  col = mix(col, vec3(0.0640, 0.0715, 0.0428), mortar * 0.95);
   // darker AND warmer: the jaw was not merely bright, it was the greenest thing on
   // the head, where the reference jaw is its most neutral, most shadowed area
   col = mix(col, col * vec3(0.74, 0.70, 0.66), chinZone * 0.60);
