@@ -10,37 +10,49 @@ every step, the container restarts without warning.**
 
 ## Where the loop is
 
-**Inner loop, iteration 3. No critic round has run yet** — the model is not good
-enough to hand over. Run `.claude/agents/argonian-critic.md` only once the inner loop
-produces something you would defend.
+**Critic round 1 is in flight** (launched at the end of iteration 4). When its report
+lands, read `critic/latest/REPORT.md`, work its ranked defect list top-down, then hand
+back for critic round 2. Repeat until it returns PASS.
+
+Note: the `argonian-critic` subagent type is only registered at session start. In a
+session where it is not yet available, launch a `general-purpose` agent and tell it to
+read and follow `.claude/agents/argonian-critic.md`.
 
 ## State of the build
 
 Working: geometry pipeline, rig, auto-skinning, garments, materials, capture harness,
 winding audit. `npm run build && npm run capture` is green. ~545k tris, ~4.7 s build.
 
-## Next actions (ranked — start at the top)
+## Next actions
 
-1. **Clothing silhouette.** The tunic is a featureless slab with no waist; sleeves run
-   almost to the wrist. Reference: fitted at the waist, sleeves end mid-forearm leaving
-   a good length of bare green forearm above the pale wrist wrap. Narrow the tunic
-   coverage at the waist (`parts/clothing.js`, tunic `coverage()`), raise the sleeve
-   coverage capsule end to ~y 1.20 so the cuff lands near y 1.10.
-2. **Collar.** The undershirt currently reads as a floating rounded rectangle on the
-   chest — the collar cut is a `roundBox`. Replace with a V/teardrop so it reads as a
-   neckline.
-3. **Strap and belt are too tubular.** Flatten both hard (the strap should lie on the
-   chest, the belt should be a wide flat band, not a sausage).
-4. **Skull plating still not dark enough** relative to the reference's near-black cap,
-   and the maroon brow patch is too faint. Masks are correct — verify with
-   `window.argonian.debugMasks(1)` before touching them; the issue is albedo/specular
-   balance, not the mask.
-5. **Tail** is too thick, too long and too bright; it dominates rear views.
-6. **Full-body lighting** is too dim at the extremities — the key spot cone does not
-   cover the legs well. Widen the cone or add a soft fill from below-front.
-7. Head: snout still slightly bulbous; eyes could sit deeper under the brow.
+**Wait for the critic report, then work its ranked list.** My own outstanding list,
+for cross-reference:
+
+- Muzzle still reads slightly bulbous/rounded at the tip vs the reference's squarer
+  snout; the nasal ridge could be more pronounced.
+- Neck is long and cylindrical; throat scutes are present but faint.
+- Cloth folds exist but the tunic still lacks seams, and the shoulders have no seam
+  definition.
+- Hands are largely hidden behind the tunic skirt in front views.
+- Feet read as blocks.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
+
+### Iteration 4
+- Clothing: garments given real geometric **folds** (noise displacement of the offset
+  distance) — smooth shrink-wrap was the main reason cloth read as CG-clean plastic.
+- Neckline reworked: a single tilted opening plus a rolled collar band. Two earlier
+  attempts (a roundBox V, then an ellipsoid V) both read as a patch stuck on the chest.
+- Straps and belts now use an **anchored frame** (`sweep({frameFn})`) so flat ribbons
+  stay flat; parallel transport was twisting them into ropes.
+- Head: horns closer together and sweeping back, muzzle tapered toward the nose, mouth
+  crease now rises toward the jaw hinge (`creaseSlot`), tusks shrunk, skull plate mask
+  driven by position rather than normal so it no longer fades on the flanks.
+- **Triplanar swirl artefact** traced to scaling the triplanar UVs by a spatially
+  varying frequency — that warps the domain and produces contour-line swirls. Fixed by
+  blending two *fixed* frequencies with a noise mask instead.
+- Capture framings re-tuned for the enlarged head, and `npm run capture` now fails if
+  the full-body shots clip or under-fill the subject.
 
 ### Iteration 3
 - Fixed **inverted ventral mask** (up-facing surfaces were painted with belly colour,
