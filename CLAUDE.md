@@ -105,7 +105,8 @@ are far more informative than the original timestamped screenshots — prefer th
 
 | file | what it is best for |
 |---|---|
-| `face-left-profile.jpg` | **The most important one.** The forehead-to-snout line, snout depth, horn sweep, jaw spike row, neck. |
+| `face-left-profile~2.jpg` | **THE BLUEPRINT — read this first.** The same profile with the head's architecture drawn on it: red skull, blue mouth, pink horns/spikes, yellow neck, white shoulders. See the section below. |
+| `face-left-profile.jpg` | **The most important unannotated one.** The forehead-to-snout line, snout depth, horn sweep, jaw spike row, neck. |
 | `face-neck-jawline-closeup.jpg` | Jawline, spike count/size/placement, neck and clavicle. |
 | `face-neck-jawline-right-profile.jpg` | Same from the other side — check bilateral consistency. |
 | `close-crop-face-front-slight-right-profile.jpg` | Facial markings, eye and brow detail at close range. |
@@ -114,6 +115,39 @@ are far more informative than the original timestamped screenshots — prefer th
 
 `npm run compare` uses **all five named images uncropped** — they are already cropped
 to their subject. Only the original screenshots take a `crop` rectangle.
+
+### The annotated profile — `face-left-profile~2.jpg` — is the head's blueprint
+
+The user drew the head's architecture directly onto the profile reference. Colour key:
+**red = skull outline · blue = mouth · pink = horns and spikes · yellow = neck ·
+white = shoulder line.** Read it before touching head geometry. What it establishes:
+
+- **The skull is a compact rounded wedge, roughly as tall as it is long** (length:height
+  about 1.15, measured off the red outline). Not a long low lozenge. Every time this
+  file's head has drifted, it has drifted LONGER and FLATTER.
+- **The top line is ONE CONVEX ARC** from the snout tip, up over the brow, to the crown.
+  No notch at the bridge, no step behind the nose. If the profile has a dip in it
+  anywhere between lip and crown, that is a defect.
+- **The rear of the skull DROPS STEEPLY from the crown.** There is no long occiput
+  trailing backwards; the back of the skull and the back of the neck are on roughly the
+  same vertical line.
+- **The head's deepest point is at the FRONT.** The chin sits lower than the jaw hinge —
+  the jawline slopes UP as it runs backward.
+- **The mouth is long**: about half the head's length, running from the snout tip back
+  and slightly UP to under the eye.
+- **Two horns a side, not one.** The main horn leaves the crown and sweeps BACK at about
+  30 deg above horizontal, with a metal band near its middle. A second, much shorter
+  horn stands ahead of it and rises nearly VERTICALLY, leaning very slightly forward.
+- **The pale spikes are FEW, LARGE and point BACKWARD.** Two big flat ones on the rear
+  cheek and jaw — each about as long as the second horn — one smaller behind the mouth
+  corner, and one small one at the chin. Plus a pair of small scutes on the brow near
+  the eye. They are not a fringe, not whiskers, and not a picket fence: at any point
+  where this project has had more than about five spikes a side, it has been wrong.
+- **The round tympanic plate** sits high on the side of the skull behind the eye.
+- **The neck is a thick column with a DEEP throat.** From the jawline down to the
+  underside of the neck is a substantial drop, and the back of the neck runs straight
+  down from the skull.
+- **The shoulders come up close to the neck** and slope away from it fairly steeply.
 
 ### What the profile reference settles
 
@@ -259,6 +293,13 @@ them pale cream — what is dark in the bust shot is the frill *behind* them.
 26. **Revert to the last good state rather than tuning forward out of a hole.** The
     recovery here was `git show <good-commit>:src/parts/anatomy.js`, splice the head
     field back, and re-apply only the changes that were independently verified wins.
+
+## When you are stuck, look it up
+
+If a particular effect is proving hard — a shading technique, a Three.js API, a way of
+building some geometry — search online for it. Advice and worked examples exist for most
+of what this project needs, and an hour of guessing at shader constants is worse than
+one search.
 
 ## Commands
 

@@ -10,7 +10,7 @@ import {
   buildBodyField, buildHeadField, transformHeadField, BODY_BOUNDS, HEAD_BOUNDS, HEAD_XF,
 } from './parts/anatomy.js';
 import {
-  buildHorn, buildHornCuff, buildCrownSpikes, buildJawSpikes, buildTeeth, buildFingers,
+  buildHorn, buildHornCuff, buildFrontHorns, buildCrownSpikes, buildJawSpikes, buildTeeth, buildFingers,
   buildEyes,
 } from './parts/features.js';
 import {
@@ -107,6 +107,7 @@ export function buildArgonian(opts = {}) {
     { geom: buildHorn(-1, seatField), region: 1 },
     { geom: buildHornCuff(1, seatField), region: 2 },
     { geom: buildHornCuff(-1, seatField), region: 2 },
+    ...buildFrontHorns(seatField).map((geom) => ({ geom, region: 0 })),
     ...buildCrownSpikes(seatField).map((geom) => ({ geom, region: 4 })),  // 4 = oxblood crest
     ...buildJawSpikes(seatField).map((geom) => ({ geom, region: 0 })),
   ];

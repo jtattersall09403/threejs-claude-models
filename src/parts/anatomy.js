@@ -179,7 +179,11 @@ export function buildHeadField() {
       { k: i === 0 ? 0.055 : 0.038 }));
   }
   // a low dorsal ridge riding the same curve — a crest, not a separate bridge
-  f.add(capsule([0, 1.7040, 0.024], [0, 1.6510, 0.124], 0.0138, 0.0078,
+  // Starts UP ON THE BROW BAR, not behind it. The gap between the overhanging brow and
+  // the first snout station left a concave notch at the bridge, and the user's pink
+  // trace of the reference profile is one CONVEX sweep from lip to crown with no notch
+  // in it at all.
+  f.add(capsule([0, 1.7115, 0.074], [0, 1.6490, 0.128], 0.0168, 0.0080,
     { k: 0.026, scale: [1, 0.62, 1] }));
   f.add(ellipsoid([0, 1.6408, 0.1495], [0.0152, 0.0132, 0.0122], { k: 0.016 })); // nose pad
 

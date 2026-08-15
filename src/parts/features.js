@@ -37,7 +37,10 @@ function hornPts(s) {
 // Fine ring ridging concentrated near the base and gone by mid-length, as in the
 // reference. Trap #10: keep the per-ring phase step under a radian — 38 rad over
 // 46 rings is 0.84, so it reads as ridging rather than aliasing into a rope.
-const hornRadius = (t) => (0.0212 * Math.pow(1 - t, 0.62) + 0.0008)
+// 0.0165. Measured across the profile reference the main horn is about a twentieth of
+// the head's length thick at the base; at 0.0212 it read as a heavy bull horn and was
+// the loudest thing in the silhouette.
+const hornRadius = (t) => (0.0165 * Math.pow(1 - t, 0.62) + 0.0008)
   * (1 + 0.055 * Math.sin(t * 38) * Math.max(0, 1 - t * 1.6));
 
 function hornRings(side, field) {
@@ -85,6 +88,24 @@ function seat(field, p, dir, inset = 0.008) {
 }
 
 /** Cream crown spikes fanned across the top-rear of the skull. */
+/**
+ * The SECOND, smaller horn pair, ahead of and inboard of the main horns.
+ *
+ * Every profile crop in the corpus shows two pale horns a side: the long banded one
+ * sweeping back, and a shorter one in front of it rising more steeply. With only the
+ * long pair the head reads as a bull's rather than as the reference's.
+ */
+export function buildFrontHorns(field) {
+  const out = [];
+  for (const s of [1, -1]) {
+    const dir = [s * 0.34, 0.86, -0.38];
+    out.push(spike(seat(field, [s * 0.0435, 1.7290, 0.022], dir, 0.006), dir, 0.098, 0.0110, {
+      taper: 0.70, sides: 12, steps: 9, bend: [s * 0.004, 0.003, -0.022],
+    }));
+  }
+  return out;
+}
+
 export function buildCrownSpikes(field) {
   const out = [];
   // The crest. Confirmed across face-left-profile, close-crop-face-front and
@@ -147,13 +168,13 @@ export function buildJawSpikes(field) {
     // them somewhere the reference does not have them, and read as whiskers or a
     // picket fence rather than as part of the jaw's outline.
     for (const [p, dir, len, r] of [
-      [[s * 0.0300, 1.5960, 0.100], [s * 0.30, -0.26, -0.92], 0.0310, 0.0125],
-      [[s * 0.0400, 1.5975, 0.056], [s * 0.34, -0.20, -0.92], 0.0370, 0.0145],
-      [[s * 0.0500, 1.6110, 0.014], [s * 0.40, -0.06, -0.91], 0.0410, 0.0162],
-      [[s * 0.0560, 1.6390, -0.004], [s * 0.44, 0.12, -0.89], 0.0430, 0.0168],
+      [[s * 0.0300, 1.5960, 0.100], [s * 0.30, -0.26, -0.92], 0.0340, 0.0128],
+      [[s * 0.0400, 1.5975, 0.056], [s * 0.34, -0.20, -0.92], 0.0405, 0.0150],
+      [[s * 0.0500, 1.6110, 0.014], [s * 0.40, -0.06, -0.91], 0.0445, 0.0168],
+      [[s * 0.0560, 1.6390, -0.004], [s * 0.44, 0.12, -0.89], 0.0460, 0.0174],
     ]) {
       out.push(spike(seat(field, p, dir, 0.004), dir, len, r, {
-        taper: 0.62, flat: 0.34, sides: 10, steps: 7, bend: [0, -0.004, 0.0],
+        taper: 0.62, flat: 0.32, sides: 10, steps: 7, bend: [0, -0.005, 0.0],
       }));
     }
     // brow scutes: three flat claw-like plates lying back along the brow ridge,
@@ -162,9 +183,9 @@ export function buildJawSpikes(field) {
     // spines lying back along the brow ridge, and they carry a lot of the face's
     // character. Angled back rather than out, so they read against the skull.
     for (const [p, dir, len, r] of [
-      [[s * 0.0292, 1.7325, 0.0470], [s * 0.20, 0.44, 0.88], 0.0405, 0.0062],
-      [[s * 0.0432, 1.7305, 0.0400], [s * 0.42, 0.40, 0.81], 0.0375, 0.0058],
-      [[s * 0.0552, 1.7240, 0.0290], [s * 0.64, 0.36, 0.68], 0.0330, 0.0053],
+      [[s * 0.0262, 1.7300, 0.0800], [s * 0.18, 0.38, 0.91], 0.0380, 0.0075],
+      [[s * 0.0412, 1.7290, 0.0740], [s * 0.38, 0.36, 0.85], 0.0355, 0.0070],
+      [[s * 0.0542, 1.7230, 0.0620], [s * 0.58, 0.32, 0.75], 0.0320, 0.0064],
     ]) {
       out.push(spike(seat(field, p, dir, 0.003), dir, len, r, {
         taper: 0.9, flat: 0.38, sides: 10, steps: 7, bend: [0, 0.004, -0.010],
