@@ -89,8 +89,10 @@ export function clothingFields(body) {
       capsule([0, 1.415, 0.0], [0, 1.24, 0.008], 0.245, 0.235),
       capsule([0, 1.24, 0.008], [0, 1.10, 0.01], 0.235, 0.198),
       capsule([0, 1.10, 0.01], [0, 0.985, 0.005], 0.198, 0.212),
-      capsule([-0.188, 1.40, 0], [-0.211, 1.128, -0.006], 0.15, 0.079),
-      capsule([0.188, 1.40, 0], [0.211, 1.128, -0.006], 0.15, 0.079),
+      // The sleeve cap radius sets the shoulder's bulk. At 0.15 it ballooned into a
+      // padded square pauldron; the reference shoulder slopes away from the neck.
+      capsule([-0.185, 1.386, 0], [-0.211, 1.128, -0.006], 0.106, 0.079),
+      capsule([0.185, 1.386, 0], [0.211, 1.128, -0.006], 0.106, 0.079),
     ]);
     const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0105, 16));
     // a cut-free copy of the same shell, used only as a projection target for the

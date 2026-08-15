@@ -77,9 +77,12 @@ float fbm(vec3 p) {
  * and pushing it further drives the garment inside the body.
  */
 float clothCrease(vec3 p) {
-  float d = fbm(vec3(p.x * 26.0, p.y * 7.5, p.z * 26.0));
+  // Two smooth octaves, NOT fbm: fbm's high octaves are isotropic and turn the
+  // creases into marbled camouflage blotches instead of hanging drape lines.
+  float d = vnoise(vec3(p.x * 30.0, p.y * 5.5, p.z * 30.0)) * 0.68
+          + vnoise(vec3(p.x * 63.0, p.y * 12.0, p.z * 63.0)) * 0.32;
   float c = 1.0 - abs(d * 2.0 - 1.0);
-  return pow(clamp(c, 0.0, 1.0), 2.0);
+  return pow(clamp(c, 0.0, 1.0), 2.4);
 }
 `;
 
@@ -237,6 +240,12 @@ const SKIN_FRAG = /* glsl */`
   float streak = ss(0.72, 0.97, abs(sin((J.x - 0.010) * 150.0)));
   col = mix(col, boneCol * 0.72, brow * streak * ss(0.014, 0.048, abs(J.x)) * 0.85);
 
+  // Rust-red hands. In the reference the hands are markedly warmer than the green
+  // forearms — one of the few strong hue breaks anywhere on the character, and its
+  // absence was part of why the whole figure read as a single monochrome mass.
+  float handZone = ss(0.905, 0.860, P.y) * ss(0.180, 0.202, abs(P.x));
+  col = mix(col, col * vec3(2.10, 1.06, 0.70), handZone * 0.76);
+
   // dark closed lip line along the mouth crease
   float lipY = LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE;
   // thin. At 2x this width it stopped reading as a closed mouth and became a
@@ -374,8 +383,8 @@ const CLOTH_FRAG = /* glsl */`
                  clothCrease(vRest + vec3(0.0, 0.0, E))) - cr;
   gr -= Nr * dot(gr, Nr);              // keep the perturbation tangential
   float gl = length(gr);
-  if (gl > 1e-5) gNormal = normalize(gNormal - (gr / gl) * (0.55 * cr));
-  col *= mix(1.07, 0.58, cr);
+  if (gl > 1e-5) gNormal = normalize(gNormal - (gr / gl) * (0.42 * cr));
+  col *= mix(1.05, 0.74, cr);
   col *= 0.94 + 0.11 * wear;
   // grime settles low on the garment
   col *= mix(0.72, 1.0, ss(0.75, 1.15, vRest.y));
@@ -472,7 +481,9 @@ export function createMaterials() {
     // Values are separated deliberately. Authored close together they collapsed into
     // one flat brown mass in which tunic, trousers, belt and sash were indistinguishable
     // — the reference reads as separate garments before you resolve any detail.
-    tunic: clothMat('tunic', [0.0285, 0.0262, 0.0232], 0.95, 13.0, cloth),
+    // warm dark brown with a maroon undertone, per the full-body reference — not the
+    // neutral tan it was, which read as canvas rather than as a dyed woollen tunic
+    tunic: clothMat('tunic', [0.0246, 0.0202, 0.0172], 0.95, 13.0, cloth),
     undershirt: clothMat('undershirt', [0.0330, 0.0345, 0.0315], 0.95, 22.0, cloth),
     trousers: clothMat('trousers', [0.0208, 0.0198, 0.0186], 0.95, 12.0, cloth),
     wrap: clothMat('wrap', [0.0455, 0.0458, 0.0420], 0.96, 26.0, cloth),
