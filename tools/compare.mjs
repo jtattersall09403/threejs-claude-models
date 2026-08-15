@@ -34,8 +34,8 @@ const PAIRS = [
   },
   {
     name: 'head_side',
-    ref: 'Screenshot_20260815_081025_com_google_android_youtube_MainActivity.jpg',
-    crop: [1020, 700, 760, 820],
+    ref: 'face-left-profile.jpg',
+    crop: [140, 40, 520, 690],   // named refs are already close crops, not full screenshots
     render: 'head_side.png',
     note: 'profile — muzzle top line, jaw depth, occiput',
   },

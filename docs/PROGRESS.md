@@ -79,6 +79,26 @@ that is **wider than the upper** — at its old width it sat inside the shoe's o
 offset surface and contributed nothing, which is the same burial failure as the belt
 and is worth checking first whenever an added detail "does not appear".
 
+## Direct feedback from the user (iteration 19) — WORK THESE, they are not yet done
+
+The user added **five named reference images** to `corpus/character/` for exactly these
+(see the corpus table in `CLAUDE.md`). All of this is OPEN:
+
+1. **Jawline and its spikes** — number, size and positioning are all wrong. The profile
+   reference shows a few LARGE, flat, blade-like spikes swept back, not a row of small
+   cones.
+2. **Forehead-to-muzzle angle.** The reference is a *smooth reptilian read*: one
+   unbroken curve from crown over brow down to the snout tip. Ours is a **dog muzzle**
+   — a box bolted onto a braincase with a visible brow step. This is probably the
+   single biggest remaining likeness error and it is structural, not paint.
+3. **Head proportions, especially the VERTICAL THICKNESS of the snout/muzzle.** The
+   reference snout is shallow in section; ours is a deep box.
+4. **Cheekbone definition.**
+5. **The neck.**
+6. **Naturalness of stance overall** — may have to be inferred rather than read off the
+   references.
+7. **Shoulder proportions.**
+
 ## Direct feedback from the user on the head (iteration 13) — keep checking these
 
 These came from the user looking at the live artifact, and they were all correct:
