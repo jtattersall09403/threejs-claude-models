@@ -94,7 +94,24 @@ rather than reasoning from a bad image.
 5. **Custom uniforms need GLSL declarations.** `onBeforeCompile` supplies values only;
    `declare()` in materials.js emits the `uniform` lines.
 6. **Horns/spikes must be seated with `raySurface`**, not placed at authored
-   coordinates — the blend-inflated skull swallows them otherwise.
+   coordinates — the blend-inflated skull swallows them otherwise. Seat against the
+   *authoring-space* head field, BEFORE `transformHeadField()` — seating against the
+   transformed field buries every spike inside the skull.
+7. **A critic report on disk may be stale.** `critic/latest/REPORT.md` is restored by
+   `git pull` and a new round may not have overwritten it yet. Check its mtime against
+   the build it claims to judge, and prefer the agent's *returned message* — a report
+   citing values you have already changed is last round's. Do not act on it.
+8. **Anything painted in the shader that traces a geometric feature must share ONE
+   constant with the geometry** (see `LIP` in parts/anatomy.js). The mouth line was cut
+   from one curve and painted from another with a different intercept and slope; the
+   dark line drifted off the groove and smeared onto the cheek.
+9. **Do not rebuild `dist/` while a critic agent is running** — it captures once and
+   then takes ad-hoc shots against `dist/`, so a rebuild desyncs its evidence. Editing
+   `src/` is safe; running `npm run build` is not.
+10. **Profile modulation on swept parts aliases.** A `sin(a*n + t*m)` braid with `m`
+    large relative to the ring count turns a strap into a jagged rope. Keep the
+    per-ring phase step well under a radian and prefer more lobes around (`a*3`+) over
+    a fast twist.
 
 ## Commands
 
