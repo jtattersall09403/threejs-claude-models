@@ -44,23 +44,41 @@ The **only** end condition is: the harsh critic subagent returns **VERDICT: PASS
 
 ## The loop (this is the whole job)
 
+There are TWO loops. The inner one is yours and you do most of your work there. The
+outer one brings in a fresh pair of eyes. **Do not collapse them into one.**
+
 ```
- ┌─ inner loop ─────────────────────────────────────────────┐
- │ 1. plan   → docs/PROGRESS.md "Next actions"              │
- │ 2. code   → src/**                                        │
- │ 3. build  → npm run build      (dist/argonian.html)       │
- │ 4. capture→ npm run capture    (captures/latest/*.png)    │
- │ 5. LOOK at every capture. Compare to corpus/character/.   │
- │    Not perfect? → back to 1.                              │
- └──────────────────────────────────────────────────────────┘
-              ↓ only when *you* think it is perfect
- 6. Hand off to the harsh critic subagent (.claude/agents/argonian-critic.md).
-    It sees ONLY the reference images + the artifact. It reports defects with
-    evidence into critic/latest/.
- 7. Critic not satisfied? → back to 1, factoring in its evidence.
-    Repeat the meta-loop until the critic is completely satisfied.
-    THERE IS NO OTHER EXIT FROM THIS LOOP. See RULE 1.
+ ┌─ INNER LOOP — this is where you spend most of your time ──────────────┐
+ │ 1. plan    → what specifically is off, and what will you change?      │
+ │ 2. code    → src/**                                                    │
+ │ 3. build   → npm run build                                             │
+ │ 4. capture → npm run capture   (multi-angle: orbit + head + detail)    │
+ │ 5. LOOK at the captures, SIDE BY SIDE against corpus/character/.       │
+ │    npm run compare  builds the comparison sheets for you.              │
+ │ 6. Not yet at the bar? → back to 1. Loop again. And again.             │
+ └───────────────────────────────────────────────────────────────────────┘
+            ↓ ONLY once **you** believe the bar is met
+ ┌─ OUTER LOOP ──────────────────────────────────────────────────────────┐
+ │ 7. Hand off to the harsh critic subagent. It sees only the reference   │
+ │    images and the artifact, and finds what you could not see yourself. │
+ │ 8. Critic FAIL? → work its ranked list, then GO BACK TO THE INNER LOOP │
+ │    and iterate on your own until you again think the bar is met.       │
+ │    Only then hand off for the next critic round.                       │
+ └───────────────────────────────────────────────────────────────────────┘
 ```
+
+**The critic is not your feedback loop — it is your audit.** Handing off after a single
+pass of fixes wastes a round: the critic burns ~25 minutes rendering and comes back with
+things you would have caught yourself by looking. Its value is finding what you are
+*blind* to, and you only get that value once you have already fixed everything you can
+*see*. Expect several inner-loop iterations per critic round.
+
+Concretely, before every hand-off:
+- Run a full `npm run capture` and actually read the orbit frames, the head close-ups
+  and the detail shots — not one hero angle.
+- Run `npm run compare` and study the reference/render pairs side by side.
+- Write down what still looks wrong. If the list is non-empty, you are not ready to
+  hand off — go fix it.
 
 **Never skip step 5.** Reading the capture PNGs with the Read tool *is* the
 quality gate. Text-only reasoning about the model is not a substitute.
@@ -120,6 +138,7 @@ rather than reasoning from a bad image.
 | `npm run build` | bundles `src/` + three.js into the single-file `dist/argonian.html` |
 | `npm run capture` | headless Chromium orbit + close-up capture → `captures/latest/` |
 | `npm run shot -- <name> <az> <el> <dist> <targetY> <fov>` | one ad-hoc framing → `captures/adhoc/` |
+| `npm run compare` | reference/render side-by-side sheets → `captures/compare/` |
 
 `npm run capture` fails loudly if the page logs a WebGL/JS error, so a green run
 means the artifact really renders.
@@ -140,6 +159,7 @@ src/                  the model (see docs/ARCHITECTURE.md)
 tools/                build.mjs · capture.mjs
 dist/argonian.html    the built artifact (committed)
 captures/latest/      most recent capture run only
+captures/compare/     reference-vs-render sheets (regenerated, never accumulated)
 critic/latest/        most recent critic report + evidence only
 .claude/agents/       critic subagent definition
 ```

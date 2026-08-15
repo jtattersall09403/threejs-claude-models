@@ -129,9 +129,9 @@ const SKIN_FRAG = /* glsl */`
   float headMask = ss(1.53, 1.61, P.y);
   // Two FIXED scale frequencies blended by a noise mask. Scaling the triplanar UVs
   // by a spatially varying factor warps the domain and produces contour-line swirls.
-  float freq = mix(22.0, 36.0, headMask);
-  vec4 fine = triDetail(P, Nr, freq, mix(1.3, 1.2, headMask));
-  vec4 plateD = triDetail(P, Nr, freq * 0.42, 1.15);
+  float freq = mix(16.0, 25.0, headMask);
+  vec4 fine = triDetail(P, Nr, freq, mix(1.55, 1.45, headMask));
+  vec4 plateD = triDetail(P, Nr, freq * 0.46, 1.35);
   float sizeMix = ss(0.38, 0.66, fbm(P * 3.1 + 4.0)) * 0.4;
   // zoned scale size: big armour plates over the cranium, fine pebbling on the
   // muzzle and cheek. One uniform frequency reads as fishnet, not hide.
@@ -153,12 +153,12 @@ const SKIN_FRAG = /* glsl */`
   // driven by position, not by normal, so it does not fade out on the flanks
   float cap = ss(1.648, 1.672, J.y) * ss(0.198, 0.122, J.z);
   cap = max(cap, ss(1.612, 1.658, J.y) * ss(-0.005, -0.075, J.z));  // occiput
-  cap *= ss(0.148, 0.120, abs(J.x));                                 // not the very flanks
+  cap *= ss(0.132, 0.104, abs(J.x));                                 // not the very flanks
   cap = max(cap, ss(1.682, 1.702, J.y) * ss(0.140, 0.106, J.z));     // crown, full width
 
   // dark scaled band around the eye socket and temple
   float eyeD = length((J - vec3(EYE_X, EYE_Y, EYE_Z)) * vec3(0.72, 1.35, 0.62));
-  float socket = ss(0.112, 0.040, eyeD) * step(1.598, H.y);
+  float socket = ss(0.126, 0.042, eyeD) * step(1.588, H.y);
 
   // maroon plate over the brow ridges and between the eyes
   float browD = length((J - vec3(0.042, 1.7185, 0.042)) * vec3(0.80, 2.6, 1.05));
@@ -179,26 +179,26 @@ const SKIN_FRAG = /* glsl */`
   float blotch = fbm(P * 5.6 + 11.0);
   float macro  = fbm(P * 1.45 + 31.0);   // large irregular blotching
 
-  vec3 dorsal   = vec3(0.033, 0.041, 0.018);
-  vec3 dorsal2  = vec3(0.011, 0.015, 0.007);
-  vec3 warmOl   = vec3(0.066, 0.060, 0.030);
-  vec3 belly    = vec3(0.086, 0.082, 0.046);
+  vec3 dorsal   = vec3(0.0245, 0.0295, 0.0145);
+  vec3 dorsal2  = vec3(0.0075, 0.0098, 0.0052);
+  vec3 warmOl   = vec3(0.0455, 0.0430, 0.0225);
+  vec3 belly    = vec3(0.0425, 0.0415, 0.0235);
   vec3 plate    = vec3(0.0046, 0.0048, 0.0052);
-  vec3 maroon   = vec3(0.115, 0.026, 0.020);
+  vec3 maroon   = vec3(0.062, 0.017, 0.014);
   vec3 boneCol  = vec3(0.145, 0.126, 0.084);
 
   vec3 col = mix(dorsal2, dorsal, ss(0.30, 0.72, mottle * 0.6 + blotch * 0.7));
   col = mix(col, warmOl, ss(0.45, 0.88, blotch));
   col = mix(col, col * 0.46, ss(0.42, 0.72, macro) * 0.55);
-  col = mix(col, belly, ventral * 0.88);
+  col = mix(col, belly, ventral * 0.80);
   col = mix(col, belly * vec3(1.30, 1.14, 0.84), bandZone * bands * 0.95);
   col = mix(col, mix(dorsal2, plate, 0.5), tailTop * (0.35 + 0.5 * tailScute));
   col = mix(col, plate, cap * 0.97);
   col = mix(col, plate * vec3(1.15, 1.20, 1.55), socket * 0.98);
   col = mix(col, maroon, brow * 0.95);
   // three cream claw-mark streaks across the maroon brow band
-  float streak = ss(0.62, 0.95, abs(sin((J.x - 0.012) * 128.0)));
-  col = mix(col, boneCol, brow * streak * ss(0.020, 0.055, abs(J.x)) * 0.7);
+  float streak = ss(0.72, 0.97, abs(sin((J.x - 0.010) * 150.0)));
+  col = mix(col, boneCol * 0.72, brow * streak * ss(0.014, 0.048, abs(J.x)) * 0.85);
 
   // dark closed lip line along the mouth crease
   float lipY = LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE;
@@ -207,7 +207,7 @@ const SKIN_FRAG = /* glsl */`
   col = mix(col, vec3(0.0032, 0.0028, 0.0026), lip * 0.99);
 
   // crevices between scales go dark
-  col *= mix(0.30, 1.10, ss(0.04, 0.60, h));
+  col *= mix(0.12, 1.18, ss(0.02, 0.55, h));
 
   diffuseColor.rgb = col;
   float rough = mix(0.88, 0.60, ss(0.2, 0.8, h));

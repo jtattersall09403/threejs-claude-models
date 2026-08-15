@@ -26,7 +26,7 @@ export function buildHorn(side, field) {
   const root = seat(field, pts[0], [s * 0.55, 0.72, 0.2], 0.024);
   pts[0] = root;
   const rings = curveRings(pts, (t) => {
-    const base = 0.0298 * Math.pow(1 - t, 0.6) + 0.0018;
+    const base = 0.0232 * Math.pow(1 - t, 0.58) + 0.0014;
     // ridging must run the FULL length; a (1-t) falloff leaves the horn a smooth tube
     const ridge = 1 + 0.14 * Math.sin(t * 24) * Math.min(1, t * 4);
     return base * ridge;
@@ -53,12 +53,12 @@ function seat(field, p, dir, inset = 0.008) {
 export function buildCrownSpikes(field) {
   const out = [];
   const defs = [
-    [-0.0525, 1.7495, -0.02, 0.032, 0.0155],
-    [-0.0215, 1.7595, -0.026, 0.044, 0.0178],
-    [0.0215, 1.7595, -0.026, 0.044, 0.0178],
-    [0.0525, 1.7495, -0.02, 0.032, 0.0155],
-    [-0.033, 1.7305, -0.072, 0.03, 0.0135],
-    [0.033, 1.7305, -0.072, 0.03, 0.0135],
+    [-0.0375, 1.7445, -0.022, 0.021, 0.0098],
+    [-0.0135, 1.7515, -0.028, 0.028, 0.0112],
+    [0.0135, 1.7515, -0.028, 0.028, 0.0112],
+    [0.0375, 1.7445, -0.022, 0.021, 0.0098],
+    [-0.0245, 1.7285, -0.070, 0.019, 0.0088],
+    [0.0245, 1.7285, -0.070, 0.019, 0.0088],
   ];
   for (const [x, y, z, len, r] of defs) {
     const dir = [x * 5.5, 0.86, -0.5];
@@ -74,9 +74,9 @@ export function buildJawSpikes(field) {
   const out = [];
   for (const s of [1, -1]) {
     const jaw = [
-      [s * 0.0605, 1.6005, 0.048, 0.024, 0.0082],
-      [s * 0.0545, 1.5955, 0.096, 0.021, 0.0072],
-      [s * 0.0455, 1.5935, 0.139, 0.017, 0.0058],
+      [s * 0.0485, 1.6005, 0.046, 0.022, 0.0076],
+      [s * 0.0425, 1.5965, 0.092, 0.019, 0.0066],
+      [s * 0.0345, 1.5945, 0.134, 0.015, 0.0054],
     ];
     for (const [x, y, z, len, r] of jaw) {
       const dir = [s * 0.42, -0.62, -0.66];
@@ -84,8 +84,8 @@ export function buildJawSpikes(field) {
     }
     // cheek / jaw-hinge spikes
     for (const [p, dir, len, r] of [
-      [[s * 0.0805, 1.6435, -0.016], [s * 0.62, -0.1, -0.78], 0.026, 0.0092],
-      [[s * 0.076, 1.6165, 0.008], [s * 0.6, -0.4, -0.7], 0.021, 0.0078],
+      [[s * 0.0685, 1.6435, -0.016], [s * 0.62, -0.1, -0.78], 0.023, 0.0084],
+      [[s * 0.0645, 1.6165, 0.008], [s * 0.6, -0.4, -0.7], 0.019, 0.0070],
     ]) {
       out.push(spike(seat(field, p, dir), dir, len, r, { taper: 0.7, sides: 8, steps: 6 }));
     }

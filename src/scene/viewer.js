@@ -98,7 +98,7 @@ export function createViewer(container) {
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.14;
+  renderer.toneMappingExposure = 1.06;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
@@ -124,8 +124,8 @@ export function createViewer(container) {
 
   // ---- lights ---------------------------------------------------------------
   const key = new THREE.SpotLight(0xffd7a8, 54, 20, 0.86, 0.5, 1.7);
-  key.position.set(2.5, 3.0, 2.9);
-  key.target.position.set(0, 0.98, 0);
+  key.position.set(2.1, 3.5, 2.2);
+  key.target.position.set(0, 1.06, 0);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
   key.shadow.camera.near = 0.5;
@@ -151,12 +151,12 @@ export function createViewer(container) {
   scene.add(bounce);
 
   // low warm bounce off the floor, so the legs and hem do not fall into black
-  const floorBounce = new THREE.DirectionalLight(0x8f6c4c, 0.13);
+  const floorBounce = new THREE.DirectionalLight(0x7a5c40, 0.055);
   floorBounce.position.set(0.8, -1.0, 1.6);
   scene.add(floorBounce);
 
   // a small warm practical near the face, like a candle just off-frame
-  const practical = new THREE.PointLight(0xffab63, 0.55, 3.0, 2);
+  const practical = new THREE.PointLight(0xffab63, 0.30, 3.0, 2);
   practical.position.set(0.85, 1.42, 0.95);
   scene.add(practical);
 

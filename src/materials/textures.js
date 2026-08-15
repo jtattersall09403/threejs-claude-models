@@ -93,13 +93,13 @@ export function makeScaleTexture(size = 512, cells = 15, seed = 7) {
           if (d < f1) { f2 = f1; f1 = d; } else if (d < f2) { f2 = d; }
         }
       }
-      const edge = Math.min(1, (f2 - f1) * cells * 1.5);
-      const dome = Math.pow(edge, 0.55);
+      const edge = Math.min(1, (f2 - f1) * cells * 2.1);
+      const dome = Math.pow(edge, 0.34);
       const grain = (detail[y * size + x] - 0.5) * 0.16;
-      height[y * size + x] = dome * 0.92 + grain;
+      height[y * size + x] = dome * 1.02 + grain * 0.8;
     }
   }
-  return heightToTexture(height, size, 2.6);
+  return heightToTexture(height, size, 4.6);
 }
 
 /** Coarse woven cloth. */
