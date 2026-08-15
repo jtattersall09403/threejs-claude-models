@@ -212,8 +212,8 @@ const SKIN_FRAG = /* glsl */`
   // over the entire skull and the head read mauve-grey above a green muzzle: a hard
   // two-tone split the references do not have. In them the red is dark plates on the
   // brow shelf and the crest, with olive showing between them and over the occiput.
-  float browD = length((J - vec3(0.0430, 1.7150, 0.032)) * vec3(0.62, 1.55, 1.30));
-  float brow = ss(0.078, 0.018, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.638, 1.664, H.y)
+  float browD = length((J - vec3(0.0432, 1.7325, 0.048)) * vec3(0.62, 1.42, 1.16));
+  float brow = ss(0.082, 0.018, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.652, 1.678, H.y)
              * ss(-0.020, 0.014, J.z);
   // broken into plates rather than one even wash of colour
   brow *= 0.62 + 0.55 * ss(0.30, 0.74, fbm(J * 52.0 + 5.0));
