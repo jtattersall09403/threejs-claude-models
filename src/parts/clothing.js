@@ -52,9 +52,14 @@ function folds(amp, freq = 13, drape = 0.42) {
     //    into hard-edged faceted plateaus that read as peeling paint.
     // Creases fine enough to read as cloth are shaded in CLOTH_FRAG instead, where
     // no bake resolution is involved.
+    // Frequency is bounded by the BAKE CELL, not by taste. The tunic bakes at 4 mm and
+    // the fine octave ran at freq*3.1 — about 10 mm per feature, i.e. 2.5 cells — so
+    // marching cubes could not resolve it and turned every crease into a hard faceted
+    // plateau. Across the hip that reads as layered slivers of peeling paint, which is
+    // easy to misdiagnose as a print-through or a winding fault. Same family as trap 12.
     const big = fbm3(x * freq, y * freq * drape, z * freq, 3);
-    const fine = fbm3(x * freq * 3.1 + 17, y * freq * drape * 3.1, z * freq * 3.1, 2);
-    return amp * (big * 0.72 + fine * 0.34);
+    const fine = fbm3(x * freq * 2.0 + 17, y * freq * drape * 2.0, z * freq * 2.0, 2);
+    return amp * (big * 0.80 + fine * 0.22);
   };
 }
 
@@ -112,7 +117,7 @@ export function clothingFields(body) {
       capsule([-0.110, 1.425, 0], [-0.222, 1.128, -0.006], 0.115, 0.086),
       capsule([0.110, 1.425, 0], [0.222, 1.128, -0.006], 0.115, 0.086),
     ]);
-    const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0105, 16));
+    const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0105, 12));
     // The projection target for the sash, the medallion and the belt. It has to carry
     // EVERY ADDITIVE part of the coat and none of the cuts.
     //
@@ -122,7 +127,7 @@ export function clothingFields(body) {
     // *inside* the visible coat, and they surfaced only where a fold happened to poke
     // through. That reads as torn geometry: a diagonal row of hard-edged slivers across
     // the chest and a belt reduced to a blade stuck through the cloth.
-    const shell = garment(body, 0.026, cover, bounds, 0.016, folds(0.0105, 16));
+    const shell = garment(body, 0.026, cover, bounds, 0.016, folds(0.0105, 12));
     const addBoth = (prim) => { f.add(prim); shell.add(prim); };
     // the skirt hangs clear of the body, so it is added rather than offset
     // A coat skirt, not a peplum: it reaches mid-thigh and FLARES, so the figure gets a
@@ -169,11 +174,15 @@ export function clothingFields(body) {
   {
     const bounds = [-0.25, 0.11, -0.22, 0.25, 1.04, 0.22];
     const cover = coverage([
-      roundBox([0, 0.925, 0.0], [0.27, 0.078, 0.24], 0.02),
+      // Topped out BELOW the coat skirt. The trouser waist reached y 1.02 and, offset
+      // 15 mm off a pelvis that is wider than the skirt is at that height, it stood
+      // proud of the coat and printed through it as a scatter of hard slivers around
+      // the hip — which reads as torn geometry, not as a garment.
+      roundBox([0, 0.880, 0.0], [0.27, 0.060, 0.24], 0.02),
       capsule([-0.090, 0.96, 0], [-0.104, 0.222, -0.008], 0.19, 0.082),
       capsule([0.090, 0.96, 0], [0.104, 0.222, -0.008], 0.19, 0.082),
     ]);
-    const f = garment(body, 0.015, cover, bounds, 0.014, folds(0.0080, 18));
+    const f = garment(body, 0.012, cover, bounds, 0.014, folds(0.0080, 13));
     for (const s of [1, -1]) {
       f.add(ellipsoid([s * 0.104, 0.152, -0.012], [0.055, 0.016, 0.055], { k: 0.016 })); // cuff
     }
@@ -331,33 +340,55 @@ export function buildMedallion(tunicField) {
  * showing, which reads as a blade stuck through the coat — or just outside it, where
  * the belt becomes a hoop floating clear of the body with a hard flat underside.
  */
-export function buildBelt(tunicField, lift = 0.019) {
+export function buildBelt(tunicField, lift = 0.025) {
   const parts = [];
   const ring = [];
   const N = 72;
+  // Project every sample, then take a RUNNING MAXIMUM of the projected radius before
+  // laying the band on it.
+  //
+  // Averaging (which is what smoothing the projected polyline does) puts the band
+  // through the middle of the folds, so it emerges on the fold peaks and submerges in
+  // the troughs. Around a waist that alternation is regular, and it renders as a stack
+  // of thin horizontal louvres — which looks like torn or z-fighting geometry, not like
+  // a half-buried strap, and cost an iteration to diagnose as such. A max over a window
+  // wider than one fold makes the band ride OVER every peak it crosses.
+  const dirs = [], ys = [], rad = [];
   for (let i = 0; i <= N; i++) {
     const a = (i / N) * Math.PI * 2 - Math.PI / 2;
-    let p = [Math.cos(a) * 0.20, 0.972 + Math.sin(a * 2) * 0.004, Math.sin(a) * 0.17 + 0.004];
-    if (tunicField) {
-      const out = [p[0], 0, p[2] - 0.004];
-      const l = Math.hypot(out[0], out[2]) || 1;
-      const dir = [out[0] / l, 0, out[2] / l];
-      const hit = raySurface(tunicField, p, dir, { start: -0.16, max: 0.14 });
-      p = [hit[0] + dir[0] * lift, p[1], hit[2] + dir[2] * lift];
+    const p0 = [Math.cos(a) * 0.20, 0.972 + Math.sin(a * 2) * 0.004, Math.sin(a) * 0.17 + 0.004];
+    const out = [p0[0], 0, p0[2] - 0.004];
+    const l = Math.hypot(out[0], out[2]) || 1;
+    const dir = [out[0] / l, 0, out[2] / l];
+    dirs.push(dir);
+    ys.push(p0[1]);
+    if (!tunicField) { rad.push(l); continue; }
+    const hit = raySurface(tunicField, p0, dir, { start: -0.16, max: 0.14 });
+    rad.push(Math.hypot(hit[0], hit[2] - 0.004));
+  }
+  const W = 4;
+  const ridden = rad.map((_, i) => {
+    let m = -Infinity;
+    for (let j = -W; j <= W; j++) m = Math.max(m, rad[(i + j + N + 1) % (N + 1)]);
+    return m;
+  });
+  for (let pass = 0; pass < 2; pass++) {
+    for (let i = 1; i < ridden.length - 1; i++) {
+      ridden[i] = ridden[i] * 0.5 + (ridden[i - 1] + ridden[i + 1]) * 0.25;
     }
+  }
+
+  for (let i = 0; i <= N; i++) {
+    const dir = dirs[i], r = ridden[i] + lift;
+    const p = [dir[0] * r, ys[i], dir[2] * r + 0.004];
     ring.push({
       p,
-      r: [0.035, 0.0135],
-      profile: (t) => 1 + 0.10 * Math.sin(t * 5) + 0.05 * Math.sin(t * 11),
+      // Narrower, thicker, and barely modulated. At 70 mm tall with a 15% profile
+      // wobble the band read as a stiff flat plank with a sawtooth top edge (trap 10)
+      // rather than as cloth wound round the waist.
+      r: [0.0285, 0.0165],
+      profile: (t) => 1 + 0.045 * Math.sin(t * 3) + 0.022 * Math.sin(t * 7),
     });
-  }
-  // light smoothing: projecting onto folded cloth returns a slightly noisy ring
-  for (let pass = 0; pass < 2; pass++) {
-    for (let i = 1; i < ring.length - 1; i++) {
-      for (let c = 0; c < 3; c++) {
-        ring[i].p[c] = ring[i].p[c] * 0.5 + (ring[i - 1].p[c] + ring[i + 1].p[c]) * 0.25;
-      }
-    }
   }
   parts.push(sweep(ring, {
     sides: 16, capStart: false, capEnd: false,
@@ -381,7 +412,7 @@ export function buildBelt(tunicField, lift = 0.019) {
   parts.push(sweep(knot, { sides: 12 }));
   for (const dx of [-0.024, 0.012]) {
     const tail = curveRings(
-      [[dx, 0.958, 0.173], [dx * 1.4 - 0.006, 0.892, 0.173], [dx * 1.8 - 0.012, 0.824, 0.148]],
+      [[dx, 0.958, 0.181], [dx * 1.4 - 0.006, 0.892, 0.184], [dx * 1.8 - 0.012, 0.824, 0.178]],
       (t) => [0.0155 * (1 - 0.30 * t), 0.0072 * (1 - 0.22 * t)], 18,
       { tension: 0.4, profile: (a, u) => 1 + 0.10 * Math.sin(a * 2.0 + u * 12.0) },
     );
