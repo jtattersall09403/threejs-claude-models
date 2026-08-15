@@ -110,11 +110,14 @@ export function halfSpace(point, normal, opts = {}) {
  * anything authored from primitive radii alone ends up buried inside the skin.
  * Offsetting the *baked surface* guarantees a garment always clears the body.
  */
-export function offsetSurface(field, offset, aabb, k = 0.01) {
+export function offsetSurface(field, offset, aabb, k = 0.01, wrinkle = null) {
   return {
     k,
     aabb: [aabb[0], aabb[1], aabb[2], aabb[3], aabb[4], aabb[5]],
-    d(px, py, pz) { return field.sample(px, py, pz) - offset; },
+    d(px, py, pz) {
+      const o = wrinkle ? offset + wrinkle(px, py, pz) : offset;
+      return field.sample(px, py, pz) - o;
+    },
   };
 }
 

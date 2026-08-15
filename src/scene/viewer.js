@@ -123,8 +123,8 @@ export function createViewer(container) {
   controls.update();
 
   // ---- lights ---------------------------------------------------------------
-  const key = new THREE.SpotLight(0xffddb2, 30, 14, 0.6, 0.66, 2);
-  key.position.set(2.0, 3.0, 2.5);
+  const key = new THREE.SpotLight(0xffe3c2, 36, 16, 0.8, 0.62, 2);
+  key.position.set(2.2, 3.1, 2.6);
   key.target.position.set(0, 1.15, 0);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
@@ -149,6 +149,11 @@ export function createViewer(container) {
 
   const bounce = new THREE.HemisphereLight(0x2b3042, 0x0f0c07, 0.16);
   scene.add(bounce);
+
+  // low warm bounce off the floor, so the legs and hem do not fall into black
+  const floorBounce = new THREE.DirectionalLight(0x9d7a58, 0.14);
+  floorBounce.position.set(0.8, -1.0, 1.6);
+  scene.add(floorBounce);
 
   // a small warm practical near the face, like a candle just off-frame
   const practical = new THREE.PointLight(0xffab63, 0.55, 3.0, 2);

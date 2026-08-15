@@ -346,10 +346,10 @@ export function createMaterials() {
     skin,
     horn,
     eye,
-    tunic: clothMat('tunic', [0.104, 0.066, 0.040], 0.92, 30.0, cloth),
-    undershirt: clothMat('undershirt', [0.132, 0.130, 0.104], 0.95, 44.0, cloth),
+    tunic: clothMat('tunic', [0.070, 0.049, 0.033], 0.94, 30.0, cloth),
+    undershirt: clothMat('undershirt', [0.098, 0.098, 0.082], 0.95, 44.0, cloth),
     trousers: clothMat('trousers', [0.055, 0.045, 0.034], 0.94, 26.0, cloth),
-    wrap: clothMat('wrap', [0.170, 0.164, 0.134], 0.96, 52.0, cloth),
+    wrap: clothMat('wrap', [0.116, 0.112, 0.092], 0.96, 52.0, cloth),
     leather: clothMat('leather', [0.042, 0.028, 0.018], 0.70, 22.0, leather),
     textures: { scale, cloth, leather },
   };

@@ -31,6 +31,13 @@ export function sweep(rings, opts = {}) {
     return norm([b[0] - a[0], b[1] - a[1], b[2] - a[2]]);
   });
 
+  // An explicit frame keeps flat ribbons (straps, belts) oriented against the body;
+  // parallel transport would twist them into sausages.
+  if (opts.frameFn) {
+    const frames = rings.map((ring, i) => opts.frameFn(ring.p, tangents[i], i));
+    return emit(rings, frames, tangents, sides, opts);
+  }
+
   // parallel transport frame
   let ref = Math.abs(tangents[0][1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
   let nrm = norm(cross(ref, tangents[0]));
@@ -55,6 +62,14 @@ export function sweep(rings, opts = {}) {
     const bin = norm(cross(tangents[i], nrm));
     frames.push([nrm, bin]);
   }
+  return emit(rings, frames, tangents, sides, opts);
+}
+
+function emit(rings, frames, tangents, sides, opts) {
+  const n = rings.length;
+  const positions = [];
+  const indices = [];
+  const uvs = [];
 
   for (let i = 0; i < n; i++) {
     const ring = rings[i];
