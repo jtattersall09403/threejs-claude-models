@@ -17,46 +17,64 @@ const OUT = resolve(root, 'captures/compare');
 
 // Reference screenshots are 2172x2352 with the character in the lower-right area.
 // crop = [x, y, w, h] in source pixels, chosen to frame the head/torso.
+// The five NAMED references are already cropped by the user to the thing their
+// filename describes, so they need NO crop here — omit `crop` and they render whole.
+// `crop` is only for the original 2172px screenshots, where the character is a small
+// part of a wide frame.
 const PAIRS = [
   {
     name: 'head_front',
-    ref: 'Screenshot_20260815_080957_com_google_android_youtube_MainActivity.jpg',
-    crop: [1080, 740, 620, 780],
+    ref: 'close-crop-face-front-slight-right-profile.jpg',
     render: 'head_front.png',
-    note: 'front — plating, brow band, eye value, muzzle width',
+    note: 'front — facial markings, brow band, eye and orange rim, muzzle width',
   },
   {
     name: 'head_q34',
-    ref: 'Screenshot_20260815_081002_com_google_android_youtube_MainActivity.jpg',
-    crop: [1040, 700, 700, 820],
+    ref: 'face-neck-jawline-right-profile.jpg',
     render: 'head_q34.png',
-    note: '3/4 — horn sweep + band, socket band, jaw line',
+    note: '3/4 — jawline and spikes, cheekbone, neck, horn sweep',
   },
   {
     name: 'head_side',
-    // NOTE: the named refs are ~800px close crops, not 2172px screenshots, so the
-    // crop rectangles below do not transfer. Until they are re-derived, read the
-    // named refs DIRECTLY with the Read tool — face-left-profile.jpg in particular.
-    ref: 'Screenshot_20260815_081025_com_google_android_youtube_MainActivity.jpg',
-    crop: [1020, 700, 760, 820],
+    ref: 'face-left-profile.jpg',
     render: 'head_side.png',
-    note: 'profile — muzzle top line, jaw depth, occiput',
+    note: 'PROFILE — forehead-to-snout curve, snout depth, jaw spikes, neck',
   },
   {
-    name: 'head_rear34',
-    ref: 'Screenshot_20260815_080949_com_google_android_youtube_MainActivity.jpg',
-    crop: [1060, 700, 720, 840],
-    render: 'head_rear34.png',
-    note: 'rear 3/4 — horn ring, crown spikes, throat scutes',
+    name: 'head_jawline',
+    ref: 'face-neck-jawline-closeup.jpg',
+    render: 'head_low.png',
+    note: 'jawline close — spike count/size/placement, neck, clavicle',
   },
   {
-    name: 'torso',
+    name: 'bust',
+    ref: 'face-front-and-bust-proportions.jpg',
+    render: 'torso_front.png',
+    note: 'bust — head-to-shoulder proportion, shoulder width and slope, stance',
+  },
+  {
+    name: 'body',
     ref: 'Screenshot_20260815_081046_com_google_android_youtube_MainActivity.jpg',
     crop: [980, 700, 900, 1000],
-    render: 'torso_front.png',
-    note: 'torso — tunic value + folds, sash, collar, sleeves',
+    render: 'full_front.png',
+    note: 'full body — garment layers, sash, belt, overall silhouette',
   },
 ];
+
+/** JPEG intrinsic size, so crop zoom factors are never hard-coded to one source. */
+function jpegSize(file) {
+  const d = readFileSync(file);
+  let i = 2;
+  while (i < d.length) {
+    if (d[i] !== 0xFF) { i++; continue; }
+    const m = d[i + 1];
+    if (m >= 0xC0 && m <= 0xCF && m !== 0xC4 && m !== 0xC8 && m !== 0xCC) {
+      return { h: d.readUInt16BE(i + 5), w: d.readUInt16BE(i + 7) };
+    }
+    i += 2 + d.readUInt16BE(i + 2);
+  }
+  return { w: 2172, h: 2352 };
+}
 
 const b64 = (p) => readFileSync(p).toString('base64');
 
@@ -77,15 +95,24 @@ ${PAIRS.map((p) => {
   try {
     ren = `data:image/png;base64,${b64(resolve(CAP, p.render))}`;
   } catch { return ''; }
-  const [x, y, w, h] = p.crop;
+  // No crop => show the reference whole. The zoom factor MUST use the real source
+  // width; it was hard-coded to 2172 (the original screenshots'), which scaled an
+  // 827px named reference to 263% and framed the wall behind the character.
+  let refBlock;
+  if (p.crop) {
+    const [x, y, w, h] = p.crop;
+    const sw = jpegSize(resolve(REF, p.ref)).w;
+    refBlock = `<div style="width:100%;aspect-ratio:${w}/${h};overflow:hidden;position:relative">
+          <img src="${ref}" style="position:absolute;width:${(sw / w) * 100}%;
+            left:${(-x / w) * 100}%; top:${(-y / h) * 100}%; height:auto;">
+        </div>`;
+  } else {
+    refBlock = `<img src="${ref}">`;
+  }
   return `<div id="${p.name}">
     <h2>${p.name} — ${p.note}</h2>
     <div class="row">
-      <div class="col"><div class="lbl">REFERENCE</div>
-        <div style="width:100%;aspect-ratio:${w}/${h};overflow:hidden;position:relative">
-          <img src="${ref}" style="position:absolute;width:${(2172 / w) * 100}%;
-            left:${(-x / w) * 100}%; top:${(-y / h) * 100}%; height:auto;">
-        </div></div>
+      <div class="col"><div class="lbl">REFERENCE</div>${refBlock}</div>
       <div class="col"><div class="lbl">RENDER</div><img src="${ren}"></div>
     </div>
   </div>`;

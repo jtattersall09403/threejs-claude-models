@@ -112,6 +112,9 @@ are far more informative than the original timestamped screenshots — prefer th
 | `face-front-and-bust-proportions.jpg` | Head-to-shoulder proportion, shoulder width and slope, stance. |
 | `Screenshot_*.jpg` (5) | The originals. Wider context, full body, garments. |
 
+`npm run compare` uses **all five named images uncropped** — they are already cropped
+to their subject. Only the original screenshots take a `crop` rectangle.
+
 ### What the profile reference settles
 
 - **The forehead flows into the snout as ONE SMOOTH CURVE** — crown, brow and snout

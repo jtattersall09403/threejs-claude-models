@@ -136,10 +136,13 @@ profile reference. Brow shelf lowered so it rides the curve instead of stepping 
 (reference has a few LARGE flat blade-like spikes, ours is a row of small cones),
 cheekbone definition, the neck, stance naturalness, shoulder proportions.
 
-**Tooling note:** `tools/compare.mjs` crop rectangles were authored against the 2172px
-original screenshots and do NOT transfer to the ~800px named refs. The profile sheet is
-back on the original screenshot until they are re-derived. **Read the named references
-directly with the Read tool** — they are much more informative.
+**Tooling FIXED:** `tools/compare.mjs` now uses **all five named references,
+uncropped** — they are already cropped to their subject, so `crop` is omitted and they
+render whole. The bug was that the zoom factor was hard-coded to `2172` (the original
+screenshots' width), which scaled an 827px named reference to 263% and framed the wall
+behind the character. It now reads the real JPEG width, so nothing is hard-coded to one
+source again. Sheets: `head_front`, `head_q34`, `head_side` (PROFILE), `head_jawline`,
+`bust`, plus `body` from the original screenshot for full-length garment context.
 
 ## Measuring rather than eyeballing
 
