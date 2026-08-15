@@ -182,8 +182,8 @@ const SKIN_FRAG = /* glsl */`
 
   vec3 dorsal   = vec3(0.0275, 0.0355, 0.0185);
   vec3 dorsal2  = vec3(0.0068, 0.0098, 0.0056);
-  vec3 warmOl   = vec3(0.0505, 0.0530, 0.0290);
-  vec3 belly    = vec3(0.0480, 0.0500, 0.0295);
+  vec3 warmOl   = vec3(0.0380, 0.0405, 0.0225);
+  vec3 belly    = vec3(0.0395, 0.0415, 0.0248);
   vec3 plate    = vec3(0.0046, 0.0048, 0.0052);
   vec3 maroon   = vec3(0.0560, 0.0148, 0.0110);
   vec3 boneCol  = vec3(0.088, 0.078, 0.055);
@@ -250,8 +250,8 @@ const HORN_FRAG = /* glsl */`
   // banded ring on the big horns only
   // t < ~0.2 is inside the skull (the root is seated below the surface), so the
   // band has to sit further out to be visible at all
-  float ring = step(0.5, vRegion) * ss(0.058, 0.034, abs(t - 0.32));
-  col = mix(col, dark * 0.55, ring * 0.97);
+  float ring = step(0.5, vRegion) * ss(0.075, 0.038, abs(t - 0.30));
+  col = mix(col, dark * 0.42, ring * 0.99);
 
   float grime = fbm(vRest * 60.0);
   col *= 0.80 + 0.34 * grime;
