@@ -187,12 +187,12 @@ const SKIN_FRAG = /* glsl */`
 
   // dark scaled band around the eye socket and temple
   float eyeD = length((J - vec3(EYE_X, EYE_Y + 0.004, EYE_Z + 0.018)) * vec3(0.60, 1.05, 0.46));
-  float socket = ss(0.132, 0.048, eyeD) * ss(1.628, 1.650, H.y);
+  float socket = ss(0.140, 0.050, eyeD) * ss(1.618, 1.646, H.y);
   // ...continuing back from the eye to the jaw hinge as a dark mask stripe. This is
   // the strongest value break on the reference face and without it the cheek reads
   // as one flat panel between brow and jaw.
-  float maskD = length((J - vec3(0.052, 1.6725, -0.006)) * vec3(0.42, 2.05, 0.86));
-  socket = max(socket, ss(0.098, 0.030, maskD) * 0.82);
+  float maskD = length((J - vec3(0.054, 1.6775, -0.004)) * vec3(0.40, 1.75, 0.80));
+  socket = max(socket, ss(0.110, 0.032, maskD) * 0.92);
 
   // maroon plate over the brow ridges and between the eyes. This is a NARROW band
   // just above the eyes in the reference; at its old extent it flooded the whole
@@ -244,7 +244,7 @@ const SKIN_FRAG = /* glsl */`
   col = mix(col, maroon * 0.62, brow * 0.55);  // deepen the oxblood band
   // three cream claw-mark streaks across the maroon brow band
   float streak = ss(0.72, 0.97, abs(sin((J.x - 0.010) * 150.0)));
-  col = mix(col, boneCol * 0.72, brow * streak * ss(0.014, 0.048, abs(J.x)) * 0.85);
+  col = mix(col, boneCol * 0.78, brow * streak * ss(0.012, 0.052, abs(J.x)) * 0.95);
 
   // The face as a whole, minus the already-near-black skull cap. The muzzle flanks
   // stayed a light green after the chin was fixed; in the reference the entire head
