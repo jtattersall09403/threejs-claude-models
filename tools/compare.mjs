@@ -49,7 +49,7 @@ const PAIRS = [
   {
     name: 'bust',
     ref: 'face-front-and-bust-proportions.jpg',
-    render: 'torso_front.png',
+    render: 'bust.png',
     note: 'bust — head-to-shoulder proportion, shoulder width and slope, stance',
   },
   {

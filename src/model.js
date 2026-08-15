@@ -101,13 +101,13 @@ export function buildArgonian(opts = {}) {
   const body = smoothPositions(bakeField(bodyField, BODY_BOUNDS, 0.0062), 2);
   log('baking head');
   // region: 0 = plain keratin, 1 = the big horns (shader draws their ring banding),
-  // 2 = the metal cuffs
+  // 2 = the metal cuffs, 3 = claws, 4 = the dark oxblood crown crest
   const headParts = [
     { geom: buildHorn(1, seatField), region: 1 },
     { geom: buildHorn(-1, seatField), region: 1 },
     { geom: buildHornCuff(1, seatField), region: 2 },
     { geom: buildHornCuff(-1, seatField), region: 2 },
-    ...buildCrownSpikes(seatField).map((geom) => ({ geom, region: 0 })),
+    ...buildCrownSpikes(seatField).map((geom) => ({ geom, region: 4 })),  // 4 = oxblood crest
     ...buildJawSpikes(seatField).map((geom) => ({ geom, region: 0 })),
   ];
   const headField = transformHeadField(seatField);

@@ -70,7 +70,7 @@ export function buildBodyField() {
   f.add(ellipsoid([0, 0.95, -0.062], [0.146, 0.09, 0.07], { k: K }));      // glutes
 
   // ---- neck (continues up into the head bake) --------------------------------
-  f.add(capsule([0, 1.375, -0.02], [0, 1.535, 0.012], 0.098, 0.058, { k: 0.055 }));
+  f.add(capsule([0, 1.375, -0.02], [0, 1.535, 0.012], 0.100, 0.066, { k: 0.055 }));
 
   // ---- arms ------------------------------------------------------------------
   for (const s of [1, -1]) {
@@ -159,7 +159,7 @@ export function buildHeadField() {
     [0.046, 1.6724, 0.0337, 0.0400],
     [0.100, 1.6572, 0.0274, 0.0316],
     [0.138, 1.6440, 0.0215, 0.0242],
-    [0.162, 1.6362, 0.0186, 0.0200],   // blunt, not pointed: the reference nose is round
+    [0.170, 1.6360, 0.0176, 0.0184],   // blunt, not pointed: the reference nose is round
   ];
   for (let i = 0; i < snout.length; i++) {
     const [z, cy, hy, hx] = snout[i];
@@ -169,7 +169,7 @@ export function buildHeadField() {
   // a low dorsal ridge riding the same curve — a crest, not a separate bridge
   f.add(capsule([0, 1.6990, 0.020], [0, 1.6480, 0.146], 0.0130, 0.0078,
     { k: 0.026, scale: [1, 0.62, 1] }));
-  f.add(ellipsoid([0, 1.6362, 0.1690], [0.0182, 0.0168, 0.0132], { k: 0.016 })); // nose pad
+  f.add(ellipsoid([0, 1.6370, 0.1755], [0.0148, 0.0130, 0.0126], { k: 0.016 })); // nose pad
 
   // ---- lower jaw: deep and straight, turning up at a visible hinge --------------
   // Narrower than the upper muzzle at every station, so the jaw tucks under the lip
@@ -201,7 +201,7 @@ export function buildHeadField() {
   // Set further back and tucked under: the reference's neck disappears into a deep
   // shadow beneath the jawline rather than meeting it flush.
   f.add(ellipsoid([0, 1.5560, -0.004], [0.044, 0.030, 0.042], { k: 0.014 }));
-  f.add(capsule([0, 1.448, -0.014], [0, 1.532, 0.008], 0.068, 0.048, { k: 0.04 }));
+  f.add(capsule([0, 1.448, -0.014], [0, 1.532, 0.008], 0.078, 0.057, { k: 0.04 }));
 
   // ---- cuts ------------------------------------------------------------------
   for (const s of [1, -1]) {
@@ -232,6 +232,13 @@ export function buildHeadField() {
   // ear depression
   for (const s of [1, -1]) {
     f.sub(ellipsoid([s * 0.0745, 1.6665, -0.036], [0.008, 0.014, 0.011], { k: 0.006 }));
+  }
+  // The round tympanic plate on the side of the skull — a clear disc in
+  // face-left-profile.jpg, and one of the few landmarks that reads at profile
+  // distance. A raised rim with a shallow dish inside it.
+  for (const s of [1, -1]) {
+    f.add(ellipsoid([s * 0.0630, 1.6790, -0.0330], [0.0075, 0.0215, 0.0215], { k: 0.008 }));
+    f.sub(ellipsoid([s * 0.0680, 1.6790, -0.0330], [0.0075, 0.0148, 0.0148], { k: 0.005 }));
   }
 
   return f;

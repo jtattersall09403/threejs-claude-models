@@ -195,6 +195,58 @@ immediately — both of these were obvious in one frame.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
 
+### Iteration 22 — THE STANCE, and the body I had still been neglecting
+
+The character had never been *posed*. It was rendered in its raw rest pose: perfectly
+symmetric, arms dead vertical, feet parallel and touching. No amount of anatomy fixes
+that — it reads as a shop mannequin. `src/rig/pose.js` now applies a relaxed
+asymmetric contrapposto idle as bone rotations, AFTER `mesh.bind()` (so the bind
+inverses are already snapshotted and the stance is a pure deformation, not something
+baked in twice). It re-plants the feet afterwards by measuring the lower ankle's world
+y — rotating the pelvis otherwise floats or sinks the figure against the shadow plane.
+
+Everything else this iteration came out of actually looking at the full-body and
+profile captures, which had been getting far less attention than the head:
+
+- **Legs were one column.** Thighs at ±0.078 overlapped through the centreline and the
+  trouser offset bridged what gap was left. Stance widened to ±0.090 hip / ±0.104
+  ankle, thigh narrowed in x and deepened in z (`scale: [0.88, 1, 1.04]`).
+- **No shoulder.** The top line sloped continuously from neck to elbow. Arm chain moved
+  11 mm outboard and the deltoid flattened (`[0.072, 0.052, 0.070]`) — a near-spherical
+  deltoid puts a hemisphere on top of the sleeve and the coat renders a puff.
+- **Slab torso in profile.** Ribcage z-radius 0.111 → 0.122 plus a pectoral shelf.
+- **The tail was a rudder**, reaching 0.50 m back while only dropping to y 0.305.
+  Re-authored to turn down hard in the first two segments and finish near the ankles.
+- **The skirt hem was a flat disc**: the skirt capsule bulged to y 0.639 but the bake
+  box was floored at 0.72, so marching cubes sealed it with a plate. Box lowered, and
+  the hem is now a deliberate flat cut with the ring of hem ellipsoids rolling over it.
+  The skirt also reaches mid-thigh now, so the figure has a waist instead of a pear.
+- **Clog feet.** 12 cm across, 22.6 cm long → 10 cm × 24.4 cm, narrower sole.
+- **The sash and belt were projected onto the wrong surface** — the cut-free *offset
+  shell*, which is the coat only over the ribcage. At the waist the coat is the SKIRT,
+  a centimetre proud of the shell, so both surfaced only where a fold poked through and
+  read as torn slivers and a blade through the cloth. `shell` now carries every
+  additive part of the coat (see trap 21).
+- **No neck.** After the head grew to scale 1.16 the cowl top (y 1.532) sat ABOVE the
+  jaw (1.523). Collar and coat neckline dropped ~4.6 cm; a throat column now shows.
+- **The crown crest is dark oxblood, not bone** — confirmed across the profile, the
+  close crop AND the bust before acting on it this time. New horn region 4.
+- Nine spikes a side round the skull became five: three big swept-back cheek blades
+  plus the brow spines. At the old count and size it read as a picket fence.
+- Round tympanic ear plate added (a clear landmark in the profile reference).
+
+`npm run silhouette` is new: it separates the render from its background and prints
+figure width in metres at a ladder of heights. Head width measured 0.180 m against a
+0.531 m shoulder span — the head-is-too-small worry was wrong, the missing neck was
+the real cause of that read.
+
+**Still open on the head after this iteration** (profile comparison): the horn is too
+thick and sweeps too far back; the reference's forward-angled pale brow spikes barely
+read on ours; the crown crest is now too dark to see; the muzzle top line still dips at
+the brow where the reference is a straight ramp; the lower jaw is too shallow; the hide
+still reads grey-brown where the reference is olive-green.
+
+
 ### Iteration 14 — the user's head notes, and a through-cut mouth
 - **`creaseSlot` was a through-cut, not a groove.** A band in y inside a hard limit in
   x: out at the corners of the mouth, where the surface turns to face sideways, it

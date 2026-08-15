@@ -87,20 +87,28 @@ function seat(field, p, dir, inset = 0.008) {
 /** Cream crown spikes fanned across the top-rear of the skull. */
 export function buildCrownSpikes(field) {
   const out = [];
-  // A low crest, not a crown. In the reference these are modest nubs behind the
-  // brow; at the previous size they competed with the horns and read as antlers.
+  // The crest. Confirmed across face-left-profile, close-crop-face-front and
+  // face-front-and-bust-proportions: a fan of FLAT dark-oxblood BLADES sweeping back
+  // over the crown in two ranks — not a row of pale bone cones. Built as cones they
+  // read as a tiara; built pale they compete with the horns for the eye.
   const defs = [
-    [-0.0322, 1.7570, -0.026, 0.0330, 0.0092],
-    [-0.0108, 1.7630, -0.032, 0.0410, 0.0104],
-    [0.0108, 1.7630, -0.032, 0.0410, 0.0104],
-    [0.0322, 1.7570, -0.026, 0.0330, 0.0092],
-    [-0.0212, 1.7395, -0.072, 0.0270, 0.0080],
-    [0.0212, 1.7395, -0.072, 0.0270, 0.0080],
+    // [x, y, z, length, radius]  — tallest at the centre, shrinking outboard
+    [-0.0405, 1.7455, -0.010, 0.0300, 0.0092],
+    [-0.0250, 1.7590, -0.016, 0.0430, 0.0110],
+    [-0.0085, 1.7645, -0.022, 0.0500, 0.0118],
+    [0.0085, 1.7645, -0.022, 0.0500, 0.0118],
+    [0.0250, 1.7590, -0.016, 0.0430, 0.0110],
+    [0.0405, 1.7455, -0.010, 0.0300, 0.0092],
+    // a shorter second rank over the occiput, so the crest has depth from the side
+    [-0.0230, 1.7330, -0.062, 0.0330, 0.0086],
+    [-0.0075, 1.7395, -0.070, 0.0390, 0.0096],
+    [0.0075, 1.7395, -0.070, 0.0390, 0.0096],
+    [0.0230, 1.7330, -0.062, 0.0330, 0.0086],
   ];
   for (const [x, y, z, len, r] of defs) {
-    const dir = [x * 5.5, 0.86, -0.5];
+    const dir = [x * 3.2, 0.56, -0.83];   // lying BACK over the crown, not standing up
     out.push(spike(seat(field, [x, y, z], dir, 0.004), dir, len, r, {
-      taper: 0.55, bend: [0, 0.004, -0.014], sides: 10, steps: 8,
+      taper: 0.62, bend: [0, 0.003, -0.016], sides: 10, steps: 8, flat: 0.40,
     }));
   }
   return out;
@@ -132,23 +140,19 @@ export function buildJawSpikes(field) {
         taper: 0.62, flat: 0.40, sides: 10, steps: 7, bend: [0, -0.004, 0.008],
       }));
     }
-    // cheek / jaw-hinge spikes
+    // Cheek spikes. THREE, LARGE, swept back — measured off face-left-profile, where
+    // they are roughly a sixth of the head's height each. There used to be nine spikes
+    // a side here (three jaw tusks, two hinge nubs and a four-spike "frill"), and at
+    // that count and size they read from any distance as a picket fence stapled round
+    // the skull rather than as a few heavy keratin blades.
     for (const [p, dir, len, r] of [
-      [[s * 0.0605, 1.6395, -0.016], [s * 0.62, -0.1, -0.78], 0.026, 0.0088],
-      [[s * 0.0570, 1.6180, 0.008], [s * 0.6, -0.4, -0.7], 0.022, 0.0074],
+      [[s * 0.0575, 1.6810, 0.020], [s * 0.80, 0.06, -0.60], 0.0420, 0.0112],
+      [[s * 0.0605, 1.6640, 0.000], [s * 0.82, -0.06, -0.57], 0.0400, 0.0105],
+      [[s * 0.0580, 1.6455, -0.012], [s * 0.78, -0.24, -0.58], 0.0340, 0.0092],
     ]) {
-      out.push(spike(seat(field, p, dir), dir, len, r, { taper: 0.7, sides: 8, steps: 6 }));
-    }
-    // Cheek frill: a cluster of small spikes running back from behind the eye to the
-    // jaw hinge. In the references this is a distinct dark spiky patch and its
-    // absence left the cheek as one blank panel.
-    for (const [p, dir, len, r] of [
-      [[s * 0.0560, 1.6790, 0.026], [s * 0.86, 0.10, -0.50], 0.0165, 0.0050],
-      [[s * 0.0585, 1.6650, 0.006], [s * 0.88, -0.04, -0.47], 0.0185, 0.0056],
-      [[s * 0.0590, 1.6505, -0.010], [s * 0.86, -0.16, -0.48], 0.0175, 0.0052],
-      [[s * 0.0525, 1.6905, 0.004], [s * 0.80, 0.30, -0.52], 0.0140, 0.0044],
-    ]) {
-      out.push(spike(seat(field, p, dir, 0.003), dir, len, r, { taper: 0.8, sides: 8, steps: 5 }));
+      out.push(spike(seat(field, p, dir, 0.004), dir, len, r, {
+        taper: 0.72, flat: 0.52, sides: 10, steps: 7, bend: [0, -0.003, -0.008],
+      }));
     }
     // brow scutes: three flat claw-like plates lying back along the brow ridge,
     // one of the most recognisable markings on the reference face

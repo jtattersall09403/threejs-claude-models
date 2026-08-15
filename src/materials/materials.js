@@ -221,10 +221,10 @@ const SKIN_FRAG = /* glsl */`
   // Darker and less green-dominant. The reference hide is a DESATURATED olive: at a
   // green/red ratio of 1.29 the muzzle read as a bright leaf green next to the
   // oxblood brow band, which is the upper/lower face split that kept reappearing.
-  vec3 dorsal   = vec3(0.0224, 0.0256, 0.0162);
+  vec3 dorsal   = vec3(0.0216, 0.0264, 0.0146);
   vec3 dorsal2  = vec3(0.0062, 0.0080, 0.0052);
-  vec3 warmOl   = vec3(0.0252, 0.0268, 0.0176);
-  vec3 belly    = vec3(0.0242, 0.0256, 0.0180);
+  vec3 warmOl   = vec3(0.0250, 0.0288, 0.0160);
+  vec3 belly    = vec3(0.0252, 0.0278, 0.0172);
   vec3 plate    = vec3(0.0062, 0.0068, 0.0048);   // dark OLIVE-black, not blue-black
   // R/G ~2.1, not ~4.8. The critic measured the reference brow at R/G 1.74 against a
   // 1.17 muzzle; pushed to a pure red this floods the crown salmon-pink instead of
@@ -257,7 +257,7 @@ const SKIN_FRAG = /* glsl */`
   // stayed a light green after the chin was fixed; in the reference the entire head
   // is a dark, fairly desaturated olive with the crown darker still.
   float faceZone = headMask * (1.0 - cap) * ss(1.556, 1.598, H.y);
-  col = mix(col, col * vec3(0.82, 0.78, 0.82), faceZone * 0.55);
+  col = mix(col, col * vec3(0.80, 0.84, 0.74), faceZone * 0.55);
 
   // Warm orange rim of scales right around the eye opening. Clearly present in every
   // reference crop and the strongest local hue accent on the head; without it the eye
@@ -322,7 +322,7 @@ const SKIN_FRAG = /* glsl */`
   // line vanished even though debugMasks(6) showed the mask present and correct.
   float lip = ss(0.0062 * scute, 0.0022, abs(H.y - lipY))
             * ss(0.168, 0.157, H.z) * ss(0.006, 0.026, H.z);
-  col = mix(col, vec3(0.0016, 0.0014, 0.0013), lip * 0.99);
+  col = mix(col, vec3(0.0040, 0.0036, 0.0030), lip * 0.80);
 
   // Crevices between scales go dark on the BODY. Range kept narrow: at 0.42..1.06 the
   // detail height alone swung local brightness 2.5x, so wherever the scale texture
@@ -344,7 +344,7 @@ const SKIN_FRAG = /* glsl */`
   col = mix(col, boneCol * 0.46, mortar * 0.62);
   // darker AND warmer: the jaw was not merely bright, it was the greenest thing on
   // the head, where the reference jaw is its most neutral, most shadowed area
-  col = mix(col, col * vec3(0.60, 0.53, 0.52), chinZone * 0.88);
+  col = mix(col, col * vec3(0.74, 0.70, 0.66), chinZone * 0.60);
   // cream mortar lines between the cranial plates — in the reference the gaps are
   // LIGHTER than the plates, the opposite of a generic crevice darkening
   col = mix(col, boneCol * 0.24, crownZone * (1.0 - ss(0.08, 0.30, h)) * 0.30);
@@ -415,9 +415,17 @@ const HORN_FRAG = /* glsl */`
   col *= mix(0.56, 1.06, ss(0.1, 0.7, h));
   gRoughOut = clamp(0.48 + (1.0 - h) * 0.28 + grime * 0.12, 0.3, 0.95);
 
+  // region 4 is the crown crest. Dark oxblood in every reference that shows the crown
+  // — the profile, the close crop and the bust all agree — where the horns, the jaw
+  // spikes and the cheek spikes are pale bone. Rendered in bone it read as a tiara.
+  if (vRegion > 3.5) {
+    col = mix(vec3(0.0262, 0.0104, 0.0088), vec3(0.0104, 0.0046, 0.0042), ss(0.25, 1.0, t))
+        * (0.78 + 0.38 * grime) * mix(0.86, 1.08, streakH);
+    gRoughOut = clamp(0.62 + grime * 0.24, 0.42, 0.94);
+  }
   // region 3 is the claws: dark horn, not the pale bone of the head spikes. Left the
   // same value they caught the light and the hand read as a fistful of ivory talons.
-  if (vRegion > 2.5) {
+  else if (vRegion > 2.5) {
     col *= vec3(0.26, 0.245, 0.235);
     gRoughOut = clamp(gRoughOut - 0.12, 0.24, 0.9);
   }
