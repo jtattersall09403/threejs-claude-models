@@ -151,10 +151,10 @@ const SKIN_FRAG = /* glsl */`
   // armoured skull cap: top of the braincase, wrapping down over the temples
   // covers the whole cranium from the brow back, wrapping down behind the eyes —
   // driven by position, not by normal, so it does not fade out on the flanks
-  float cap = ss(1.664, 1.684, J.y) * ss(0.160, 0.118, J.z);
+  float cap = ss(1.652, 1.676, J.y) * ss(0.168, 0.124, J.z);
   cap = max(cap, ss(1.612, 1.658, J.y) * ss(-0.005, -0.075, J.z));  // occiput
-  cap *= ss(0.122, 0.098, abs(J.x));                                 // not the very flanks
-  cap = max(cap, ss(1.694, 1.712, J.y) * ss(0.128, 0.098, J.z));     // crown, full width
+  cap *= ss(0.132, 0.106, abs(J.x));                                 // not the very flanks
+  cap = max(cap, ss(1.682, 1.702, J.y) * ss(0.140, 0.106, J.z));     // crown, full width
 
   // dark scaled band around the eye socket and temple
   float eyeD = length((J - vec3(EYE_X, EYE_Y, EYE_Z)) * vec3(0.85, 1.5, 1.0));
@@ -162,7 +162,7 @@ const SKIN_FRAG = /* glsl */`
 
   // maroon plate over the brow ridges and between the eyes
   float browD = length((J - vec3(0.042, 1.7185, 0.042)) * vec3(0.80, 2.6, 1.05));
-  float brow = ss(0.075, 0.018, browD) * ss(-0.25, 0.25, Nr.y) * step(1.645, H.y);
+  float brow = ss(0.066, 0.016, browD) * ss(-0.25, 0.25, Nr.y) * step(1.645, H.y);
 
   // banded scutes on throat and belly
   float bands = ss(0.22, 0.95, abs(sin(P.y * 78.0 + P.z * 9.0)));
@@ -196,9 +196,9 @@ const SKIN_FRAG = /* glsl */`
 
   // dark closed lip line along the mouth crease
   float lipY = 1.6118 + (0.205 - H.z) * 0.082;
-  float lip = ss(0.0165, 0.0035, abs(H.y - lipY))
+  float lip = ss(0.0092, 0.0022, abs(H.y - lipY))
             * ss(0.222, 0.196, H.z) * ss(0.028, 0.055, H.z);
-  col = mix(col, vec3(0.0035, 0.0030, 0.0028), lip * 0.97);
+  col = mix(col, vec3(0.0055, 0.0048, 0.0044), lip * 0.92);
 
   // crevices between scales go dark
   col *= mix(0.30, 1.10, ss(0.04, 0.60, h));
@@ -258,8 +258,8 @@ const EYE_FRAG = /* glsl */`
   float x = dot(d, rt), y = dot(d, up);
   float r = length(vec2(x, y));
 
-  vec3 amber = vec3(0.560, 0.272, 0.022);
-  vec3 amberHot = vec3(0.870, 0.520, 0.068);
+  vec3 amber = vec3(0.680, 0.340, 0.030);
+  vec3 amberHot = vec3(0.980, 0.640, 0.095);
   float fibers = fbm(vec3(atan(y, x) * 5.0, r * 26.0, 0.0));
   vec3 iris = mix(amber, amberHot, fibers * 0.85);
   iris *= 0.86 + 0.42 * ss(0.05, 0.55, r);
@@ -272,7 +272,9 @@ const EYE_FRAG = /* glsl */`
   col *= 1.0 - 0.55 * ss(0.62, 0.76, r) * (1.0 - ss(0.76, 0.9, r));
 
   diffuseColor.rgb = col;
-  gRoughOut = mix(0.30, 0.62, ss(0.55, 0.80, r));
+  gRoughOut = mix(0.26, 0.62, ss(0.55, 0.80, r));
+  // confine the glow to the iris ring, and kill it inside the pupil
+  gEmissive = col * (1.0 - ss(0.60, 0.86, r)) * ss(0.86, 1.06, slit);
 `;
 
 const CLOTH_FRAG = /* glsl */`
@@ -312,6 +314,7 @@ function wrap(frag) {
   return `
   vec3 gNormal = vec3(0.0, 0.0, 1.0);
   float gRoughOut = -1.0;
+  vec3 gEmissive = vec3(-1.0);
   {
     ${frag}
   }
@@ -322,10 +325,11 @@ function finishRoughness(material) {
   const prev = material.onBeforeCompile;
   material.onBeforeCompile = (shader, renderer) => {
     prev.call(material, shader, renderer);
-    shader.fragmentShader = shader.fragmentShader.replace(
-      '#include <roughnessmap_fragment>',
-      `#include <roughnessmap_fragment>\n  if (gRoughOut >= 0.0) roughnessFactor = gRoughOut;`,
-    );
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <roughnessmap_fragment>',
+        `#include <roughnessmap_fragment>\n  if (gRoughOut >= 0.0) roughnessFactor = gRoughOut;`)
+      .replace('#include <emissivemap_fragment>',
+        `#include <emissivemap_fragment>\n  if (gEmissive.r >= 0.0) totalEmissiveRadiance *= gEmissive;`);
   };
 }
 
@@ -350,7 +354,7 @@ export function createMaterials() {
 
   const eye = mk('argonianEye', {
     roughness: 0.30, metalness: 0.0,
-    emissive: new THREE.Color(0x3a1c04), emissiveIntensity: 0.42,
+    emissive: new THREE.Color(0x6d3a08), emissiveIntensity: 1.25,
   }, EYE_FRAG, { uDetail: { value: scale } }, false);
 
   const clothMat = (name, base, rough, weave, tex) => mk(name, { roughness: rough }, CLOTH_FRAG, {
