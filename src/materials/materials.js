@@ -203,7 +203,7 @@ const SKIN_FRAG = /* glsl */`
   // dark closed lip line along the mouth crease
   float lipY = LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE;
   float lip = ss(0.0105, 0.0028, abs(H.y - lipY))
-            * ss(0.210, 0.188, H.z) * ss(0.024, 0.048, H.z);
+            * ss(0.216, 0.202, H.z) * ss(0.020, 0.044, H.z);
   col = mix(col, vec3(0.0032, 0.0028, 0.0026), lip * 0.99);
 
   // crevices between scales go dark

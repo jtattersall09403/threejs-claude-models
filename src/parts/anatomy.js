@@ -115,18 +115,20 @@ export function buildHeadField() {
 
   // ---- muzzle: squared blocks, not tubes. The reference snout is a box with a
   // level top and near-parallel sides; capsules give a drooping bulb instead. -----
-  f.add(roundBox([0, 1.6555, 0.108], [0.038, 0.023, 0.062], 0.017, { k: 0.048 }));
-  f.add(roundBox([0, 1.6545, 0.186], [0.028, 0.018, 0.024], 0.014, { k: 0.030 }));
+  f.add(roundBox([0, 1.6555, 0.084], [0.039, 0.023, 0.040], 0.017, { k: 0.052 }));
+  f.add(roundBox([0, 1.6552, 0.150], [0.032, 0.021, 0.032], 0.015, { k: 0.038 }));
+  f.add(roundBox([0, 1.6545, 0.196], [0.024, 0.017, 0.022], 0.013, { k: 0.030 }));
   f.add(capsule([0, 1.6935, 0.026], [0, 1.6805, 0.196], 0.032, 0.020,
     { k: 0.026, scale: [1, 0.72, 1] }));                                      // nasal bridge ridge
   f.add(ellipsoid([0, 1.6545, 0.2145], [0.0245, 0.0175, 0.0155], { k: 0.016 })); // nose pad
 
   // ---- lower jaw: deep and straight, turning up at a visible hinge --------------
-  f.add(roundBox([0, 1.6035, 0.106], [0.034, 0.018, 0.060], 0.016, { k: 0.046 }));
-  f.add(roundBox([0, 1.6055, 0.178], [0.025, 0.014, 0.022], 0.013, { k: 0.028 }));
+  f.add(roundBox([0, 1.6035, 0.084], [0.036, 0.018, 0.040], 0.016, { k: 0.050 }));
+  f.add(roundBox([0, 1.6045, 0.148], [0.029, 0.016, 0.032], 0.014, { k: 0.036 }));
+  f.add(roundBox([0, 1.6055, 0.190], [0.021, 0.013, 0.020], 0.012, { k: 0.026 }));
   f.add(ellipsoid([0, 1.6105, 0.196], [0.024, 0.019, 0.020], { k: 0.016 }));   // chin
   for (const s of [1, -1]) {
-    f.add(ellipsoid([s * 0.0575, 1.6425, 0.048], [0.033, 0.048, 0.068], { k: 0.048 })); // cheek / masseter
+    f.add(ellipsoid([s * 0.0545, 1.6395, 0.056], [0.033, 0.049, 0.074], { k: 0.058 })); // cheek / masseter
     f.add(ellipsoid([s * 0.0725, 1.6445, -0.008], [0.029, 0.054, 0.044], { k: 0.032 })); // jaw hinge
   }
 
@@ -149,7 +151,7 @@ export function buildHeadField() {
     { k: 0.0045, yMin: 1.56, yMax: 1.68 }));
   // nostrils
   for (const s of [1, -1]) {
-    f.sub(ellipsoid([s * 0.0125, 1.6635, 0.2225], [0.0068, 0.0052, 0.0088], { k: 0.0045 }));
+    f.sub(ellipsoid([s * 0.0118, 1.6655, 0.2145], [0.0048, 0.0060, 0.0105], { k: 0.004 }));
   }
   // ear depression
   for (const s of [1, -1]) {
