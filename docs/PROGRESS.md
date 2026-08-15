@@ -94,7 +94,13 @@ and is worth checking first whenever an added detail "does not appear".
    smooth curve; nose blunted rather than pointed.
 4. **Cheekbone definition** — a ridge exists from under the eye to the hinge; NOT yet
    strong enough.
-5. **The neck** — OPEN.
+5. **The neck** — PARTLY DONE. `face-neck-jawline-closeup.jpg` shows it is one of the
+   largest features on the character: a long column of LOOSE SKIN in vertical folds,
+   distinctly LIGHTER than the head, widening into the shoulders. Ours was a short
+   dark tube. Collar dropped further, and `SKIN_FRAG` now lightens the neck zone and
+   paints ridged vertical folds. **Still off: the jaw-to-neck junction is a hard
+   horizontal line rather than a shadowed undercut, and the folds read as a smooth
+   pale tube rather than loose skin.**
 6. **Naturalness of stance** — OPEN, not started.
 7. **Shoulder proportions** — OPEN, not started.
 

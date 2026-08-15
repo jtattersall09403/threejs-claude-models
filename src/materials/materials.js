@@ -281,6 +281,15 @@ const SKIN_FRAG = /* glsl */`
                 * ss(0.158, 0.134, H.z);
   col = mix(col, col * 1.55, jawEdge * 0.55);
 
+  // NECK. In face-neck-jawline-closeup.jpg the neck is one of the largest features on
+  // the character: a long column of LOOSE SKIN in vertical folds, distinctly LIGHTER
+  // than the head, widening into the shoulders. Ours was a short dark tube.
+  float neckZone = ss(1.386, 1.436, P.y) * ss(1.556, 1.512, P.y);
+  float neckFold = 1.0 - abs(vnoise(vec3(P.x * 46.0, P.y * 5.0, P.z * 46.0)) * 2.0 - 1.0);
+  neckFold = pow(clamp(neckFold, 0.0, 1.0), 2.2);
+  col = mix(col, col * vec3(1.34, 1.30, 1.16), neckZone * 0.62);
+  col *= mix(1.0, 0.60, neckZone * neckFold * 0.85);
+
   // The tail was rendering a distinctly cooler blue-green than the head. The
   // references never show it, so this is internal consistency only — but the two
   // visible skin areas have to agree in hue or the tail pulls the eye.

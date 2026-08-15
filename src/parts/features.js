@@ -117,15 +117,19 @@ export function buildJawSpikes(field) {
     // few, big, swept-back plates along the jaw — this is the reading the user flagged.
     // On the CHEEK PLANE at roughly mouth height, not down on the lower jaw edge —
     // seated low they sit behind the collar and never read at all.
+    // They HANG DOWNWARD from the jaw hinge like short tusks — see
+    // face-neck-jawline-closeup.jpg. Swept back along the cheek they read as a
+    // fin; the reference's point down and slightly forward, clustered at the rear
+    // of the jaw rather than running its whole length.
     const jaw = [
-      [s * 0.0505, 1.6475, 0.006, 0.0760, 0.0190],
-      [s * 0.0472, 1.6395, 0.052, 0.0690, 0.0172],
-      [s * 0.0410, 1.6330, 0.094, 0.0560, 0.0146],
+      [s * 0.0505, 1.6320, 0.000, 0.0560, 0.0165],
+      [s * 0.0468, 1.6265, 0.040, 0.0505, 0.0150],
+      [s * 0.0410, 1.6225, 0.076, 0.0420, 0.0128],
     ];
     for (const [x, y, z, len, r] of jaw) {
-      const dir = [s * 0.66, -0.30, -0.69];
+      const dir = [s * 0.40, -0.86, 0.12];
       out.push(spike(seat(field, [x, y, z], dir, 0.005), dir, len, r, {
-        taper: 0.62, flat: 0.34, sides: 10, steps: 7, bend: [0, -0.004, -0.010],
+        taper: 0.62, flat: 0.40, sides: 10, steps: 7, bend: [0, -0.004, 0.008],
       }));
     }
     // cheek / jaw-hinge spikes
