@@ -161,8 +161,8 @@ const SKIN_FRAG = /* glsl */`
   float socket = ss(0.132, 0.048, eyeD) * ss(1.628, 1.650, H.y);
 
   // maroon plate over the brow ridges and between the eyes
-  float browD = length((J - vec3(0.042, 1.7185, 0.042)) * vec3(0.80, 2.6, 1.05));
-  float brow = ss(0.066, 0.016, browD) * ss(-0.25, 0.25, Nr.y) * step(1.645, H.y);
+  float browD = length((J - vec3(0.038, 1.7145, 0.040)) * vec3(0.72, 2.3, 0.95));
+  float brow = ss(0.072, 0.014, browD) * ss(-0.35, 0.20, Nr.y) * step(1.640, H.y);
 
   // dorsal scute ridge down the tail — a plain taper reads as a rubber tube
   float tailZone = ss(-0.10, -0.16, P.z) * ss(1.02, 0.94, P.y);
@@ -184,13 +184,13 @@ const SKIN_FRAG = /* glsl */`
   vec3 warmOl   = vec3(0.0505, 0.0530, 0.0290);
   vec3 belly    = vec3(0.0480, 0.0500, 0.0295);
   vec3 plate    = vec3(0.0046, 0.0048, 0.0052);
-  vec3 maroon   = vec3(0.0305, 0.0098, 0.0078);
+  vec3 maroon   = vec3(0.0425, 0.0128, 0.0098);
   vec3 boneCol  = vec3(0.088, 0.078, 0.055);
 
   vec3 col = mix(dorsal2, dorsal, ss(0.30, 0.72, mottle * 0.6 + blotch * 0.7));
   col = mix(col, warmOl, ss(0.45, 0.88, blotch));
   col = mix(col, col * 0.46, ss(0.42, 0.72, macro) * 0.55);
-  col = mix(col, belly, ventral * 0.80);
+  col = mix(col, belly, ventral * 0.66);
   col = mix(col, belly * vec3(1.30, 1.14, 0.84), bandZone * bands * 0.95);
   col = mix(col, mix(dorsal2, plate, 0.5), tailTop * (0.35 + 0.5 * tailScute));
   col = mix(col, plate, cap * 0.97);
@@ -203,7 +203,7 @@ const SKIN_FRAG = /* glsl */`
   // dark closed lip line along the mouth crease
   float lipY = LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE;
   float lip = ss(0.0105, 0.0028, abs(H.y - lipY))
-            * ss(0.216, 0.202, H.z) * ss(0.020, 0.044, H.z);
+            * ss(0.192, 0.178, H.z) * ss(0.016, 0.040, H.z);
   col = mix(col, vec3(0.0032, 0.0028, 0.0026), lip * 0.99);
 
   // crevices between scales go dark

@@ -31,7 +31,7 @@ export const EYE_WORLD = headPoint(EYE.c);
 
 // The mouth line. The geometry cut and the shader's lip paint MUST share this or
 // the dark line drifts off the groove and smears onto the cheek.
-export const LIP = { y0: 1.6215, z0: 0.200, slope: 0.062 };
+export const LIP = { y0: 1.6205, z0: 0.176, slope: 0.070 };
 
 export const BODY_BOUNDS = [-0.35, -0.03, -0.62, 0.35, 1.55, 0.24];
 const HEAD_BOX = [-0.15, 1.40, -0.16, 0.15, 1.82, 0.28];
@@ -115,18 +115,18 @@ export function buildHeadField() {
 
   // ---- muzzle: squared blocks, not tubes. The reference snout is a box with a
   // level top and near-parallel sides; capsules give a drooping bulb instead. -----
-  f.add(roundBox([0, 1.6555, 0.084], [0.026, 0.023, 0.040], 0.015, { k: 0.048 }));
-  f.add(roundBox([0, 1.6552, 0.150], [0.019, 0.017, 0.032], 0.013, { k: 0.032 }));
-  f.add(roundBox([0, 1.6545, 0.196], [0.012, 0.011, 0.020], 0.010, { k: 0.024 }));
-  f.add(capsule([0, 1.6935, 0.026], [0, 1.6805, 0.196], 0.024, 0.015,
+  f.add(roundBox([0, 1.6555, 0.078], [0.027, 0.024, 0.034], 0.016, { k: 0.048 }));
+  f.add(roundBox([0, 1.6552, 0.132], [0.021, 0.019, 0.026], 0.014, { k: 0.032 }));
+  f.add(roundBox([0, 1.6545, 0.172], [0.014, 0.013, 0.018], 0.011, { k: 0.024 }));
+  f.add(capsule([0, 1.6935, 0.026], [0, 1.6795, 0.172], 0.024, 0.015,
     { k: 0.024, scale: [1, 0.72, 1] }));                                      // nasal bridge ridge
-  f.add(ellipsoid([0, 1.6545, 0.2135], [0.0185, 0.0155, 0.0145], { k: 0.014 })); // nose pad
+  f.add(ellipsoid([0, 1.6545, 0.1885], [0.0195, 0.0165, 0.0145], { k: 0.014 })); // nose pad
 
   // ---- lower jaw: deep and straight, turning up at a visible hinge --------------
-  f.add(roundBox([0, 1.6035, 0.084], [0.024, 0.018, 0.040], 0.015, { k: 0.046 }));
-  f.add(roundBox([0, 1.6045, 0.148], [0.019, 0.016, 0.032], 0.013, { k: 0.032 }));
-  f.add(roundBox([0, 1.6055, 0.190], [0.013, 0.013, 0.020], 0.011, { k: 0.024 }));
-  f.add(ellipsoid([0, 1.6105, 0.194], [0.018, 0.017, 0.019], { k: 0.014 }));   // chin
+  f.add(roundBox([0, 1.6035, 0.078], [0.025, 0.019, 0.034], 0.015, { k: 0.046 }));
+  f.add(roundBox([0, 1.6045, 0.130], [0.020, 0.017, 0.026], 0.013, { k: 0.032 }));
+  f.add(roundBox([0, 1.6055, 0.168], [0.014, 0.013, 0.018], 0.011, { k: 0.024 }));
+  f.add(ellipsoid([0, 1.6105, 0.170], [0.018, 0.017, 0.018], { k: 0.014 }));   // chin
   for (const s of [1, -1]) {
     f.add(ellipsoid([s * 0.0395, 1.6375, 0.030], [0.019, 0.045, 0.052], { k: 0.048 })); // cheek / masseter
     f.add(ellipsoid([s * 0.0555, 1.6455, -0.010], [0.021, 0.052, 0.042], { k: 0.032 })); // jaw hinge
@@ -147,11 +147,11 @@ export function buildHeadField() {
     f.add(ellipsoid([s * 0.0482, 1.6800, 0.0630], [0.0250, 0.0058, 0.0225], { k: 0.007 }));
   }
   // mouth crease — rises toward the jaw hinge like a real reptile jaw line
-  f.sub(creaseSlot((z) => LIP.y0 + (LIP.z0 - z) * LIP.slope, 0.0024, [-0.005, 0.210], 0.060,
+  f.sub(creaseSlot((z) => LIP.y0 + (LIP.z0 - z) * LIP.slope, 0.0024, [-0.005, 0.186], 0.058,
     { k: 0.0045, yMin: 1.56, yMax: 1.68 }));
   // nostrils
   for (const s of [1, -1]) {
-    f.sub(ellipsoid([s * 0.0090, 1.6650, 0.2130], [0.0040, 0.0052, 0.0092], { k: 0.0035 }));
+    f.sub(ellipsoid([s * 0.0092, 1.6640, 0.1885], [0.0042, 0.0054, 0.0090], { k: 0.0035 }));
   }
   // ear depression
   for (const s of [1, -1]) {

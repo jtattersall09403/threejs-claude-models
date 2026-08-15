@@ -26,7 +26,7 @@ export function buildHorn(side, field) {
   const root = seat(field, pts[0], [s * 0.55, 0.72, 0.2], 0.024);
   pts[0] = root;
   const rings = curveRings(pts, (t) => {
-    const base = 0.0232 * Math.pow(1 - t, 0.58) + 0.0014;
+    const base = 0.0248 * Math.pow(1 - t, 0.52) + 0.0016;
     // ridging must run the FULL length; a (1-t) falloff leaves the horn a smooth tube
     const ridge = 1 + 0.14 * Math.sin(t * 24) * Math.min(1, t * 4);
     return base * ridge;
@@ -74,9 +74,9 @@ export function buildJawSpikes(field) {
   const out = [];
   for (const s of [1, -1]) {
     const jaw = [
-      [s * 0.0485, 1.6005, 0.046, 0.042, 0.0080],
-      [s * 0.0425, 1.5965, 0.092, 0.036, 0.0070],
-      [s * 0.0345, 1.5945, 0.134, 0.030, 0.0058],
+      [s * 0.0475, 1.6005, 0.044, 0.040, 0.0078],
+      [s * 0.0415, 1.5975, 0.084, 0.034, 0.0068],
+      [s * 0.0335, 1.5955, 0.120, 0.028, 0.0056],
     ];
     for (const [x, y, z, len, r] of jaw) {
       const dir = [s * 0.42, -0.62, -0.66];
