@@ -24,10 +24,10 @@ session transcript; the actionable residue is captured here.
 |---|---|---|
 | 1 | hands read as a bundle of sticks; palm was 9.6 cm deep | palm rebuilt as a flat wedge, finger curl 3-4x, deeper taper — **re-check** |
 | 2 | eye sits too high / muzzle too long, and the jaw NARROWS where the reference FLARES | jaw and muzzle blocks widened ~20 %, braincase raised — **not fully closed** |
-| 3 | horns 55 % too long, 19 deg too steep, 30 % too slender | re-authored to ~27 deg, 0.20 m, base 0.0212 — now arguably too SHORT and stubby |
+| 3 | horns 55 % too long, 19 deg too steep, 30 % too slender | re-authored to ~27 deg, base 0.0212; over-shortened, then lengthened back toward 0.66x head length — **re-check** |
 | 4 | oxblood brow field absent (hue contrast 3x under) | widened and strengthened, then **overshot to pink and dialled back** to R/G ~2.1 |
-| 5 | scale grout polarity INVERTED — reference grout is bright, ours dark | cells enlarged, plates flattened — **albedo polarity still needs verifying** |
-| 6 | eye is a sphere loose in a hole; pupil does not read from the front | **NOT DONE** |
+| 5 | scale grout polarity INVERTED — reference grout is bright, ours dark | cells enlarged and flattened, `mortar` strengthened to 0.62 and the head's crevice darkening damped to 0.92 so it stops fighting it — **still not as crisp as the reference net** |
+| 6 | eye is a sphere loose in a hole; pupil does not read from the front | DONE. Gaze axis brought near-forward (0.16 -> 0.055 outward) so the slit reads in the front framing; iris extended to fill the aperture, no sclera. The fix that worked was **shrinking the APERTURE below the ball radius**, not shrinking the ball — the first attempt sank the ball and the eye vanished. |
 | 7 | no bare reptilian throat — cowl runs to the chin | cowl dropped ~5 cm |
 | 8 | garment values collapsed; sash and cuff DARKER than the coat, should be lightest | sash/wrap/undershirt/belt all lifted — **re-check polarity** |
 | 9 | mouth line does not read | thickened and darkened — **re-check** |
