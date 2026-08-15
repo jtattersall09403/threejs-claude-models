@@ -26,7 +26,7 @@ export function buildHorn(side, field) {
   const root = seat(field, pts[0], [s * 0.55, 0.72, 0.2], 0.024);
   pts[0] = root;
   const rings = curveRings(pts, (t) => {
-    const base = 0.0262 * Math.pow(1 - t, 0.48) + 0.0016;
+    const base = 0.0222 * Math.pow(1 - t, 0.55) + 0.0014;
     // ridging must run the FULL length; a (1-t) falloff leaves the horn a smooth tube
     const ridge = 1 + 0.14 * Math.sin(t * 24) * Math.min(1, t * 4);
     return base * ridge;

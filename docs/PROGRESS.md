@@ -29,16 +29,21 @@ every single iteration.
 
 ## My open list (must be empty before hand-off)
 
-1. **Tunic has no seams or structure.** The reference shows a clear sleeve seam at the
-   shoulder, a front opening, and cuffs. Ours is one smooth mass. A shoulder-yoke roll
-   and cuff bands exist in `clothing.js` but barely read — strengthen them.
-2. **Pale blotches on the tunic** — the macro dirt/wear term is producing irregular
-   light patches that read as stains rather than wear. Reduce or tighten it.
-3. **Throat cowl** was just added; verify it reads at normal distance and does not
-   collide with the jaw.
-4. Reference has a small **chest medallion/brooch** on the sash — not modelled.
-5. Head: re-check horn length in profile after the last shortening.
-6. Hands: fingers still fairly uniform; claws could seat 1-2 mm deeper.
+Iteration 10 closed: sash floating, cloth value, chest medallion, belt wrap, throat
+cowl, cloth blotching, seam visibility. Still open:
+
+1. **Shoulder yoke seam barely reads** and only on one side. The reference shows a
+   clear sleeve/torso seam over each deltoid. Strengthen the roll in `clothing.js`
+   (the `capsule` yoke) and/or the shader seam term in `CLOTH_FRAG`.
+2. **No front opening on the tunic.** The reference has a vertical slot down the chest
+   centre with the lighter undershirt behind it and two hem edges.
+3. **Horn is thicker and paler than the reference's** and dominates the profile.
+   Just thinned; re-check. The reference horn also carries a metal band near its
+   midpoint (ours has a dark ring, not a metal cuff).
+4. **Sleeve cuffs read as pale bracelets**, not rolled sleeve ends.
+5. Hands: fingers still fairly uniform; claws could seat 1-2 mm deeper.
+6. Verify the throat cowl reads at normal viewing distance (it is hidden in the
+   torso crop framing — shoot it directly).
 
 ## Reference numbers to converge (from critic round 3)
 
