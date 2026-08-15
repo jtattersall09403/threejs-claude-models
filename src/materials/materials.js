@@ -299,7 +299,7 @@ const SKIN_FRAG = /* glsl */`
   // Scalloped along its length: the reference mouth is broken by lip scutes, and a
   // single clean line of constant thickness reads as a painted-on dash.
   float scute = 0.72 + 0.28 * abs(sin(H.z * 118.0));
-  float lip = ss(0.0115 * scute, 0.0022, abs(H.y - lipY))
+  float lip = ss(0.0165 * scute, 0.0030, abs(H.y - lipY))
             * ss(0.168, 0.157, H.z) * ss(0.006, 0.026, H.z);
   col = mix(col, vec3(0.0016, 0.0014, 0.0013), lip * 0.99);
 
@@ -317,7 +317,9 @@ const SKIN_FRAG = /* glsl */`
   // The single most characteristic surface feature of the reference head: a BRIGHT
   // reticulated net dividing large flat plates. Generic crevice darkening is the
   // exact opposite, so on the head it is damped hard and this runs on top of it.
-  float mortar = (1.0 - ss(0.14, 0.34, h)) * headMask * (1.0 - cap * 0.92);
+  // suppressed along the mouth: the bright net was filling the crease back in
+  float mortar = (1.0 - ss(0.14, 0.34, h)) * headMask * (1.0 - cap * 0.92)
+               * (1.0 - ss(0.030, 0.010, abs(H.y - (LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE))));
   col = mix(col, boneCol * 0.46, mortar * 0.62);
   // darker AND warmer: the jaw was not merely bright, it was the greenest thing on
   // the head, where the reference jaw is its most neutral, most shadowed area

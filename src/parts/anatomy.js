@@ -182,7 +182,9 @@ export function buildHeadField() {
   // mouth crease — rises toward the jaw hinge like a real reptile jaw line
   // x-extent follows the muzzle's own half-width, narrowing toward the snout, so the
   // crease stays on the surface instead of running out past the corners of the mouth
-  f.sub(creaseSlot((z) => LIP.y0 + (LIP.z0 - z) * LIP.slope, 0.0026, [-0.005, 0.158],
+  // halfT 0.0026 is ~1.7 head-bake cells — too shallow to survive polygonisation, so
+  // the mouth reduced to a faint scale-row transition. Deepened to ~2.7 cells.
+  f.sub(creaseSlot((z) => LIP.y0 + (LIP.z0 - z) * LIP.slope, 0.0042, [-0.005, 0.158],
     (z) => 0.046 - 0.140 * Math.max(0, z - 0.040),
     { k: 0.0045, yMin: 1.56, yMax: 1.68, xBound: 0.07 }));
   // nostrils — at the old size they were below the bake resolution and invisible
