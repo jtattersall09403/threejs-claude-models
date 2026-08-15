@@ -14,7 +14,7 @@ import { Field, capsule, ellipsoid, roundBox, creaseSlot } from '../core/sdf.js'
 
 export const EYE = {
   c: [0.0468, 1.6975, 0.0705],   // mirrored on x
-  r: 0.0196,
+  r: 0.0180,
   gaze: [0.16, 0.0, 0.987],      // outward/forward gaze axis for the left(+x) eye
 };
 

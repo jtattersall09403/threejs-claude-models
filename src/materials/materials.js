@@ -141,7 +141,9 @@ const SKIN_FRAG = /* glsl */`
   float crownZone = ss(1.652, 1.690, H.y) * ss(0.170, 0.105, H.z);
   // big scutes under the chin and along the lower jaw — in the references these are
   // the largest scales on the animal and markedly darker than the muzzle
-  float chinZone = ss(1.618, 1.572, H.y) * ss(0.185, 0.155, H.z) * headMask;
+  // the Z gate has to reach past the front of the chin (H.z ~0.168) or it closes on
+  // exactly the part of the jaw that reads too pale
+  float chinZone = ss(1.620, 1.570, H.y) * ss(0.196, 0.172, H.z) * headMask;
   float plateMix = clamp(sizeMix + crownZone * 0.8 + chinZone * 0.7, 0.0, 1.0);
   gNormal = normalize(mix(fine.xyz, plateD.xyz, plateMix));
   float h = mix(fine.w, plateD.w, plateMix);
@@ -235,7 +237,9 @@ const SKIN_FRAG = /* glsl */`
   // height alone swung local brightness 2.5x, so wherever the scale texture happened
   // to sit high the hide jumped to a pale wash that read as a lighting error.
   col *= mix(0.52, 1.04, ss(0.02, 0.55, h));
-  col = mix(col, col * 0.62, chinZone * 0.72);
+  // darker AND warmer: the jaw was not merely bright, it was the greenest thing on
+  // the head, where the reference jaw is its most neutral, most shadowed area
+  col = mix(col, col * vec3(0.60, 0.53, 0.52), chinZone * 0.88);
   // cream mortar lines between the cranial plates — in the reference the gaps are
   // LIGHTER than the plates, the opposite of a generic crevice darkening
   col = mix(col, boneCol * 0.30, crownZone * (1.0 - ss(0.06, 0.30, h)) * 0.38);
@@ -323,7 +327,7 @@ const EYE_FRAG = /* glsl */`
   vec3 iris = mix(amber, amberHot, fibers * 0.85);
   iris *= 0.86 + 0.42 * ss(0.05, 0.55, r);
 
-  vec3 col = mix(iris, vec3(0.011, 0.008, 0.005), ss(0.74, 0.88, r));
+  vec3 col = mix(iris, vec3(0.009, 0.007, 0.005), ss(0.60, 0.75, r));
   // vertical slit pupil
   float slit = length(vec2(x / 0.150, y / 0.92));
   col = mix(vec3(0.004, 0.0035, 0.003), col, ss(0.92, 1.02, slit));
