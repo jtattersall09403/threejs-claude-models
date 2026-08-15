@@ -11,6 +11,7 @@
 // EITHER of those wrong makes the head read as a rectangular box no matter how much
 // detail is painted on it — that is the failure mode this file keeps falling into.
 import { Field, capsule, ellipsoid, roundBox, creaseSlot } from '../core/sdf.js';
+import { TAIL_SPINE } from '../rig/skeleton.js';
 
 export const EYE = {
   c: [0.0468, 1.6975, 0.0705],   // mirrored on x
@@ -91,14 +92,10 @@ export function buildBodyField() {
   // ---- tail ------------------------------------------------------------------
   // Thicker than it looks like it should be on paper: at the previous radii the tail
   // read as a flat strap hanging off the back rather than a heavy muscular counterweight.
-  const tail = [
-    [[0, 0.940, -0.118], 0.074],
-    [[0, 0.838, -0.272], 0.058],
-    [[0, 0.694, -0.396], 0.044],
-    [[0, 0.542, -0.468], 0.032],
-    [[0, 0.398, -0.480], 0.021],
-    [[0, 0.272, -0.440], 0.010],
-  ];
+  // Spine points come from the rig so the capsules and the bones that skin them can
+  // never disagree; only the radii live here.
+  const TAIL_R = [0.074, 0.058, 0.044, 0.032, 0.021, 0.010];
+  const tail = TAIL_SPINE.map((p, i) => [p, TAIL_R[i]]);
   for (let i = 0; i < tail.length - 1; i++) {
     f.add(capsule(tail[i][0], tail[i + 1][0], tail[i][1], tail[i + 1][1], {
       k: 0.045, scale: [0.82, 1, 1],
