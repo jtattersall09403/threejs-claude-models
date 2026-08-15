@@ -294,6 +294,15 @@ them pale cream — what is dark in the bust shot is the frill *behind* them.
     recovery here was `git show <good-commit>:src/parts/anatomy.js`, splice the head
     field back, and re-apply only the changes that were independently verified wins.
 
+27. **When a painted effect does not appear, run `debugMasks` BEFORE the second
+    attempt.** The maroon brow took four failed tuning passes. `debugMasks(1)` (R=cap,
+    G=brow, B=socket) settled it in one look: there was no green anywhere — the mask
+    was ~0.05 because its centre had been left behind when the brow GEOMETRY moved —
+    and the red channel showed the crown-cap mask evaluating to 1 across the entire
+    face, painting near-black over everything. **Any time head geometry moves, the
+    shader masks that track it have to move with it.** They are two copies of the same
+    measurement, exactly like `LIP` in trap 8, and nothing warns you when they diverge.
+
 ## When you are stuck, look it up
 
 If a particular effect is proving hard — a shading technique, a Three.js API, a way of
