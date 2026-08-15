@@ -197,11 +197,16 @@ const SKIN_FRAG = /* glsl */`
   // maroon plate over the brow ridges and between the eyes. This is a NARROW band
   // just above the eyes in the reference; at its old extent it flooded the whole
   // cranium and the skull read red-brown instead of near-black olive.
-  float browD = length((J - vec3(0.038, 1.7225, 0.042)) * vec3(0.58, 4.6, 1.30));
-  float brow = ss(0.060, 0.014, browD) * ss(-0.55, 0.10, Nr.y) * step(1.656, H.y);
+  // A FIELD, not a stripe. At a y-weight of 4.6 this covered a 2.6 cm band; the
+  // references carry dark red over the whole brow shelf and back to the horn roots,
+  // roughly a fifth of the frontal head area.
+  float browD = length((J - vec3(0.040, 1.7180, 0.030)) * vec3(0.56, 1.60, 1.05));
+  float brow = ss(0.104, 0.020, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.638, 1.664, H.y);
 
   // dorsal scute ridge down the tail — a plain taper reads as a rubber tube
   float tailZone = ss(-0.10, -0.16, P.z) * ss(1.02, 0.94, P.y);
+  // the tail was rendering a cooler blue-green than the head; bring it back in line
+  col = mix(col, col * vec3(1.16, 0.98, 0.84), ss(-0.12, -0.20, P.z) * 0.80);
   float tailTop = tailZone * ss(0.15, 0.62, Nr.y) * ss(0.030, 0.012, abs(P.x));
   float tailScute = ss(0.30, 0.85, abs(sin(P.z * 62.0 + P.y * 26.0)));
 
@@ -223,7 +228,7 @@ const SKIN_FRAG = /* glsl */`
   vec3 warmOl   = vec3(0.0252, 0.0268, 0.0176);
   vec3 belly    = vec3(0.0242, 0.0256, 0.0180);
   vec3 plate    = vec3(0.0062, 0.0068, 0.0048);   // dark OLIVE-black, not blue-black
-  vec3 maroon   = vec3(0.0322, 0.0092, 0.0076);
+  vec3 maroon   = vec3(0.0560, 0.0116, 0.0092);
   vec3 boneCol  = vec3(0.088, 0.078, 0.055);
 
   vec3 col = mix(dorsal2, dorsal, ss(0.30, 0.72, mottle * 0.6 + blotch * 0.7));
@@ -287,9 +292,9 @@ const SKIN_FRAG = /* glsl */`
   // Scalloped along its length: the reference mouth is broken by lip scutes, and a
   // single clean line of constant thickness reads as a painted-on dash.
   float scute = 0.72 + 0.28 * abs(sin(H.z * 118.0));
-  float lip = ss(0.0072 * scute, 0.0018, abs(H.y - lipY))
+  float lip = ss(0.0115 * scute, 0.0022, abs(H.y - lipY))
             * ss(0.168, 0.157, H.z) * ss(0.006, 0.026, H.z);
-  col = mix(col, vec3(0.0032, 0.0028, 0.0026), lip * 0.99);
+  col = mix(col, vec3(0.0016, 0.0014, 0.0013), lip * 0.99);
 
   // Crevices between scales go dark on the BODY. Range kept narrow: at 0.42..1.06 the
   // detail height alone swung local brightness 2.5x, so wherever the scale texture
@@ -563,14 +568,14 @@ export function createMaterials() {
     // warm dark brown with a maroon undertone, per the full-body reference — not the
     // neutral tan it was, which read as canvas rather than as a dyed woollen tunic
     tunic: clothMat('tunic', [0.0232, 0.0190, 0.0162], 0.95, 9.0, cloth),
-    undershirt: clothMat('undershirt', [0.0258, 0.0274, 0.0246], 0.95, 12.0, cloth),
+    undershirt: clothMat('undershirt', [0.0512, 0.0548, 0.0480], 0.95, 12.0, cloth),
     trousers: clothMat('trousers', [0.0242, 0.0226, 0.0208], 0.95, 9.0, cloth),
-    wrap: clothMat('wrap', [0.0455, 0.0458, 0.0420], 0.96, 14.0, cloth),
+    wrap: clothMat('wrap', [0.1020, 0.1030, 0.0940], 0.96, 14.0, cloth),
     leather: clothMat('leather', [0.0208, 0.0146, 0.0104], 0.84, 22.0, leather),
     // sash and belt sit only a little above the tunic. Pushed further apart they
     // stopped reading as cloth and became bright metal blades laid across the chest.
-    sash: clothMat('sash', [0.0625, 0.0578, 0.0498], 0.90, 18.0, leather),
-    belt: clothMat('belt', [0.0575, 0.0558, 0.0512], 0.92, 9.0, cloth),
+    sash: clothMat('sash', [0.0985, 0.0918, 0.0790], 0.90, 18.0, leather),
+    belt: clothMat('belt', [0.0730, 0.0708, 0.0648], 0.92, 9.0, cloth),
     textures: { scale, cloth, leather },
   };
 }

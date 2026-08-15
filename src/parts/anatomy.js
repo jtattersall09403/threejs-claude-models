@@ -73,8 +73,11 @@ export function buildBodyField() {
     f.add(capsule([s * 0.211, 1.145, -0.014], [s * 0.228, 0.892, 0.012], 0.044, 0.029, { k: 0.026 }));
     f.add(ellipsoid([s * 0.216, 1.074, -0.008], [0.041, 0.06, 0.043], { k: 0.03 }));   // forearm swell
     // palm: a mitten; individual fingers are swept separately at higher detail
-    f.add(roundBox([s * 0.229, 0.828, 0.004], [0.0090, 0.026, 0.024], 0.024, { k: 0.014 }));
-    f.add(ellipsoid([s * 0.2235, 0.842, 0.028], [0.017, 0.027, 0.021], { k: 0.014 })); // thenar
+    // A flattened WEDGE, not a ball. At half-extent 0.024 plus a 0.024 round radius the
+    // palm was 9.6 cm deep before smooth-min even inflated it, and the hand read as a
+    // scaly knuckle-ball with cylinders radiating out of it.
+    f.add(roundBox([s * 0.229, 0.828, 0.006], [0.0085, 0.028, 0.010], 0.012, { k: 0.012 }));
+    f.add(ellipsoid([s * 0.2225, 0.842, 0.026], [0.013, 0.026, 0.017], { k: 0.012 })); // thenar
     f.add(capsule([s * 0.2265, 0.842, 0.018], [s * 0.222, 0.828, 0.040], 0.017, 0.014, { k: 0.024 })); // thumb metacarpal
     f.add(capsule([s * 0.231, 0.800, 0.040], [s * 0.2265, 0.796, -0.040], 0.0110, 0.0092, { k: 0.010 })); // knuckles
   }
@@ -110,9 +113,9 @@ export function buildHeadField() {
   const f = new Field();
 
   // ---- braincase: tall and domed, widest at the temples -----------------------
-  f.add(ellipsoid([0, 1.6905, -0.010], [0.0638, 0.072, 0.101], { k: 0.055 }));
+  f.add(ellipsoid([0, 1.6975, -0.010], [0.0668, 0.080, 0.101], { k: 0.055 }));
   f.add(ellipsoid([0, 1.6735, -0.052], [0.047, 0.054, 0.052], { k: 0.05 }));  // domed occiput
-  f.add(ellipsoid([0, 1.7505, -0.014], [0.043, 0.023, 0.066], { k: 0.030 })); // raised crown plate
+  f.add(ellipsoid([0, 1.7625, -0.014], [0.046, 0.025, 0.066], { k: 0.030 })); // raised crown plate
 
   // ---- brow / eye ridges -------------------------------------------------------
   for (const s of [1, -1]) {
@@ -123,9 +126,9 @@ export function buildHeadField() {
 
   // ---- muzzle: squared blocks, not tubes. The reference snout is a box with a
   // level top and near-parallel sides; capsules give a drooping bulb instead. -----
-  f.add(roundBox([0, 1.6555, 0.070], [0.026, 0.0255, 0.030], 0.015, { k: 0.048 }));
-  f.add(roundBox([0, 1.6552, 0.114], [0.0195, 0.0205, 0.022], 0.0125, { k: 0.032 }));
-  f.add(roundBox([0, 1.6545, 0.146], [0.0125, 0.0142, 0.016], 0.0098, { k: 0.024 }));
+  f.add(roundBox([0, 1.6555, 0.070], [0.0315, 0.0255, 0.030], 0.017, { k: 0.048 }));
+  f.add(roundBox([0, 1.6552, 0.114], [0.0248, 0.0205, 0.022], 0.0145, { k: 0.032 }));
+  f.add(roundBox([0, 1.6545, 0.146], [0.0170, 0.0142, 0.016], 0.0118, { k: 0.024 }));
   f.add(capsule([0, 1.6935, 0.024], [0, 1.6795, 0.146], 0.024, 0.014,
     { k: 0.024, scale: [1, 0.72, 1] }));                                      // nasal bridge ridge
   f.add(ellipsoid([0, 1.6545, 0.1585], [0.0180, 0.0162, 0.0130], { k: 0.014 })); // nose pad
@@ -133,10 +136,10 @@ export function buildHeadField() {
   // ---- lower jaw: deep and straight, turning up at a visible hinge --------------
   // Narrower than the upper muzzle at every station, so the jaw tucks under the lip
   // instead of squaring off flush with it.
-  f.add(roundBox([0, 1.6005, 0.070], [0.0225, 0.020, 0.030], 0.014, { k: 0.046 }));
-  f.add(roundBox([0, 1.6020, 0.112], [0.0175, 0.018, 0.022], 0.0118, { k: 0.032 }));
-  f.add(roundBox([0, 1.6030, 0.142], [0.0122, 0.014, 0.016], 0.0098, { k: 0.024 }));
-  f.add(ellipsoid([0, 1.6080, 0.144], [0.016, 0.016, 0.017], { k: 0.014 }));   // chin
+  f.add(roundBox([0, 1.6005, 0.070], [0.0290, 0.020, 0.030], 0.016, { k: 0.046 }));
+  f.add(roundBox([0, 1.6020, 0.112], [0.0232, 0.018, 0.022], 0.0140, { k: 0.032 }));
+  f.add(roundBox([0, 1.6030, 0.142], [0.0166, 0.014, 0.016], 0.0118, { k: 0.024 }));
+  f.add(ellipsoid([0, 1.6080, 0.144], [0.0205, 0.016, 0.017], { k: 0.014 }));   // chin
   // The cheeks are the whole reason the head reads as a box or as a snouted skull.
   // Kept narrow and swept BACK: in the reference the face steps in hard below the
   // eyes, so the muzzle — not the jaw — is what you see from the front.

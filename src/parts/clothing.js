@@ -75,16 +75,16 @@ export function clothingFields(body) {
     // short, leaving a bare column of neck almost as wide as the skull — head and
     // neck then fused into one box and the jaw line disappeared. In the references
     // the neck is not visible at all.
-    f.add(capsule([0, 1.428, -0.008], [0, 1.498, 0.006], 0.104, 0.084, { k: 0.024 }));
-    f.add(ellipsoid([0, 1.452, 0.038], [0.086, 0.042, 0.062], { k: 0.020 }));  // knotted front
+    f.add(capsule([0, 1.402, -0.008], [0, 1.444, 0.006], 0.106, 0.088, { k: 0.024 }));
+    f.add(ellipsoid([0, 1.408, 0.038], [0.088, 0.040, 0.062], { k: 0.020 }));  // knotted front
     // a rolled rim right around the opening, so the collar reads as a hemmed edge
     // the head sits down into, rather than as a smooth funnel
-    f.add(capsule([0, 1.504, 0.010], [0, 1.508, -0.006], 0.086, 0.084, { k: 0.012 }));
+    f.add(capsule([0, 1.450, 0.010], [0, 1.454, -0.006], 0.090, 0.088, { k: 0.012 }));
     f.add(ellipsoid([0.030, 1.430, 0.066], [0.036, 0.026, 0.030], { k: 0.018 }));
     // The cowl rolled down at the nape. Kept LOW and small — built up as a full hood
     // it read as a backpack strapped between the shoulder blades.
-    f.add(ellipsoid([0, 1.436, -0.074], [0.088, 0.046, 0.044], { k: 0.030 }));
-    f.add(ellipsoid([0, 1.472, -0.086], [0.068, 0.034, 0.032], { k: 0.028 }));
+    f.add(ellipsoid([0, 1.404, -0.074], [0.090, 0.044, 0.044], { k: 0.030 }));
+    f.add(ellipsoid([0, 1.436, -0.086], [0.070, 0.032, 0.032], { k: 0.028 }));
     f.sub(capsule([0, 1.43, -0.016], [0, 1.70, 0.014], 0.066, 0.074, { k: 0.018 })); // neck hole
     out.push({ field: f, bounds, cell: 0.0055, region: REGION.UNDERSHIRT });
   }
@@ -118,8 +118,8 @@ export function clothingFields(body) {
         [0.036, 0.011, 0.034], { k: 0.038 }));
     }
     for (const s of [1, -1]) {
-      f.add(ellipsoid([s * 0.2115, 1.056, -0.008], [0.0555, 0.024, 0.0555], { k: 0.010 })); // rolled cuff
-      f.add(ellipsoid([s * 0.2113, 1.085, -0.008], [0.0525, 0.0085, 0.0525], { k: 0.008 })); // cuff seam
+      f.add(ellipsoid([s * 0.2095, 1.098, -0.008], [0.0560, 0.024, 0.0560], { k: 0.010 })); // rolled cuff
+      f.add(ellipsoid([s * 0.2093, 1.127, -0.008], [0.0530, 0.0085, 0.0530], { k: 0.008 })); // cuff seam
       // shoulder yoke: a raised rolled seam over the deltoid, so sleeve and torso
       // read as separate pieces instead of one continuous moulded mass
       f.add(capsule([s * 0.076, 1.412, 0.056], [s * 0.172, 1.376, -0.052], 0.0215, 0.0185, { k: 0.0075 }));

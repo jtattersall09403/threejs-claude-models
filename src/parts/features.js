@@ -21,19 +21,23 @@ const HORN_DIR = (s) => [s * 0.55, 0.72, 0.2];
 
 function hornPts(s) {
   return [
+    // Measured off the reference: the horn axis rises ~27 deg above horizontal and is
+    // ~0.66 of head length. Authored at 46 deg and 1.02x it read as a tall vertical
+    // antelope spire instead of a short swept-back stub — the largest silhouette error
+    // in critic round 4.
     [s * 0.0500, 1.7255, 0.004],
-    [s * 0.0645, 1.7815, -0.020],
-    [s * 0.0735, 1.8395, -0.062],
-    [s * 0.0775, 1.8905, -0.112],
-    [s * 0.0765, 1.9265, -0.162],
-    [s * 0.0735, 1.9435, -0.202],
+    [s * 0.0632, 1.7530, -0.030],
+    [s * 0.0722, 1.7800, -0.078],
+    [s * 0.0768, 1.8030, -0.132],
+    [s * 0.0762, 1.8195, -0.180],
+    [s * 0.0735, 1.8285, -0.216],
   ];
 }
 
 // Fine ring ridging concentrated near the base and gone by mid-length, as in the
 // reference. Trap #10: keep the per-ring phase step under a radian — 38 rad over
 // 46 rings is 0.84, so it reads as ridging rather than aliasing into a rope.
-const hornRadius = (t) => (0.0158 * Math.pow(1 - t, 0.62) + 0.0006)
+const hornRadius = (t) => (0.0212 * Math.pow(1 - t, 0.62) + 0.0008)
   * (1 + 0.055 * Math.sin(t * 38) * Math.max(0, 1 - t * 1.6));
 
 function hornRings(side, field) {
@@ -59,7 +63,7 @@ export function buildHorn(side, field) {
  */
 export function buildHornCuff(side, field) {
   const full = hornRings(side, field);
-  const a = Math.round(HORN_STEPS * 0.35), b = Math.round(HORN_STEPS * 0.42);
+  const a = Math.round(HORN_STEPS * 0.31), b = Math.round(HORN_STEPS * 0.45);
   const rings = full.slice(a, b + 1).map((ring, i, arr) => {
     const u = i / (arr.length - 1);
     // barrelled slightly, so it reads as a band clamped on rather than a swelling
@@ -167,7 +171,7 @@ const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 const FINGER_R = { thumb: 0.0132, index: 0.0112, middle: 0.0118, ring: 0.0106, pinky: 0.0092 };
 // Relaxed curl: each joint bends forward, so the hand is not a garden fork. Whatever
 // this is, the claw MUST be placed off the curled tip — see buildFingers.
-const FINGER_CURL = { thumb: 0.010, index: 0.018, middle: 0.020, ring: 0.018, pinky: 0.014 };
+const FINGER_CURL = { thumb: 0.030, index: 0.062, middle: 0.070, ring: 0.062, pinky: 0.048 };
 
 /** Fingers swept along their bones, each finished with a claw. */
 export function buildFingers(rig) {
@@ -188,7 +192,7 @@ export function buildFingers(rig) {
       const p2c = curl(p2, c);
       const p3c = curl(p3, c * 2.4);
       const rings = curveRings([root, p1, p2c, p3c], (t) => {
-        const taper = 1 - 0.32 * t;
+        const taper = 1 - 0.55 * t;
         const knuckle = 1 + 0.1 * Math.exp(-Math.pow((t - 0.34) * 7, 2)) + 0.08 * Math.exp(-Math.pow((t - 0.66) * 8, 2));
         return r * taper * knuckle;
       }, 16, { tension: 0.4 });

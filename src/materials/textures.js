@@ -63,7 +63,7 @@ function fbmField(size, freq, octaves, seed) {
 }
 
 /** Pebbled reptile scales: jittered cellular domes separated by deep grooves. */
-export function makeScaleTexture(size = 512, cells = 15, seed = 7) {
+export function makeScaleTexture(size = 512, cells = 11, seed = 7) {
   const rand = rng(seed);
   const pts = new Float32Array(cells * cells * 2);
   for (let i = 0; i < cells * cells; i++) {
@@ -93,8 +93,11 @@ export function makeScaleTexture(size = 512, cells = 15, seed = 7) {
           if (d < f1) { f2 = f1; f1 = d; } else if (d < f2) { f2 = d; }
         }
       }
-      const edge = Math.min(1, (f2 - f1) * cells * 2.1);
-      const dome = Math.pow(edge, 0.34);
+      // Wider, flatter plates with a crisper divide. The reference head is large flat
+      // plates separated by a BRIGHT reticulated net, not small puffy domes in dark
+      // grooves — the albedo polarity is handled in SKIN_FRAG's `mortar` term.
+      const edge = Math.min(1, (f2 - f1) * cells * 3.0);
+      const dome = Math.pow(edge, 0.22);
       const grain = (detail[y * size + x] - 0.5) * 0.16;
       height[y * size + x] = dome * 1.02 + grain * 0.8;
     }
