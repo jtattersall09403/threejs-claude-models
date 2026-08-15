@@ -106,7 +106,7 @@ export function createViewer(container) {
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x07070a, 0.055);
   scene.environment = environmentMap(renderer);
-  scene.environmentIntensity = 0.20;
+  scene.environmentIntensity = 0.32;
   scene.add(backdrop());
   scene.add(ground());
 
@@ -135,19 +135,21 @@ export function createViewer(container) {
   key.shadow.radius = 2.5;
   scene.add(key, key.target);
 
-  const fill = new THREE.DirectionalLight(0x7f96bb, 0.17);
+  // The subject is ORBITABLE, so the rear half of the turn has to stay readable.
+  // At a key:rim ratio of ~5:1 everything from az 120-240 fell to near-black.
+  const fill = new THREE.DirectionalLight(0x7f96bb, 0.30);
   fill.position.set(-2.8, 1.6, 1.4);
   scene.add(fill);
 
-  const rimWarm = new THREE.DirectionalLight(0xffd2ab, 1.05);
+  const rimWarm = new THREE.DirectionalLight(0xffd2ab, 2.10);
   rimWarm.position.set(-2.6, 3.0, -1.9);
   scene.add(rimWarm);
 
-  const rimCool = new THREE.DirectionalLight(0xa8c4ea, 1.05);
+  const rimCool = new THREE.DirectionalLight(0xa8c4ea, 2.00);
   rimCool.position.set(2.2, 1.7, -2.4);
   scene.add(rimCool);
 
-  const bounce = new THREE.HemisphereLight(0x2b3042, 0x0f0c07, 0.09);
+  const bounce = new THREE.HemisphereLight(0x2b3042, 0x0f0c07, 0.17);
   scene.add(bounce);
 
   // low warm bounce off the floor, so the legs and hem do not fall into black
