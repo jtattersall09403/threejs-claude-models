@@ -127,6 +127,20 @@ to their subject. Only the original screenshots take a `crop` rectangle.
   few of them — not a row of small cones.
 - The neck is substantial and visible, running down into the collar.
 
+### Check a claim across SEVERAL references before acting on it
+
+A feature read off one image is a hypothesis, not a fact. Lighting, angle and
+shadow routinely make the same feature look like a different thing in a single crop
+— a pale spike in front of a dark frill reads as a dark spike; a shadowed plate
+reads as a colour change. Before changing geometry or palette on the strength of
+"the reference shows X", open at least two more images and confirm X holds in all
+of them. State which images agree when recording the finding.
+
+This has already produced one wrong change: the crown crest and brow spines were
+briefly repainted dark oxblood on the strength of `face-front-and-bust-proportions.jpg`
+alone, when `face-left-profile.jpg` and `face-neck-jawline-closeup.jpg` both show
+them pale cream — what is dark in the bust shot is the frill *behind* them.
+
 ## Known traps (each of these cost a full iteration — do not re-learn them)
 
 1. **Triangle winding.** Marching cubes and swept tubes must emit CCW-from-outside
