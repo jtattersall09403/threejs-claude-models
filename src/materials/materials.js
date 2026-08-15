@@ -160,7 +160,7 @@ const SKIN_FRAG = /* glsl */`
   // the largest scales on the animal and markedly darker than the muzzle
   // the Z gate has to reach past the front of the chin (H.z ~0.168) or it closes on
   // exactly the part of the jaw that reads too pale
-  float chinZone = ss(1.627, 1.577, H.y) * ss(0.196, 0.172, H.z) * headMask;
+  float chinZone = ss(1.627, 1.577, H.y) * ss(0.178, 0.156, H.z) * headMask;
   float plateMix = clamp(sizeMix + crownZone * 0.8 + chinZone * 0.7, 0.0, 1.0);
   gNormal = normalize(mix(fine.xyz, plateD.xyz, plateMix));
   float h = mix(fine.w, plateD.w, plateMix);
@@ -271,7 +271,7 @@ const SKIN_FRAG = /* glsl */`
   // ...and a lit edge right along the jawline itself, so the boundary reads as an
   // edge the light catches rather than only as a gradient
   float jawEdge = ss(0.0085, 0.0018, abs(H.y - 1.6145)) * ss(-0.03, 0.02, H.z)
-                * ss(0.176, 0.150, H.z);
+                * ss(0.158, 0.134, H.z);
   col = mix(col, col * 1.55, jawEdge * 0.55);
 
   // Rust-red hands. In the reference the hands are markedly warmer than the green
@@ -288,7 +288,7 @@ const SKIN_FRAG = /* glsl */`
   // single clean line of constant thickness reads as a painted-on dash.
   float scute = 0.72 + 0.28 * abs(sin(H.z * 118.0));
   float lip = ss(0.0072 * scute, 0.0018, abs(H.y - lipY))
-            * ss(0.186, 0.174, H.z) * ss(0.006, 0.028, H.z);
+            * ss(0.168, 0.157, H.z) * ss(0.006, 0.026, H.z);
   col = mix(col, vec3(0.0032, 0.0028, 0.0026), lip * 0.99);
 
   // Crevices between scales go dark on the BODY. Range kept narrow: at 0.42..1.06 the

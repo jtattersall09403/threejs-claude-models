@@ -68,23 +68,23 @@ export function clothingFields(body) {
     // than the offset body surface or the intersection lands inside the skin
     const cover = coverage([
       roundBox([0, 1.352, 0.005], [0.30, 0.156, 0.28], 0.02),
-      roundBox([0, 1.480, -0.078], [0.13, 0.075, 0.09], 0.03),   // rolled-down cowl
+      roundBox([0, 1.452, -0.078], [0.13, 0.075, 0.09], 0.03),   // rolled-down cowl
     ]);
     const f = garment(body, 0.010, cover, bounds, 0.020, folds(0.0038, 24));
     // A wrapped cloth cowl that rises to just under the jaw. It used to stop ~6 cm
     // short, leaving a bare column of neck almost as wide as the skull — head and
     // neck then fused into one box and the jaw line disappeared. In the references
     // the neck is not visible at all.
-    f.add(capsule([0, 1.432, -0.008], [0, 1.550, 0.006], 0.102, 0.082, { k: 0.024 }));
-    f.add(ellipsoid([0, 1.490, 0.038], [0.084, 0.042, 0.062], { k: 0.020 }));  // knotted front
+    f.add(capsule([0, 1.428, -0.008], [0, 1.498, 0.006], 0.104, 0.084, { k: 0.024 }));
+    f.add(ellipsoid([0, 1.452, 0.038], [0.086, 0.042, 0.062], { k: 0.020 }));  // knotted front
     // a rolled rim right around the opening, so the collar reads as a hemmed edge
     // the head sits down into, rather than as a smooth funnel
-    f.add(capsule([0, 1.556, 0.010], [0, 1.560, -0.006], 0.082, 0.080, { k: 0.012 }));
-    f.add(ellipsoid([0.030, 1.462, 0.066], [0.036, 0.026, 0.030], { k: 0.018 }));
+    f.add(capsule([0, 1.504, 0.010], [0, 1.508, -0.006], 0.086, 0.084, { k: 0.012 }));
+    f.add(ellipsoid([0.030, 1.430, 0.066], [0.036, 0.026, 0.030], { k: 0.018 }));
     // The cowl rolled down at the nape. Kept LOW and small — built up as a full hood
     // it read as a backpack strapped between the shoulder blades.
-    f.add(ellipsoid([0, 1.462, -0.074], [0.086, 0.048, 0.044], { k: 0.030 }));
-    f.add(ellipsoid([0, 1.502, -0.086], [0.066, 0.036, 0.032], { k: 0.028 }));
+    f.add(ellipsoid([0, 1.436, -0.074], [0.088, 0.046, 0.044], { k: 0.030 }));
+    f.add(ellipsoid([0, 1.472, -0.086], [0.068, 0.034, 0.032], { k: 0.028 }));
     f.sub(capsule([0, 1.43, -0.016], [0, 1.70, 0.014], 0.066, 0.074, { k: 0.018 })); // neck hole
     out.push({ field: f, bounds, cell: 0.0055, region: REGION.UNDERSHIRT });
   }

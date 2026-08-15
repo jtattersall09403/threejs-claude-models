@@ -24,9 +24,9 @@ for (let i = 0; i < ORBIT_STEPS; i++) {
 SHOTS.push(
   // pulled back and raised: at 0.92 m the horn tips fell outside the frame, so the
   // one thing these shots exist to judge — the head's silhouette — was cropped away
-  ['head_front', 0, 4, 1.22, 1.688, 30],
-  ['head_q34', 35, 5, 1.24, 1.688, 30],
-  ['head_side', 88, 4, 1.26, 1.688, 30],
+  ['head_front', 0, 4, 1.32, 1.676, 30],
+  ['head_q34', 35, 5, 1.34, 1.676, 30],
+  ['head_side', 88, 4, 1.40, 1.676, 30],
   ['head_rear34', 145, 8, 0.96, 1.678, 30],
   ['head_low', 10, -16, 0.94, 1.660, 30],
   ['head_top', 20, 46, 0.96, 1.700, 30],

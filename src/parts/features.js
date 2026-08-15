@@ -86,12 +86,12 @@ export function buildCrownSpikes(field) {
   // A low crest, not a crown. In the reference these are modest nubs behind the
   // brow; at the previous size they competed with the horns and read as antlers.
   const defs = [
-    [-0.0305, 1.7485, -0.026, 0.0225, 0.0072],
-    [-0.0102, 1.7545, -0.032, 0.0285, 0.0082],
-    [0.0102, 1.7545, -0.032, 0.0285, 0.0082],
-    [0.0305, 1.7485, -0.026, 0.0225, 0.0072],
-    [-0.0200, 1.7315, -0.072, 0.0195, 0.0064],
-    [0.0200, 1.7315, -0.072, 0.0195, 0.0064],
+    [-0.0322, 1.7570, -0.026, 0.0330, 0.0092],
+    [-0.0108, 1.7630, -0.032, 0.0410, 0.0104],
+    [0.0108, 1.7630, -0.032, 0.0410, 0.0104],
+    [0.0322, 1.7570, -0.026, 0.0330, 0.0092],
+    [-0.0212, 1.7395, -0.072, 0.0270, 0.0080],
+    [0.0212, 1.7395, -0.072, 0.0270, 0.0080],
   ];
   for (const [x, y, z, len, r] of defs) {
     const dir = [x * 5.5, 0.86, -0.5];
@@ -110,10 +110,10 @@ export function buildJawSpikes(field) {
     // clearly separated spikes a side, angled out and down so they break the
     // silhouette from the front as well as in profile.
     const jaw = [
-      [s * 0.0385, 1.6105, 0.016, 0.0455, 0.0118],
-      [s * 0.0360, 1.6060, 0.056, 0.0415, 0.0108],
-      [s * 0.0315, 1.6025, 0.094, 0.0355, 0.0094],
-      [s * 0.0255, 1.6005, 0.128, 0.0285, 0.0077],
+      [s * 0.0385, 1.6105, 0.014, 0.0455, 0.0118],
+      [s * 0.0360, 1.6060, 0.050, 0.0415, 0.0108],
+      [s * 0.0315, 1.6025, 0.084, 0.0355, 0.0094],
+      [s * 0.0255, 1.6005, 0.115, 0.0285, 0.0077],
     ];
     for (const [x, y, z, len, r] of jaw) {
       // Lateral AND swept back, as in the references. Angled down-and-back they
