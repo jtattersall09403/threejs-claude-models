@@ -10,23 +10,37 @@ every step, the container restarts without warning.**
 
 ## Where the loop is
 
-**Critic round 1 returned FAIL** with 14 ranked defects — the full report is in
-`critic/latest/REPORT.md` with zoomed evidence images. Iteration 5 worked defects
-1–7, 10 and 11. **Defects 8, 9, 12, 13, 14 are still open** (see Next actions).
-When those are done, re-run the critic for round 2.
+**Critic round 2 is in flight.** Round 1 returned FAIL with 14 defects; iterations 5
+and 6 worked all 14. When round 2's report lands, work its list and hand back again.
+**The only exit from this loop is VERDICT: PASS** (CLAUDE.md rule 1).
 
-Note: the `argonian-critic` subagent type is only registered at session start. In a
-session where it is not yet available, launch a `general-purpose` agent and tell it to
-read and follow `.claude/agents/argonian-critic.md`.
+Note: the `argonian-critic` subagent type is registered at session start. If it is not
+available in a fresh session, launch a `general-purpose` agent and tell it to read and
+follow `.claude/agents/argonian-critic.md`.
+
+**Do not edit `src/` while a critic agent is running** — it builds from source and a
+half-applied edit will corrupt its render.
 
 ## State of the build
 
 Working: geometry pipeline, rig, auto-skinning, garments, materials, capture harness,
 winding audit. `npm run build && npm run capture` is green. ~545k tris, ~4.7 s build.
 
-## Next actions — open critic defects, in priority order
+## Next actions
 
-Read `critic/latest/REPORT.md` for the full text and evidence images.
+Work the round-2 report when it lands. My own standing observations from the
+iteration-6 captures, for cross-reference:
+
+- **Eyes still read as dark beads**, not the reference's bright amber focal point.
+  The aperture and iris coverage are now correct; the problem is that the brow shadows
+  them. Likely fix: raise the eye material's `emissiveIntensity` well above 0.42 so
+  they self-illuminate in the dim key, and brighten the amber.
+- The mouth line is too thick and too black — it reads as a drawn-on stripe.
+- Nostrils sit on the side of the snout rather than the top of the tip.
+- The near-black skull plate has receded again relative to the maroon brow band.
+- The snout tip is squared off a little too abruptly.
+
+### Round 1 defects (all worked in iterations 5–6)
 
 1. **Defect 9 — hands.** Palm is a flat rectangular paddle with four straight parallel
    rods; fingers need per-finger length variation and real curl in the `curveRings`
