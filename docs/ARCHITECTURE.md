@@ -52,7 +52,7 @@ One `SkinnedMesh` per material, all sharing one `Skeleton`.
 | mesh | material | notes |
 |---|---|---|
 | `skin` | `argonianSkin` | body + head + fingers; hide colour from rest position |
-| `horn` | `argonianHorn` | `aRegion=1` on the big horns → banded ring; 0 elsewhere |
+| `horn` | `argonianHorn` | `aRegion`: 0 = plain keratin (spikes), 1 = the big horns, 2 = the metal cuffs (own metalness output), 3 = claws (darkened) |
 | `eye` | `argonianEye` | iris + vertical slit drawn from the direction to the eye centre |
 | `cloth3/4/5/6/7` | tunic / undershirt / leather / trousers / wrap | keyed by `REGION` |
 
@@ -72,7 +72,7 @@ Shared shader plumbing (`materials/materials.js`):
 
 | hook | use |
 |---|---|
-| `window.argonian.debugMasks(1\|2\|3)` | 1 = cap/brow/socket as RGB, 2 = ventral/bands, 3 = rest normal. **Use this before concluding a mask "doesn't work".** |
+| `window.argonian.debugMasks(1..5)` | 1 = cap/brow/socket as RGB, 2 = ventral/bandZone/bands, 3 = rest normal, 4 = ventral alone, **5 = head-space Y banded every 10 mm with a red stripe at 1.60**. **Use these before concluding a mask "doesn't work"** — mode 5 in particular settles where a threshold actually lands in one look instead of one rebuild per hypothesis. Also reachable as `DEBUG=5 npm run shot -- ...`. |
 | `window.__meshAudit()` | signed volume + outward-face fraction per mesh; the winding guard |
 | `window.__frameStats()` | subject's screen-space extent, for checking a framing |
 | `window.__setCamera(az, el, dist, targetY, fov)` | deterministic framing |
@@ -89,3 +89,19 @@ pinky1-3, hip, knee, ankle, toe`.
 Skin weights come from `buildSegments()`. Bones whose auto-generated span sits in the
 wrong flesh get hand-authored spans in `EXTRA_SEGMENTS` — without those the upper
 muzzle binds to the jaw and opens with it.
+
+## Shared constants — change in ONE place
+
+Several values are consumed by more than one subsystem. Held separately they drift,
+and the symptom is never obviously a drift problem:
+
+| constant | defined in | also used by | what drift looks like |
+|---|---|---|---|
+| `LIP` | `parts/anatomy.js` | the geometry crease cut **and** `SKIN_FRAG`'s lip paint | the dark line slides off the groove and smears onto the cheek |
+| `TAIL_SPINE` | `rig/skeleton.js` | `parts/anatomy.js` tail capsules | tail geometry skins to the wrong bone spans and deforms wrongly once animated |
+| `EYE`, `HEAD_XF` | `parts/anatomy.js` | anatomy, features, eyes, and every head-space mask in `SKIN_FRAG`/`EYE_FRAG` via `defines()` | masks land in the wrong place; the iris centres off the eyeball |
+
+Coordinate spaces are the other recurring trap. Geometry for the head is authored
+**pre-`HEAD_XF`**; `vRest` in the shaders is **world**. Any head mask must undo the
+transform first (`H` in `SKIN_FRAG`, `EH` in `EYE_FRAG`) — comparing world against
+authoring space silently misplaces things by the offset and scale.
