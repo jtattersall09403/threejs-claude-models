@@ -143,7 +143,12 @@ export function buildHeadField() {
   // compact rounded mass, length:height about 1.09. Ours ran to 1.4+: a long low
   // lozenge with the muzzle taking 39% of the length where the reference's takes 24%.
   f.add(ellipsoid([0, 1.7015, -0.006], [0.0668, 0.0925, 0.0930], { k: 0.055 }));
-  f.add(ellipsoid([0, 1.6790, -0.048], [0.047, 0.058, 0.048], { k: 0.05 }));  // domed occiput
+  f.add(ellipsoid([0, 1.6840, -0.046], [0.047, 0.062, 0.042], { k: 0.05 }));  // domed occiput
+  // The rear of the skull DROPS STEEPLY from the crown in the annotated profile — the
+  // back of the head and the back of the neck sit on roughly one vertical line. A
+  // plain dome trails backwards instead and reads as a long low skull.
+  f.add(capsule([0, 1.7480, -0.058], [0, 1.6280, -0.052], 0.0280, 0.0400,
+    { k: 0.045, scale: [1.4, 1, 1] }));
   f.add(ellipsoid([0, 1.7790, -0.010], [0.048, 0.026, 0.062], { k: 0.030 })); // raised crown plate
 
   // ---- brow / eye ridges -------------------------------------------------------

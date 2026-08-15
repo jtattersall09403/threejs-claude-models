@@ -196,6 +196,42 @@ immediately — both of these were obvious in one frame.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
 
+### Iteration 23 — the user annotated the profile, and I had the head architecture wrong
+
+**Read `corpus/character/face-left-profile~2.jpg` and the blueprint section in
+CLAUDE.md before touching the head.** The user drew the head's architecture straight
+onto the profile: red skull, blue mouth, pink horns and spikes, yellow neck, white
+shoulders. It corrected three things I had been getting steadily wrong.
+
+**First, I broke the head and had to revert.** Over iterations 20-22 the head got a
+longer snout, a shorter braincase, a deeper jaw, a wider muzzle, bigger crest blades,
+bigger cheek spikes and re-aimed horns — each argued from a real measurement against a
+real reference, and the aggregate was a bulbous smooth manatee snout inside a fringe of
+needles. The user had to point at it. Recovery was `git show 9d39008:src/parts/*.js`,
+splice the head field back, and re-apply only the independently verified wins (eye
+size, the lateral mask gate, the olive hide, the collar drop, the ear plate). Traps 25
+and 26 record this.
+
+**Then, from the blueprint:**
+- The skull is a compact wedge, roughly as tall as it is long (~1.15). Ours was ~1.4:
+  a long low lozenge. Braincase raised and shortened, snout cut 20%.
+- The profile's top line is ONE CONVEX ARC. Ours had a notch at the bridge between the
+  brow and the nose — the dorsal ridge now starts up on the brow bar and fills it.
+- The brow OVERHANGS the eye. It used to sit tucked behind the muzzle.
+- The rear of the skull drops steeply; back of head and back of neck on one vertical.
+- The pale spikes are FEW, LARGE and point BACKWARD along the jawline — two big rear
+  blades about as long as the second horn, one mid, one small at the chin. Every
+  previous arrangement (swept off the cheek, hanging as tusks, standing out sideways)
+  put them where the reference does not have them.
+- There are TWO horns a side: the long banded one sweeping back at ~30 deg, and a
+  shorter one ahead of it standing nearly vertical. `buildFrontHorns` is new.
+
+**Still open on the head:** the front horn barely reads at profile distance; the crest
+is too dark to see from the side; the eye should be a brighter amber slash in a dark
+socket; the reference's pale reticulated net is still stronger than ours; the throat is
+paler and smoother than the reference's scute ladder.
+
+
 ### Iteration 22 — THE STANCE, and the body I had still been neglecting
 
 The character had never been *posed*. It was rendered in its raw rest pose: perfectly

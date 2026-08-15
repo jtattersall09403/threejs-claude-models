@@ -98,8 +98,8 @@ function seat(field, p, dir, inset = 0.008) {
 export function buildFrontHorns(field) {
   const out = [];
   for (const s of [1, -1]) {
-    const dir = [s * 0.34, 0.86, -0.38];
-    out.push(spike(seat(field, [s * 0.0435, 1.7290, 0.022], dir, 0.006), dir, 0.098, 0.0110, {
+    const dir = [s * 0.26, 0.955, 0.14];
+    out.push(spike(seat(field, [s * 0.0420, 1.7280, 0.030], dir, 0.006), dir, 0.105, 0.0112, {
       taper: 0.70, sides: 12, steps: 9, bend: [s * 0.004, 0.003, -0.022],
     }));
   }
@@ -168,10 +168,10 @@ export function buildJawSpikes(field) {
     // them somewhere the reference does not have them, and read as whiskers or a
     // picket fence rather than as part of the jaw's outline.
     for (const [p, dir, len, r] of [
-      [[s * 0.0300, 1.5960, 0.100], [s * 0.30, -0.26, -0.92], 0.0340, 0.0128],
-      [[s * 0.0400, 1.5975, 0.056], [s * 0.34, -0.20, -0.92], 0.0405, 0.0150],
-      [[s * 0.0500, 1.6110, 0.014], [s * 0.40, -0.06, -0.91], 0.0445, 0.0168],
-      [[s * 0.0560, 1.6390, -0.004], [s * 0.44, 0.12, -0.89], 0.0460, 0.0174],
+      [[s * 0.0300, 1.5960, 0.100], [s * 0.30, -0.26, -0.92], 0.0250, 0.0104],
+      [[s * 0.0400, 1.5975, 0.056], [s * 0.34, -0.20, -0.92], 0.0330, 0.0132],
+      [[s * 0.0505, 1.6110, 0.012], [s * 0.40, -0.10, -0.91], 0.0620, 0.0196],
+      [[s * 0.0565, 1.6410, -0.006], [s * 0.44, 0.10, -0.89], 0.0685, 0.0208],
     ]) {
       out.push(spike(seat(field, p, dir, 0.004), dir, len, r, {
         taper: 0.62, flat: 0.32, sides: 10, steps: 7, bend: [0, -0.005, 0.0],
