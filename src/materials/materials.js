@@ -263,9 +263,11 @@ const SKIN_FRAG = /* glsl */`
   col = mix(col, vec3(0.0475, 0.0222, 0.0080), eyeRim * 0.72);
 
   // A shadowed band under the jawline, so the jaw reads as a mass sitting above the
-  // neck rather than continuing into it.
-  float jawShadow = ss(1.588, 1.548, H.y) * headMask;
-  col *= mix(1.0, 0.44, jawShadow);
+  // neck rather than continuing into it. NOT gated by headMask — headMask fades out
+  // across 1.535..1.585, which is precisely the band this is trying to darken, so
+  // multiplying by it cancels the effect exactly where it is wanted.
+  float jawShadow = ss(1.594, 1.546, H.y) * ss(1.468, 1.512, H.y) * ss(-0.03, 0.02, H.z);
+  col *= mix(1.0, 0.40, jawShadow);
 
   // Rust-red hands. In the reference the hands are markedly warmer than the green
   // forearms — one of the few strong hue breaks anywhere on the character, and its
