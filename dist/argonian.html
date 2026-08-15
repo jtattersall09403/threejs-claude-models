@@ -4069,7 +4069,7 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
   col = mix(col, belly, ventral * 0.66);
   col = mix(col, belly * vec3(1.06, 1.00, 0.80), bandZone * bands * 0.55);
   col = mix(col, mix(dorsal2, plate, 0.5), tailTop * (0.35 + 0.5 * tailScute));
-  col = mix(col, plate, cap * 0.97);
+  col = mix(col, plate * 0.72, cap * 0.98);
   col = mix(col, plate * vec3(1.15, 1.20, 1.55), socket * 0.98);
   col = mix(col, maroon, brow * 0.98);
   col = mix(col, maroon * 0.62, brow * 0.55);  // deepen the oxblood band
@@ -4133,14 +4133,14 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
   // scales are LIGHTER than the scales, giving a pale reticulated mesh \u2014 the exact
   // opposite of a generic crevice darkening. Previously applied to the cranial
   // plates only, which left the muzzle looking like plain pebbled rubber.
-  float mortar = (1.0 - ss(0.10, 0.30, h)) * headMask * (1.0 - cap * 0.7);
+  float mortar = (1.0 - ss(0.10, 0.30, h)) * headMask * (1.0 - cap * 0.92);
   col = mix(col, boneCol * 0.30, mortar * 0.42);
   // darker AND warmer: the jaw was not merely bright, it was the greenest thing on
   // the head, where the reference jaw is its most neutral, most shadowed area
   col = mix(col, col * vec3(0.60, 0.53, 0.52), chinZone * 0.88);
   // cream mortar lines between the cranial plates \u2014 in the reference the gaps are
   // LIGHTER than the plates, the opposite of a generic crevice darkening
-  col = mix(col, boneCol * 0.30, crownZone * (1.0 - ss(0.06, 0.30, h)) * 0.38);
+  col = mix(col, boneCol * 0.24, crownZone * (1.0 - ss(0.08, 0.30, h)) * 0.30);
 
   diffuseColor.rgb = col;
   float rough = mix(0.88, 0.60, ss(0.2, 0.8, h));
