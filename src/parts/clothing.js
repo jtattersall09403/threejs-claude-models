@@ -43,9 +43,15 @@ function garment(body, offset, cover, bounds, edge = 0.014, wrinkle = null) {
  */
 function folds(amp, freq = 13, drape = 0.42) {
   return (x, y, z) => {
-    const big = fbm3(x * freq, y * freq * drape, z * freq, 3);
-    const fine = fbm3(x * freq * 3.1 + 17, y * freq * drape * 3.1, z * freq * 3.1, 2);
-    return amp * (big * 0.72 + fine * 0.34);
+    // RIDGED noise, not plain fbm. Plain fbm displaces the offset smoothly and the
+    // garment comes out gently lumpy — from any distance it still reads as a
+    // shrink-wrapped bodysuit. Cloth creases: sharp valleys, rounded crests, which
+    // is what folding the noise about its midpoint gives.
+    const a = fbm3(x * freq, y * freq * drape, z * freq, 3);
+    const b = fbm3(x * freq * 2.7 + 17, y * freq * drape * 2.7, z * freq * 2.7, 2);
+    const ridge = 1 - Math.abs(a * 2 - 1);
+    const fine = 1 - Math.abs(b * 2 - 1);
+    return amp * (ridge * 0.78 + fine * 0.30 - 0.52);
   };
 }
 
@@ -60,7 +66,7 @@ export function clothingFields(body) {
     const cover = coverage([
       roundBox([0, 1.352, 0.005], [0.30, 0.156, 0.28], 0.02),
     ]);
-    const f = garment(body, 0.010, cover, bounds, 0.020, folds(0.0058, 18));
+    const f = garment(body, 0.010, cover, bounds, 0.020, folds(0.0060, 30));
     // A wrapped cloth cowl that rises to just under the jaw. It used to stop ~6 cm
     // short, leaving a bare column of neck almost as wide as the skull — head and
     // neck then fused into one box and the jaw line disappeared. In the references
@@ -83,10 +89,10 @@ export function clothingFields(body) {
       capsule([-0.188, 1.40, 0], [-0.211, 1.128, -0.006], 0.15, 0.079),
       capsule([0.188, 1.40, 0], [0.211, 1.128, -0.006], 0.15, 0.079),
     ]);
-    const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0235, 9));
+    const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0175, 18));
     // a cut-free copy of the same shell, used only as a projection target for the
     // sash and medallion
-    const shell = garment(body, 0.026, cover, bounds, 0.016, folds(0.0235, 9));
+    const shell = garment(body, 0.026, cover, bounds, 0.016, folds(0.0175, 18));
     // the skirt hangs clear of the body, so it is added rather than offset
     f.add(capsule([0, 1.0, 0.0], [0, 0.788, -0.012], 0.15, 0.149, { k: 0.055, scale: [1, 1, 0.9] }));
         // hem broken up so it does not end in a hard horizontal CSG cut
@@ -127,7 +133,7 @@ export function clothingFields(body) {
       capsule([-0.08, 0.96, 0], [-0.089, 0.222, -0.008], 0.19, 0.082),
       capsule([0.08, 0.96, 0], [0.089, 0.222, -0.008], 0.19, 0.082),
     ]);
-    const f = garment(body, 0.015, cover, bounds, 0.014, folds(0.0150, 12));
+    const f = garment(body, 0.015, cover, bounds, 0.014, folds(0.0125, 22));
     for (const s of [1, -1]) {
       f.add(ellipsoid([s * 0.089, 0.152, -0.012], [0.055, 0.016, 0.055], { k: 0.016 })); // cuff
     }
@@ -195,7 +201,7 @@ function bandFrame(outwardOf) {
  * side it detaches and hangs in mid-air, and from the front you see its shadowed
  * underside, so it reads as a slash in the cloth rather than a strap lying on it.
  */
-export function buildStrap(tunicField, lift = 0.006) {
+export function buildStrap(tunicField, lift = 0.013) {
   const raw = [
     [-0.160, 1.438, -0.058],
     [-0.190, 1.412, 0.050],
@@ -205,9 +211,14 @@ export function buildStrap(tunicField, lift = 0.006) {
     [0.183, 1.006, 0.068],
     [0.198, 0.963, -0.038],
   ];
-  // sit ON the coat: march out to the tunic surface, then lift by half the strap
-  // thickness so it rests on the cloth instead of hovering over it or sinking in
-  const pts = raw.map((p) => {
+  const N = 150;
+  // Project EVERY ring centre, not just the seven control points. Projecting the
+  // control points and then interpolating draws a smooth curve between widely spaced
+  // anchors, which cuts straight through the cloth folds in between — the strap then
+  // renders as a row of disconnected slivers where it happens to surface. The lift
+  // must also clear the fold amplitude, or it submerges again.
+  const centres = curveRings(raw, () => 0, N, { tension: 0.4 }).map((r) => r.p);
+  const pts = centres.map((p) => {
     const outward = [p[0], (p[1] - 1.16) * 0.25, p[2]];
     const l = Math.hypot(outward[0], outward[1], outward[2]) || 1;
     const dir = [outward[0] / l, outward[1] / l, outward[2] / l];
@@ -215,13 +226,25 @@ export function buildStrap(tunicField, lift = 0.006) {
     const hit = raySurface(tunicField, p, dir, { start: -0.16, max: 0.14 });
     return [hit[0] + dir[0] * lift, hit[1] + dir[1] * lift, hit[2] + dir[2] * lift];
   });
+  // light smoothing: raySurface returns a slightly noisy polyline over folded cloth
+  for (let pass = 0; pass < 3; pass++) {
+    for (let i = 1; i < pts.length - 1; i++) {
+      for (let c = 0; c < 3; c++) {
+        pts[i][c] = pts[i][c] * 0.5 + (pts[i - 1][c] + pts[i + 1][c]) * 0.25;
+      }
+    }
+  }
 
   // A broad strap. At half this width it rendered as a dark diagonal scratch across
   // the chest rather than a band of braided cord lying on the coat.
-  const rings = curveRings(pts, () => [0.0175, 0.0078], 150, {
-    tension: 0.4,
-    profile: (a, t) => 1 + 0.20 * Math.sin(a * 3.0 + t * 40.0)
-                     + 0.09 * Math.sin(a * 6.0 - t * 62.0),  // braided cord relief
+  const rings = pts.map((p, i) => {
+    const t = i / (N - 1);
+    return {
+      p,
+      r: [0.0175, 0.0078],
+      profile: (a) => 1 + 0.20 * Math.sin(a * 3.0 + t * 40.0)
+                    + 0.09 * Math.sin(a * 6.0 - t * 62.0),  // braided cord relief
+    };
   });
   return sweep(rings, {
     sides: 28,

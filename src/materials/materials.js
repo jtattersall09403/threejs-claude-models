@@ -412,7 +412,7 @@ function finishRoughness(material) {
 
 export function createMaterials() {
   const scale = makeScaleTexture(512, 15, 7);
-  const cloth = makeClothTexture(512, 46, 19);
+  const cloth = makeClothTexture(512, 26, 19);
   const leather = makeLeatherTexture(512, 22, 41);
 
   const mk = (name, opts, frag, uniforms, fragNormal = true) => {
