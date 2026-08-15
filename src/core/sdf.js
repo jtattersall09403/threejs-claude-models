@@ -160,19 +160,28 @@ export function raySurface(field, origin, dir, opts = {}) {
  * the hinge.
  */
 export function creaseSlot(fy, halfT, zRange, xHalf, opts = {}) {
+  const xf = typeof xHalf === 'function' ? xHalf : () => xHalf;
+  const bound = opts.xBound !== undefined ? opts.xBound : (typeof xHalf === 'function' ? 0.09 : xHalf);
   return {
     k: opts.k !== undefined ? opts.k : 0.005,
-    aabb: [-xHalf, opts.yMin || 1.5, zRange[0], xHalf, opts.yMax || 1.75, zRange[1]],
+    aabb: [-bound, opts.yMin || 1.5, zRange[0], bound, opts.yMax || 1.75, zRange[1]],
     d(px, py, pz) {
       // taper to nothing at both ends, or the slot stops dead and leaves hard
       // rectangular corners that read as stamping errors
       const span = zRange[1] - zRange[0];
       const u = Math.max(0, Math.min(1, (pz - zRange[0]) / (span || 1)));
       const fade = Math.min(1, Math.min(u, 1 - u) / 0.15);
-      const t = halfT * (0.15 + 0.85 * fade);
+      const xh = xf(pz);
+      // ...and taper toward the SIDES too. A constant-thickness band of y inside a
+      // hard limit in x is a through-cut, not a groove: out at the corners of the
+      // mouth, where the surface turns to face sideways, it stops grazing the
+      // surface and saws a slit clean through the jaw. Closing the slot off as it
+      // approaches its own x limit keeps it a crease everywhere along its length.
+      const xFade = Math.min(1, Math.max(0, (xh - Math.abs(px)) / (xh * 0.38 + 1e-6)));
+      const t = halfT * (0.10 + 0.90 * Math.min(fade, xFade));
       const dy = Math.abs(py - fy(pz)) - t;
       const dz = Math.max(pz - zRange[1], zRange[0] - pz);
-      const dx = Math.abs(px) - xHalf;
+      const dx = Math.abs(px) - xh;
       return Math.max(dy, Math.max(dz, dx));
     },
   };

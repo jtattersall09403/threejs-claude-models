@@ -116,7 +116,8 @@ export function buildHeadField() {
 
   // ---- brow / eye ridges -------------------------------------------------------
   for (const s of [1, -1]) {
-    f.add(ellipsoid([s * 0.0455, 1.7195, 0.058], [0.028, 0.018, 0.040], { k: 0.022 })); // brow shelf
+    f.add(ellipsoid([s * 0.0455, 1.7225, 0.052], [0.029, 0.017, 0.038], { k: 0.022 }));  // brow shelf, outer
+    f.add(ellipsoid([s * 0.0248, 1.7145, 0.070], [0.021, 0.015, 0.032], { k: 0.020 })); // ...dipping inboard
     f.add(ellipsoid([s * 0.0575, 1.686, 0.022], [0.016, 0.052, 0.057], { k: 0.035 }));  // temple
   }
 
@@ -140,6 +141,8 @@ export function buildHeadField() {
   // Kept narrow and swept BACK: in the reference the face steps in hard below the
   // eyes, so the muzzle — not the jaw — is what you see from the front.
   for (const s of [1, -1]) {
+    // cheekbone: a distinct ridge running back from under the eye to the hinge
+    f.add(ellipsoid([s * 0.0468, 1.6705, 0.030], [0.0125, 0.0125, 0.036], { k: 0.014 }));
     f.add(ellipsoid([s * 0.0305, 1.6335, 0.014], [0.0140, 0.044, 0.046], { k: 0.048 })); // cheek / masseter
     f.add(ellipsoid([s * 0.0430, 1.6405, -0.022], [0.0155, 0.050, 0.038], { k: 0.032 })); // jaw hinge
   }
@@ -147,7 +150,11 @@ export function buildHeadField() {
   // ---- throat / neck (overlaps the body bake) ------------------------------------
   // Kept narrower than the jaw. When the neck matched the skull for width the head
   // and neck fused into one vertical box and the jaw line vanished.
-  f.add(ellipsoid([0, 1.5855, 0.046], [0.052, 0.042, 0.053], { k: 0.05 }));
+  // Small k, and set BACK and DOWN. Blended broadly into the jaw it erased the
+  // jawline: the jaw, throat and neck fused into one continuous expanse of scale,
+  // which is exactly what the references do NOT show — there the jaw is a distinct
+  // mass with a hard lower edge and the neck sits shadowed underneath it.
+  f.add(ellipsoid([0, 1.5735, 0.030], [0.048, 0.038, 0.048], { k: 0.022 }));
   f.add(capsule([0, 1.462, -0.012], [0, 1.578, 0.012], 0.070, 0.056, { k: 0.05 }));
 
   // ---- cuts ------------------------------------------------------------------
@@ -161,8 +168,11 @@ export function buildHeadField() {
     f.add(ellipsoid([s * 0.0482, 1.6800, 0.0630], [0.0250, 0.0058, 0.0225], { k: 0.007 }));
   }
   // mouth crease — rises toward the jaw hinge like a real reptile jaw line
-  f.sub(creaseSlot((z) => LIP.y0 + (LIP.z0 - z) * LIP.slope, 0.0024, [-0.005, 0.176], 0.058,
-    { k: 0.0045, yMin: 1.56, yMax: 1.68 }));
+  // x-extent follows the muzzle's own half-width, narrowing toward the snout, so the
+  // crease stays on the surface instead of running out past the corners of the mouth
+  f.sub(creaseSlot((z) => LIP.y0 + (LIP.z0 - z) * LIP.slope, 0.0026, [-0.005, 0.176],
+    (z) => 0.046 - 0.125 * Math.max(0, z - 0.045),
+    { k: 0.0045, yMin: 1.56, yMax: 1.68, xBound: 0.07 }));
   // nostrils — at the old size they were below the bake resolution and invisible
   for (const s of [1, -1]) {
     f.sub(ellipsoid([s * 0.0098, 1.6630, 0.1755], [0.0056, 0.0070, 0.0118], { k: 0.0035 }));

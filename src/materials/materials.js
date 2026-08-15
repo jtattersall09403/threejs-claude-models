@@ -252,6 +252,21 @@ const SKIN_FRAG = /* glsl */`
   float faceZone = headMask * (1.0 - cap) * ss(1.556, 1.598, H.y);
   col = mix(col, col * vec3(0.82, 0.78, 0.82), faceZone * 0.55);
 
+  // Warm orange rim of scales right around the eye opening. Clearly present in every
+  // reference crop and the strongest local hue accent on the head; without it the eye
+  // sits in a flat dark patch.
+  // Tight: the eye aperture is only ~24 mm across, so the ring has to live between
+  // ~21 and ~31 mm. Scaled generously it stops being a rim and floods the whole
+  // cheek and temple with orange.
+  float rimD = length((J - vec3(EYE_X, EYE_Y - 0.001, EYE_Z + 0.003)) * vec3(0.90, 1.10, 0.78));
+  float eyeRim = ss(0.0158, 0.0208, rimD) * ss(0.0300, 0.0238, rimD);
+  col = mix(col, vec3(0.0475, 0.0222, 0.0080), eyeRim * 0.72);
+
+  // A shadowed band under the jawline, so the jaw reads as a mass sitting above the
+  // neck rather than continuing into it.
+  float jawShadow = ss(1.588, 1.548, H.y) * headMask;
+  col *= mix(1.0, 0.44, jawShadow);
+
   // Rust-red hands. In the reference the hands are markedly warmer than the green
   // forearms — one of the few strong hue breaks anywhere on the character, and its
   // absence was part of why the whole figure read as a single monochrome mass.
