@@ -147,11 +147,10 @@ export function buildTeeth() {
 }
 
 const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
-const FINGER_R = { thumb: 0.0150, index: 0.0128, middle: 0.0134, ring: 0.0122, pinky: 0.0104 };
-// relaxed curl: each joint bends a little forward, so the hand is not a garden fork
-// Curled well forward. Nearly straight, the fingers splay and the hand reads as a
-// garden rake of pale talons rather than a relaxed hand.
-const FINGER_CURL = { thumb: 0.015, index: 0.030, middle: 0.034, ring: 0.030, pinky: 0.023 };
+const FINGER_R = { thumb: 0.0132, index: 0.0112, middle: 0.0118, ring: 0.0106, pinky: 0.0092 };
+// Relaxed curl: each joint bends forward, so the hand is not a garden fork. Whatever
+// this is, the claw MUST be placed off the curled tip — see buildFingers.
+const FINGER_CURL = { thumb: 0.010, index: 0.018, middle: 0.020, ring: 0.018, pinky: 0.014 };
 
 /** Fingers swept along their bones, each finished with a claw. */
 export function buildFingers(rig) {
@@ -166,18 +165,23 @@ export function buildFingers(rig) {
       const root = [p1[0] + (p1[0] - p2[0]) * 0.95, p1[1] + (p1[1] - p2[1]) * 0.95, p1[2] + (p1[2] - p2[2]) * 0.95];
       const c = FINGER_CURL[name];
       const curl = (q, amt) => [q[0], q[1], q[2] + amt];
-      const rings = curveRings([root, p1, curl(p2, c), curl(p3, c * 2.4)], (t) => {
+      // Curled joint positions are computed ONCE and shared with the claw below.
+      // Deriving the claw from the uncurled p2/p3 leaves it hanging in mid-air a
+      // couple of centimetres off the fingertip.
+      const p2c = curl(p2, c);
+      const p3c = curl(p3, c * 2.4);
+      const rings = curveRings([root, p1, p2c, p3c], (t) => {
         const taper = 1 - 0.32 * t;
         const knuckle = 1 + 0.1 * Math.exp(-Math.pow((t - 0.34) * 7, 2)) + 0.08 * Math.exp(-Math.pow((t - 0.66) * 8, 2));
         return r * taper * knuckle;
       }, 16, { tension: 0.4 });
       parts.push({ geom: sweep(rings, { sides: 12, capEnd: false }), region: 'skin' });
 
-      // claw
-      const dir = [p3[0] - p2[0], p3[1] - p2[1], p3[2] - p2[2]];
+      // claw, seated on the CURLED tip
+      const dir = [p3c[0] - p2c[0], p3c[1] - p2c[1], p3c[2] - p2c[2]];
       const l = Math.hypot(...dir) || 1;
       const d = [dir[0] / l, dir[1] / l, dir[2] / l];
-      const clawBase = [p3[0] - d[0] * 0.006, p3[1] - d[1] * 0.006, p3[2] - d[2] * 0.006];
+      const clawBase = [p3c[0] - d[0] * 0.008, p3c[1] - d[1] * 0.008, p3c[2] - d[2] * 0.008];
       parts.push({
         geom: spike(clawBase, d, 0.012, r * 0.62, {
           taper: 0.62, sides: 8, steps: 7,

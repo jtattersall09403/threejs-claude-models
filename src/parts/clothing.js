@@ -256,7 +256,9 @@ export function buildStrap(tunicField, lift = 0.013) {
       p,
       // FLAT: the reference strap is a broad braided band lying on the coat, so the
       // cross-section is a wide thin ribbon. Nearer to round it reads as a rope.
-      r: [0.0198, 0.0050],
+      // Tapered at both ends, or a flat band terminates in a hard cap that catches
+      // the light edge-on and reads as a knife blade laid across the hip.
+      r: [0.0198 * (0.30 + 0.70 * Math.min(1, Math.min(t, 1 - t) / 0.07)), 0.0050],
       profile: (a) => 1 + 0.10 * Math.sin(a * 3.0 + t * 40.0)
                     + 0.05 * Math.sin(a * 6.0 - t * 62.0),  // braid relief
     };
