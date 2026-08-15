@@ -207,8 +207,16 @@ const SKIN_FRAG = /* glsl */`
   // A FIELD, not a stripe. At a y-weight of 4.6 this covered a 2.6 cm band; the
   // references carry dark red over the whole brow shelf and back to the horn roots,
   // roughly a fifth of the frontal head area.
-  float browD = length((J - vec3(0.0435, 1.7135, 0.026)) * vec3(0.50, 1.28, 0.86));
-  float brow = ss(0.088, 0.020, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.638, 1.664, H.y);
+  // A BAND over the brow ridge, not a field over the cranium. At an x weight of 0.50
+  // the ellipsoid reached 0.176 in x — wider than the whole head — so 70% maroon went
+  // over the entire skull and the head read mauve-grey above a green muzzle: a hard
+  // two-tone split the references do not have. In them the red is dark plates on the
+  // brow shelf and the crest, with olive showing between them and over the occiput.
+  float browD = length((J - vec3(0.0430, 1.7150, 0.032)) * vec3(0.62, 1.55, 1.30));
+  float brow = ss(0.068, 0.016, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.638, 1.664, H.y)
+             * ss(-0.020, 0.014, J.z);
+  // broken into plates rather than one even wash of colour
+  brow *= 0.62 + 0.55 * ss(0.30, 0.74, fbm(J * 52.0 + 5.0));
 
   // dorsal scute ridge down the tail — a plain taper reads as a rubber tube
   float tailZone = ss(-0.10, -0.16, P.z) * ss(1.02, 0.94, P.y);
@@ -225,19 +233,21 @@ const SKIN_FRAG = /* glsl */`
   float blotch = fbm(P * 5.6 + 11.0);
   float macro  = fbm(P * 1.45 + 31.0);   // large irregular blotching
 
-  // Darker and less green-dominant. The reference hide is a DESATURATED olive: at a
-  // green/red ratio of 1.29 the muzzle read as a bright leaf green next to the
-  // oxblood brow band, which is the upper/lower face split that kept reappearing.
-  vec3 dorsal   = vec3(0.0216, 0.0264, 0.0146);
-  vec3 dorsal2  = vec3(0.0062, 0.0080, 0.0052);
-  vec3 warmOl   = vec3(0.0250, 0.0288, 0.0160);
-  vec3 belly    = vec3(0.0252, 0.0278, 0.0172);
+  // Green/red here has to be read against the KEY LIGHT, not on its own. The key is
+  // 0xffe6cc — warm, and it multiplies the albedo by roughly (1.00, 0.90, 0.80). At an
+  // albedo G/R of 1.22 the hide rendered at 1.10, which is a warm grey-brown, and the
+  // side-by-side against every reference crop read brown where the reference reads
+  // olive. Authored at 1.46 it lands near 1.31 on screen.
+  vec3 dorsal   = vec3(0.0194, 0.0288, 0.0130);
+  vec3 dorsal2  = vec3(0.0055, 0.0086, 0.0046);
+  vec3 warmOl   = vec3(0.0226, 0.0312, 0.0144);
+  vec3 belly    = vec3(0.0232, 0.0302, 0.0156);
   vec3 plate    = vec3(0.0062, 0.0068, 0.0048);   // dark OLIVE-black, not blue-black
   // R/G ~2.1, not ~4.8. The critic measured the reference brow at R/G 1.74 against a
   // 1.17 muzzle; pushed to a pure red this floods the crown salmon-pink instead of
   // reading as dark oxblood over olive.
   vec3 maroon   = vec3(0.0330, 0.0158, 0.0126);
-  vec3 boneCol  = vec3(0.088, 0.078, 0.055);
+  vec3 boneCol  = vec3(0.082, 0.080, 0.052);
 
   vec3 col = mix(dorsal2, dorsal, ss(0.30, 0.72, mottle * 0.6 + blotch * 0.7));
   col = mix(col, warmOl, ss(0.45, 0.88, blotch));
@@ -255,7 +265,7 @@ const SKIN_FRAG = /* glsl */`
   col = mix(col, plate * vec3(1.15, 1.20, 1.55), socket * 0.98);
   // partial mix, so the olive hide shows through and the band lands near the
   // reference's 1.74 rather than at the paint's own ratio
-  col = mix(col, maroon, brow * 0.88);
+  col = mix(col, maroon, brow * 0.70);
   // three cream claw-mark streaks across the maroon brow band
   float streak = ss(0.72, 0.97, abs(sin((J.x - 0.010) * 150.0)));
   col = mix(col, boneCol * 0.78, brow * streak * ss(0.012, 0.052, abs(J.x)) * 0.95);

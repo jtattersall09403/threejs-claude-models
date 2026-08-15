@@ -262,19 +262,14 @@ means the artifact really renders.
 
 ## If you get cut off
 
-**Five Routines keep this loop alive.** Four are bound to the working session and fire
-at :05, :20, :35 and :50 — a 15-minute cadence, since cron's minimum interval is
-hourly so the cadence is built from offset hourly Routines. If you are mid-iteration,
-ignore them.
+**Four Routines keep this loop alive.** They are bound to the working session and fire
+at :05, :20, :35 and :50 — a 15-minute cadence, built from offset hourly Routines
+because cron's minimum interval is hourly. If you are mid-iteration, ignore them.
 
-The fifth, **"Argonian loop FALLBACK (fresh session)"** (fires at :40), spawns a
-**brand new session** and exists because the session-bound four are useless if the
-session itself dies. It self-suppresses: it checks the age of the last commit on the
-branch first and stops immediately if it is under 45 minutes old, so it never
-duplicates a live session's work. That staleness check is the whole safety mechanism —
-do not remove it.
+(A fifth Routine used to spawn a brand new session as a failsafe. The user asked for it
+to be removed, and it has been deleted. Do not recreate it.)
 
-Delete **all five** once the critic passes.
+Delete all four once the critic passes.
 
 ## (old note)
 

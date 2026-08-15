@@ -15,7 +15,7 @@ import { TAIL_SPINE } from '../rig/skeleton.js';
 
 export const EYE = {
   c: [0.0468, 1.6975, 0.0688],   // mirrored on x
-  r: 0.0192,   // The ball stays a decent size; what stops a free sphere edge showing
+  r: 0.0176,   // The ball stays a decent size; what stops a free sphere edge showing
                // is the APERTURE being clearly smaller than the ball, below. Shrinking
                // and sinking the ball instead just makes the eye vanish.
   gaze: [0.055, 0.0, 0.9985],    // near-forward. At 0.16 outward the iris sat off to

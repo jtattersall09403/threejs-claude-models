@@ -6,9 +6,10 @@ https://claude.ai/code/artifact/14637ddd-070e-40ea-926e-df6f773c0d92
 **Branch:** `claude/argonian-threejs-character-j1wpzp` · **Rule 0: commit + push after
 every step.** · **Rule 1: the only exit is a critic PASS.**
 
-An hourly watchdog Routine ("Argonian loop watchdog",
-`trig_01LKYqwcGrZeTRZsj1g55xdg`) fires into the session to resume this loop if it is
-cut off. Ignore it if mid-iteration. Delete it once the critic signs off.
+Four session-bound watchdog Routines ("Argonian loop watchdog :05/:20/:35/:50") fire
+into this session on a 15-minute cadence to resume the loop if it is cut off. Ignore
+them if mid-iteration. Delete all four once the critic signs off. The fresh-session
+failsafe Routine was deleted at the user's request — do not recreate it.
 
 ---
 
