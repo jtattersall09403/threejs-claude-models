@@ -153,7 +153,9 @@ export function createViewer(container) {
   scene.add(bounce);
 
   // low warm bounce off the floor, so the legs and hem do not fall into black
-  const floorBounce = new THREE.DirectionalLight(0x7a5c40, 0.135);
+  // Kept low: this is the only light that reaches DOWNWARD-facing surfaces, and at
+  // 0.135 it lit the flat underside of the coat hem into a bright shelf.
+  const floorBounce = new THREE.DirectionalLight(0x7a5c40, 0.085);
   floorBounce.position.set(0.8, -1.0, 1.6);
   scene.add(floorBounce);
 

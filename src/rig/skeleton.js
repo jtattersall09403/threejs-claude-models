@@ -57,21 +57,24 @@ const MIRROR = [
   ['wrist', 'elbow', [0.239, 0.892, 0.012]],
   ['hand', 'wrist', [0.239, 0.828, 0.008]],
 
+  // Fingers shortened ~17% and thickened. At 111 mm the middle finger was longer than
+  // the palm and, hanging open, the hand read from every rear angle as a rake of pale
+  // sticks rather than as a hand.
   ['thumb1', 'hand', [0.233, 0.826, 0.036]],
   ['thumb2', 'thumb1', [0.226, 0.786, 0.062]],
   ['thumb3', 'thumb2', [0.222, 0.752, 0.082]],
   ['index1', 'hand', [0.243, 0.792, 0.038]],
-  ['index2', 'index1', [0.247, 0.735, 0.047]],
-  ['index3', 'index2', [0.248, 0.6965, 0.058]],
+  ['index2', 'index1', [0.247, 0.7455, 0.045]],
+  ['index3', 'index2', [0.248, 0.7145, 0.056]],
   ['middle1', 'hand', [0.244, 0.79, 0.011]],
-  ['middle2', 'middle1', [0.248, 0.728, 0.029]],
-  ['middle3', 'middle2', [0.249, 0.679, 0.049]],
+  ['middle2', 'middle1', [0.248, 0.7395, 0.027]],
+  ['middle3', 'middle2', [0.249, 0.6985, 0.047]],
   ['ring1', 'hand', [0.242, 0.79, -0.015]],
-  ['ring2', 'ring1', [0.246, 0.733, 0.007]],
-  ['ring3', 'ring2', [0.247, 0.6925, 0.028]],
+  ['ring2', 'ring1', [0.246, 0.7435, 0.005]],
+  ['ring3', 'ring2', [0.247, 0.7110, 0.026]],
   ['pinky1', 'hand', [0.238, 0.788, -0.04]],
-  ['pinky2', 'pinky1', [0.241, 0.741, -0.016]],
-  ['pinky3', 'pinky2', [0.242, 0.7135, 0.003]],
+  ['pinky2', 'pinky1', [0.241, 0.7510, -0.018]],
+  ['pinky3', 'pinky2', [0.242, 0.7295, 0.001]],
 
   // Stance width. At the old ±0.078 hip / ±0.089 ankle the thighs overlapped through
   // the centreline and the trouser offset bridged what little gap was left below the

@@ -242,7 +242,7 @@ const SKIN_FRAG = /* glsl */`
   vec3 dorsal2  = vec3(0.0055, 0.0086, 0.0046);
   vec3 warmOl   = vec3(0.0226, 0.0312, 0.0144);
   vec3 belly    = vec3(0.0232, 0.0302, 0.0156);
-  vec3 plate    = vec3(0.0062, 0.0068, 0.0048);   // dark OLIVE-black, not blue-black
+  vec3 plate    = vec3(0.0050, 0.0074, 0.0042);   // dark OLIVE-black, not blue-black
   // R/G ~2.1, not ~4.8. The critic measured the reference brow at R/G 1.74 against a
   // 1.17 muzzle; pushed to a pure red this floods the crown salmon-pink instead of
   // reading as dark oxblood over olive.
@@ -260,6 +260,11 @@ const SKIN_FRAG = /* glsl */`
   col = mix(col, col * mix(0.84, 1.18, ss(0.34, 0.70, fbm(P * 8.5 + 61.0))), headMask * 0.55);
   col = mix(col, belly, ventral * 0.66);
   col = mix(col, belly * vec3(1.06, 1.00, 0.80), bandZone * bands * 0.55);
+  // The tail is the only large expanse of bare hide left on a clothed figure, it is
+  // smooth and convex, and it sits where both rim lights catch it — so at the body's
+  // own value it rendered as the brightest, most saturated object in every rear
+  // three-quarter frame, reading as a separate prop rather than as part of the animal.
+  col *= mix(1.0, 0.72, tailZone);
   col = mix(col, mix(dorsal2, plate, 0.5), tailTop * (0.35 + 0.5 * tailScute));
   col = mix(col, plate * 0.72, cap * 0.98);
   col = mix(col, plate * vec3(1.15, 1.20, 1.55), socket * 0.98);
@@ -358,7 +363,10 @@ const SKIN_FRAG = /* glsl */`
   // suppressed along the mouth: the bright net was filling the crease back in
   float mortar = (1.0 - ss(0.14, 0.34, h)) * headMask * (1.0 - cap * 0.92)
                * (1.0 - ss(0.012, 0.004, abs(H.y - (LIP_Y0 + (LIP_Z0 - H.z) * LIP_SLOPE))));
-  col = mix(col, boneCol * 0.58, mortar * 0.80);
+  // The reticulation is a PALE OLIVE net, not a cream one. Painted with boneCol it
+  // covered most of the head in warm bone at 80% and was the main reason the head
+  // still read brown next to a green tail after the base hide had been corrected.
+  col = mix(col, vec3(0.0540, 0.0605, 0.0362), mortar * 0.80);
   // darker AND warmer: the jaw was not merely bright, it was the greenest thing on
   // the head, where the reference jaw is its most neutral, most shadowed area
   col = mix(col, col * vec3(0.74, 0.70, 0.66), chinZone * 0.60);

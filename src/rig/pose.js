@@ -59,11 +59,11 @@ export const IDLE_STANCE = {
   // ---- tail: a lazy lateral S, and a little more droop than the rest curve ---
   // A tail with no lateral component is the single most plank-like thing on the model
   // from the side, because its whole length lies in one plane with the spine.
-  tail1: { y: -4.5, x: -1.5 },
-  tail2: { y: 5.0, x: -2.5, z: 1.5 },
-  tail3: { y: 4.5, x: -2.5, z: -1.0 },
-  tail4: { y: -3.5, x: -2.0 },
-  tail5: { y: -4.5, x: -1.5 },
+  tail1: { y: -2.0, x: -1.5 },
+  tail2: { y: 2.4, x: -2.5, z: 1.5 },
+  tail3: { y: 2.2, x: -2.5, z: -1.0 },
+  tail4: { y: -1.8, x: -2.0 },
+  tail5: { y: -2.2, x: -1.5 },
 
   // ---- fingers: a slack hand, curling in slightly toward the palm ------------
   // Small. The finger SWEEPS already carry most of the curl (parts/features.js); this

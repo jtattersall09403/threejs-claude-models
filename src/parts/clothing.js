@@ -132,8 +132,8 @@ export function clothingFields(body) {
     // hem roll, waved so the border is not a dead-level line
     for (let i = 0; i < 16; i++) {
       const a = (i / 16) * Math.PI * 2;
-      addBoth(ellipsoid([Math.cos(a) * 0.146, 0.706 + Math.sin(a * 3) * 0.010, Math.sin(a) * 0.126 - 0.016],
-        [0.038, 0.013, 0.036], { k: 0.038 }));
+      addBoth(ellipsoid([Math.cos(a) * 0.146, 0.700 + Math.sin(a * 3) * 0.017, Math.sin(a) * 0.126 - 0.016],
+        [0.038, 0.021, 0.036], { k: 0.038 }));
     }
     for (const s of [1, -1]) {
       addBoth(ellipsoid([s * 0.2205, 1.098, -0.008], [0.0560, 0.024, 0.0560], { k: 0.010 })); // rolled cuff
@@ -159,7 +159,9 @@ export function clothingFields(body) {
     // The hem. A garment edge is a real edge — cloth stops. Cut it flat and let the
     // ring of hem ellipsoids above roll over the cut, so it reads as a hemmed border
     // rather than as a sawn plane or as a closed dome.
-    f.sub(roundBox([0, 0.46, -0.006], [0.6, 0.222, 0.6], 0.012, { k: 0.016 }));
+    // Lower than the hem roll's centre, so what you see from behind and below is the
+    // ROLL's rounded underside rather than the flat face of the cut itself.
+    f.sub(roundBox([0, 0.45, -0.006], [0.6, 0.222, 0.6], 0.012, { k: 0.020 }));
     out.push({ field: f, bounds, cell: 0.004, region: REGION.TUNIC, tunic: true, shell });
   }
 

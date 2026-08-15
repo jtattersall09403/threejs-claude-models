@@ -186,7 +186,7 @@ export function buildTeeth() {
 }
 
 const FINGERS = ['thumb', 'index', 'middle', 'ring', 'pinky'];
-const FINGER_R = { thumb: 0.0132, index: 0.0112, middle: 0.0118, ring: 0.0106, pinky: 0.0092 };
+const FINGER_R = { thumb: 0.0142, index: 0.0126, middle: 0.0132, ring: 0.0120, pinky: 0.0104 };
 // Relaxed curl: each joint bends forward, so the hand is not a garden fork. Whatever
 // this is, the claw MUST be placed off the curled tip — see buildFingers.
 // NOTE: the tip is offset by c * TIP_CURL below, so the effective displacement is
