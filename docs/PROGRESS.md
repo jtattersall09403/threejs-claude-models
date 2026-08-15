@@ -79,7 +79,26 @@ that is **wider than the upper** — at its old width it sat inside the shoe's o
 offset surface and contributed nothing, which is the same burial failure as the belt
 and is worth checking first whenever an added detail "does not appear".
 
-## Direct feedback from the user (iteration 19) — WORK THESE, they are not yet done
+## Direct feedback from the user (iteration 19) — status after iteration 21
+
+1. **Jawline and its spikes** — PARTLY DONE. `spike()` gained an `opts.flat` option so
+   they are BLADES not cones (a circular section reads as a whisker), reduced from a
+   row of 4 small cones to 3 large plates, and moved UP onto the cheek plane at mouth
+   height — seated on the lower jaw edge they sat behind the collar and never read.
+   **Still off: they are too long and lie too flat along the cheek; the reference's
+   flare out and back more, and sit slightly further forward.**
+2. **Forehead-to-muzzle angle** — DONE. The snout is now one continuous tapering form
+   flowing out of the braincase (see iteration 20 below), and the brow shelf was
+   lowered so it rides the curve instead of stepping above it.
+3. **Snout vertical thickness** — DONE. Sections are shallow and the tops descend on a
+   smooth curve; nose blunted rather than pointed.
+4. **Cheekbone definition** — a ridge exists from under the eye to the hinge; NOT yet
+   strong enough.
+5. **The neck** — OPEN.
+6. **Naturalness of stance** — OPEN, not started.
+7. **Shoulder proportions** — OPEN, not started.
+
+### (original wording of the request, for reference)
 
 The user added **five named reference images** to `corpus/character/` for exactly these
 (see the corpus table in `CLAUDE.md`). All of this is OPEN:
