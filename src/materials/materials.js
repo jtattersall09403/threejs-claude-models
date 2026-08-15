@@ -224,7 +224,11 @@ const SKIN_FRAG = /* glsl */`
   float tailScute = ss(0.30, 0.85, abs(sin(P.z * 62.0 + P.y * 26.0)));
 
   // banded scutes on throat and belly
-  float bands = ss(0.18, 0.92, abs(sin(P.y * 62.0 + P.z * 8.0)));
+  // 62 rad/m is a 10 cm period — less than one full band across a 6 cm throat, so the
+  // throat and the underside of the jaw rendered as one smooth pale expanse. Every
+  // reference crop shows a clear ladder of horizontal scutes there, and it is the main
+  // thing that stops the throat reading as an inflated balloon.
+  float bands = ss(0.18, 0.92, abs(sin(P.y * 176.0 + P.z * 20.0)));
   float bandZone = ventral * ss(1.36, 1.44, H.y) * ss(1.645, 1.575, H.y);
   bandZone = max(bandZone, ventral * ss(1.35, 1.25, P.y) * ss(0.80, 0.95, P.y));
 
@@ -258,8 +262,16 @@ const SKIN_FRAG = /* glsl */`
   float snoutTop = ss(1.630, 1.676, H.y) * ss(0.020, 0.090, H.z) * ss(0.20, 0.78, Nr.y);
   col = mix(col, col * 0.87, headMask * snoutTop * 0.35);
   col = mix(col, col * mix(0.84, 1.18, ss(0.34, 0.70, fbm(P * 8.5 + 61.0))), headMask * 0.55);
-  col = mix(col, belly, ventral * 0.66);
+  col = mix(col, belly, ventral * 0.52);
   col = mix(col, belly * vec3(1.06, 1.00, 0.80), bandZone * bands * 0.55);
+  // Transverse scutes across the UNDERSIDE OF THE JAW. The band term above is driven
+  // from world P at 62 rad/m — a 10 cm period, which is half a cycle across a jaw that is
+  // 5 cm deep, so the whole underside rendered as one smooth pale blob. In the
+  // jawline reference this is a clear ladder of horizontal plates and it is most of
+  // what stops the throat reading as a balloon from below.
+  float jawScute = ss(0.22, 0.90, abs(sin(H.z * 232.0 + H.x * 34.0)));
+  float jawUnder = headMask * ventral * ss(1.642, 1.586, H.y);
+  col = mix(col, col * mix(0.66, 1.18, jawScute), jawUnder * 0.62);
   // The tail is the only large expanse of bare hide left on a clothed figure, it is
   // smooth and convex, and it sits where both rim lights catch it — so at the body's
   // own value it rendered as the brightest, most saturated object in every rear
@@ -313,7 +325,7 @@ const SKIN_FRAG = /* glsl */`
   float neckZone = ss(1.386, 1.436, P.y) * ss(1.556, 1.512, P.y);
   float neckFold = 1.0 - abs(vnoise(vec3(P.x * 46.0, P.y * 5.0, P.z * 46.0)) * 2.0 - 1.0);
   neckFold = pow(clamp(neckFold, 0.0, 1.0), 2.2);
-  col = mix(col, col * vec3(1.34, 1.30, 1.16), neckZone * 0.62);
+  col = mix(col, col * vec3(1.15, 1.13, 1.05), neckZone * 0.55);
   col *= mix(1.0, 0.60, neckZone * neckFold * 0.85);
 
   // The tail was rendering a distinctly cooler blue-green than the head. The

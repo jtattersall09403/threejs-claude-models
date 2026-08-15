@@ -248,6 +248,18 @@ them pale cream — what is dark in the bust shot is the frill *behind* them.
     said "~0.66 of head length, ~27 deg"; the points it sat above had drifted to a full
     head length at 26 deg. Comments record intent, geometry records fact.
 
+25. **Individually-justified measurements COMPOUND.** Over four iterations the head got
+    a longer snout, a shorter braincase, a deeper jaw, a wider muzzle, bigger crest
+    blades, bigger cheek spikes and re-aimed horns — each one argued from a real
+    measurement against a real reference. The aggregate was a smooth bulbous manatee
+    snout inside a fringe of needles, and it took the user pointing at it to see. After
+    every geometry change to the head, look at the WHOLE head next to the reference, not
+    at the feature you just changed. If two consecutive changes both push the same
+    dimension the same way, stop and re-measure the whole thing.
+26. **Revert to the last good state rather than tuning forward out of a hole.** The
+    recovery here was `git show <good-commit>:src/parts/anatomy.js`, splice the head
+    field back, and re-apply only the changes that were independently verified wins.
+
 ## Commands
 
 | command | what it does |
