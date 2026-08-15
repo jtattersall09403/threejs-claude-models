@@ -117,8 +117,8 @@ export function makeClothTexture(size = 512, threads = 46, seed = 19) {
   const aw = new Float32Array(threads + 1);
   const ah = new Float32Array(threads + 1);
   for (let i = 0; i <= threads; i++) {
-    jw[i] = 0.58 + rand() * 0.90;   // warp thread "width" exponent
-    jh[i] = 0.58 + rand() * 0.90;
+    jw[i] = 0.50 + rand() * 1.15;   // warp thread "width" exponent
+    jh[i] = 0.50 + rand() * 1.15;
     aw[i] = 0.74 + rand() * 0.46;   // warp thread height
     ah[i] = 0.74 + rand() * 0.46;
   }

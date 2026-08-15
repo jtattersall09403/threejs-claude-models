@@ -154,7 +154,9 @@ export function buildHeadField() {
   // jawline: the jaw, throat and neck fused into one continuous expanse of scale,
   // which is exactly what the references do NOT show — there the jaw is a distinct
   // mass with a hard lower edge and the neck sits shadowed underneath it.
-  f.add(ellipsoid([0, 1.5590, 0.014], [0.046, 0.032, 0.044], { k: 0.018 }));
+  // Set further back and tucked under: the reference's neck disappears into a deep
+  // shadow beneath the jawline rather than meeting it flush.
+  f.add(ellipsoid([0, 1.5560, -0.004], [0.044, 0.030, 0.042], { k: 0.014 }));
   f.add(capsule([0, 1.448, -0.014], [0, 1.532, 0.008], 0.068, 0.048, { k: 0.04 }));
 
   // ---- cuts ------------------------------------------------------------------

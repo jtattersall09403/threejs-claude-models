@@ -267,7 +267,7 @@ const SKIN_FRAG = /* glsl */`
   // across 1.535..1.585, which is precisely the band this is trying to darken, so
   // multiplying by it cancels the effect exactly where it is wanted.
   float jawShadow = ss(1.612, 1.558, H.y) * ss(1.468, 1.514, H.y) * ss(-0.05, 0.01, H.z);
-  col *= mix(1.0, 0.34, jawShadow);
+  col *= mix(1.0, 0.26, jawShadow);
   // ...and a lit edge right along the jawline itself, so the boundary reads as an
   // edge the light catches rather than only as a gradient
   float jawEdge = ss(0.0085, 0.0018, abs(H.y - 1.6145)) * ss(-0.03, 0.02, H.z)
