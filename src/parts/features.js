@@ -21,23 +21,27 @@ const HORN_DIR = (s) => [s * 0.55, 0.72, 0.2];
 
 function hornPts(s) {
   return [
-    // Measured off the reference: the horn axis rises ~27 deg above horizontal and is
-    // ~0.66 of head length. Authored at 46 deg and 1.02x it read as a tall vertical
-    // antelope spire instead of a short swept-back stub — the largest silhouette error
-    // in critic round 4.
+    // Re-measured against face-left-profile.jpg rather than trusting the old note: in
+    // the reference the horn runs ~0.86 of head length and rises ~36 deg above
+    // horizontal. The points here had drifted to a FULL head length at 26 deg, which
+    // is why the profile read as a pair of long backswept bull horns rather than the
+    // reference's shorter, steeper sweep.
     [s * 0.0500, 1.7255, 0.004],
-    [s * 0.0645, 1.7590, -0.034],
-    [s * 0.0748, 1.7920, -0.090],
-    [s * 0.0802, 1.8200, -0.152],
-    [s * 0.0798, 1.8400, -0.208],
-    [s * 0.0768, 1.8510, -0.250],
+    [s * 0.0632, 1.7645, -0.030],
+    [s * 0.0722, 1.8035, -0.076],
+    [s * 0.0770, 1.8390, -0.128],
+    [s * 0.0768, 1.8620, -0.170],
+    [s * 0.0740, 1.8730, -0.200],
   ];
 }
 
 // Fine ring ridging concentrated near the base and gone by mid-length, as in the
 // reference. Trap #10: keep the per-ring phase step under a radian — 38 rad over
 // 46 rings is 0.84, so it reads as ridging rather than aliasing into a rope.
-const hornRadius = (t) => (0.0212 * Math.pow(1 - t, 0.62) + 0.0008)
+// 0.0158, not 0.0212. Measured off the profile reference the horn is about a
+// twentieth of the head's length across at the base; at 0.0212 it read as a heavy
+// bull horn and dominated the whole silhouette.
+const hornRadius = (t) => (0.0158 * Math.pow(1 - t, 0.62) + 0.0008)
   * (1 + 0.055 * Math.sin(t * 38) * Math.max(0, 1 - t * 1.6));
 
 function hornRings(side, field) {
@@ -159,13 +163,17 @@ export function buildJawSpikes(field) {
     // Longer and sharper than mere scutes: in the references these are proper
     // spines lying back along the brow ridge, and they carry a lot of the face's
     // character. Angled back rather than out, so they read against the skull.
+    // They have to PROJECT, not lie down. Angled back along the brow at 0.006 radius
+    // they were flush with the skull and invisible at profile distance; in every
+    // reference crop this is a rank of pale claws standing clear of the brow and
+    // pointing FORWARD over the eye, and it carries much of the face's character.
     for (const [p, dir, len, r] of [
-      [[s * 0.0292, 1.7325, 0.0470], [s * 0.20, 0.44, 0.88], 0.0405, 0.0062],
-      [[s * 0.0432, 1.7305, 0.0400], [s * 0.42, 0.40, 0.81], 0.0375, 0.0058],
-      [[s * 0.0552, 1.7240, 0.0290], [s * 0.64, 0.36, 0.68], 0.0330, 0.0053],
+      [[s * 0.0272, 1.7375, 0.0480], [s * 0.16, 0.30, 0.94], 0.0430, 0.0088],
+      [[s * 0.0418, 1.7350, 0.0410], [s * 0.36, 0.28, 0.89], 0.0400, 0.0082],
+      [[s * 0.0548, 1.7275, 0.0300], [s * 0.58, 0.26, 0.77], 0.0345, 0.0074],
     ]) {
       out.push(spike(seat(field, p, dir, 0.003), dir, len, r, {
-        taper: 0.9, flat: 0.38, sides: 10, steps: 7, bend: [0, 0.004, -0.010],
+        taper: 0.82, flat: 0.46, sides: 10, steps: 7, bend: [0, -0.005, 0.008],
       }));
     }
   }

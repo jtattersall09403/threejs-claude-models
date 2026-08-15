@@ -133,9 +133,9 @@ export function buildHeadField() {
   const f = new Field();
 
   // ---- braincase: tall and domed, widest at the temples -----------------------
-  f.add(ellipsoid([0, 1.6975, -0.010], [0.0668, 0.080, 0.101], { k: 0.055 }));
-  f.add(ellipsoid([0, 1.6735, -0.052], [0.047, 0.054, 0.052], { k: 0.05 }));  // domed occiput
-  f.add(ellipsoid([0, 1.7625, -0.014], [0.046, 0.025, 0.066], { k: 0.030 })); // raised crown plate
+  f.add(ellipsoid([0, 1.6985, -0.006], [0.0668, 0.0845, 0.0900], { k: 0.055 }));
+  f.add(ellipsoid([0, 1.6745, -0.045], [0.047, 0.056, 0.046], { k: 0.05 }));  // domed occiput
+  f.add(ellipsoid([0, 1.7650, -0.010], [0.046, 0.025, 0.060], { k: 0.030 })); // raised crown plate
 
   // ---- brow / eye ridges -------------------------------------------------------
   for (const s of [1, -1]) {
@@ -157,9 +157,9 @@ export function buildHeadField() {
   const snout = [
     // [z,     centre y, half-height, half-width]
     [0.046, 1.6724, 0.0337, 0.0400],
-    [0.100, 1.6572, 0.0274, 0.0316],
-    [0.138, 1.6440, 0.0215, 0.0242],
-    [0.170, 1.6360, 0.0176, 0.0184],   // blunt, not pointed: the reference nose is round
+    [0.104, 1.6560, 0.0280, 0.0320],
+    [0.152, 1.6408, 0.0216, 0.0244],
+    [0.192, 1.6300, 0.0170, 0.0182],   // blunt, not pointed: the reference nose is round
   ];
   for (let i = 0; i < snout.length; i++) {
     const [z, cy, hy, hx] = snout[i];
@@ -167,17 +167,20 @@ export function buildHeadField() {
       { k: i === 0 ? 0.055 : 0.038 }));
   }
   // a low dorsal ridge riding the same curve — a crest, not a separate bridge
-  f.add(capsule([0, 1.6990, 0.020], [0, 1.6480, 0.146], 0.0130, 0.0078,
-    { k: 0.026, scale: [1, 0.62, 1] }));
-  f.add(ellipsoid([0, 1.6370, 0.1755], [0.0148, 0.0130, 0.0126], { k: 0.016 })); // nose pad
+  // Also the nasal BRIDGE: it fills the step between the brow shelf and the first
+  // snout station. Without it the profile's top line dips behind the brow and rises
+  // again over the nose — an S where the reference is one straight ramp.
+  f.add(capsule([0, 1.7095, 0.032], [0, 1.6410, 0.166], 0.0172, 0.0078,
+    { k: 0.030, scale: [1, 0.66, 1] }));
+  f.add(ellipsoid([0, 1.6310, 0.1980], [0.0148, 0.0130, 0.0126], { k: 0.016 })); // nose pad
 
   // ---- lower jaw: deep and straight, turning up at a visible hinge --------------
   // Narrower than the upper muzzle at every station, so the jaw tucks under the lip
   // instead of squaring off flush with it.
-  f.add(roundBox([0, 1.6005, 0.070], [0.0290, 0.020, 0.030], 0.016, { k: 0.046 }));
-  f.add(roundBox([0, 1.6020, 0.112], [0.0232, 0.018, 0.022], 0.0140, { k: 0.032 }));
-  f.add(roundBox([0, 1.6030, 0.142], [0.0166, 0.014, 0.016], 0.0118, { k: 0.024 }));
-  f.add(ellipsoid([0, 1.6080, 0.144], [0.0205, 0.016, 0.017], { k: 0.014 }));   // chin
+  f.add(roundBox([0, 1.5960, 0.070], [0.0290, 0.0245, 0.032], 0.016, { k: 0.046 }));
+  f.add(roundBox([0, 1.5985, 0.116], [0.0234, 0.0215, 0.024], 0.0140, { k: 0.032 }));
+  f.add(roundBox([0, 1.6010, 0.156], [0.0168, 0.0165, 0.018], 0.0118, { k: 0.024 }));
+  f.add(ellipsoid([0, 1.6055, 0.166], [0.0206, 0.0170, 0.017], { k: 0.014 }));   // chin
   // The cheeks are the whole reason the head reads as a box or as a snouted skull.
   // Kept narrow and swept BACK: in the reference the face steps in hard below the
   // eyes, so the muzzle — not the jaw — is what you see from the front.
@@ -222,12 +225,12 @@ export function buildHeadField() {
   // crease stays on the surface instead of running out past the corners of the mouth
   // halfT 0.0026 is ~1.7 head-bake cells — too shallow to survive polygonisation, so
   // the mouth reduced to a faint scale-row transition. Deepened to ~2.7 cells.
-  f.sub(creaseSlot((z) => LIP.y0 + (LIP.z0 - z) * LIP.slope, 0.0042, [-0.005, 0.158],
-    (z) => 0.046 - 0.140 * Math.max(0, z - 0.040),
+  f.sub(creaseSlot((z) => LIP.y0 + (LIP.z0 - z) * LIP.slope, 0.0042, [-0.005, 0.182],
+    (z) => 0.046 - 0.125 * Math.max(0, z - 0.040),
     { k: 0.0045, yMin: 1.56, yMax: 1.68, xBound: 0.07 }));
   // nostrils — at the old size they were below the bake resolution and invisible
   for (const s of [1, -1]) {
-    f.sub(ellipsoid([s * 0.0098, 1.6630, 0.1575], [0.0056, 0.0070, 0.0118], { k: 0.0035 }));
+    f.sub(ellipsoid([s * 0.0096, 1.6580, 0.1800], [0.0056, 0.0070, 0.0118], { k: 0.0035 }));
   }
   // ear depression
   for (const s of [1, -1]) {

@@ -229,6 +229,25 @@ them pale cream — what is dark in the bust shot is the frill *behind* them.
     and `a` is where it fades to zero. Setting `b` very small leaves a sub-pixel core
     and the feature disappears even though the mask is present and correctly placed.
 
+21. **Anything projected onto a garment must be projected onto the garment you can
+    SEE.** The sash and belt were ray-cast onto the tunic's cut-free *offset shell*,
+    which is the coat only over the ribcage — at the waist the coat is the skirt,
+    a centimetre further out. Both surfaced only where a fold happened to poke through
+    and read as torn slivers and a blade stuck through the cloth. The projection target
+    must carry every ADDITIVE part of the garment and none of the cuts.
+22. **A bake box that clips a primitive gets sealed with a flat plate.** The tunic
+    skirt's bottom cap bulged 8 cm below the bake box floor, so marching cubes closed
+    it off and every low angle showed a bare disc under the hem. If a form is meant to
+    end, cut it deliberately; never let the box do it.
+23. **The rest pose is not the display pose.** Rendering the symmetric measuring pose
+    reads as a shop mannequin however good the anatomy is. `src/rig/pose.js` applies a
+    stance as bone rotations AFTER `mesh.bind()` — before it, the bind inverses have
+    not been snapshotted and the stance gets baked in twice. Re-plant the feet after
+    posing: rotating the pelvis lifts one ankle and drops the other.
+24. **Re-measure before trusting a comment that quotes a measurement.** The horn note
+    said "~0.66 of head length, ~27 deg"; the points it sat above had drifted to a full
+    head length at 26 deg. Comments record intent, geometry records fact.
+
 ## Commands
 
 | command | what it does |
