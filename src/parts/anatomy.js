@@ -48,6 +48,19 @@ export function headPoint(p) {
 
 export const EYE_WORLD = headPoint(EYE.c);
 
+/**
+ * Centres of the two face MARKINGS whose masks live in SKIN_FRAG.
+ *
+ * They are here, next to the geometry they track, and fed to the shader as #defines
+ * exactly like EYE and LIP — because they are the same hazard as trap 8. Twice this
+ * session the brow shelf was moved in this file and its maroon mask was left behind in
+ * materials.js, and both times the symptom was "the brow does not read" followed by
+ * several rounds of tuning the COLOUR, which was never the problem. If you move the
+ * brow shelf or the cheek, move these with it.
+ */
+export const BROW_MARK = { c: [0.0430, 1.7380, 0.080] };   // maroon brow plates
+export const CHEEK_MARK = { c: [0.054, 1.6775, -0.004] };  // dark stripe, eye to jaw hinge
+
 // The mouth line. The geometry cut and the shader's lip paint MUST share this or
 // the dark line drifts off the groove and smears onto the cheek.
 export const LIP = { y0: 1.6250, z0: 0.142, slope: 0.176 };

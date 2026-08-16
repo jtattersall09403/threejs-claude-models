@@ -6,7 +6,7 @@
 // need no tangents.
 import * as THREE from 'three';
 import { makeScaleTexture, makeClothTexture, makeLeatherTexture } from './textures.js';
-import { EYE, HEAD_XF, LIP } from '../parts/anatomy.js';
+import { EYE, HEAD_XF, LIP, BROW_MARK, CHEEK_MARK } from '../parts/anatomy.js';
 
 const COMMON = /* glsl */`
 varying vec3 vRest;
@@ -229,7 +229,7 @@ const SKIN_FRAG = /* glsl */`
   // ...continuing back from the eye to the jaw hinge as a dark mask stripe. This is
   // the strongest value break on the reference face and without it the cheek reads
   // as one flat panel between brow and jaw.
-  float maskD = length((J - vec3(0.054, 1.6775, -0.004)) * vec3(0.40, 1.75, 0.80));
+  float maskD = length((J - vec3(CHEEK_X, CHEEK_Y, CHEEK_Z)) * vec3(0.40, 1.75, 0.80));
   socket = max(socket, ss(0.110, 0.032, maskD) * 0.92 * lateral * ss(0.095, 0.042, J.z));
 
   // maroon plate over the brow ridges and between the eyes. This is a NARROW band
@@ -247,7 +247,7 @@ const SKIN_FRAG = /* glsl */`
   // At the old centre the nearest brow surface already evaluated to browD 0.066 against
   // a 0.074 outer radius, i.e. a mask of ~0.05 — three rounds of "the brow does not
   // read" were this, not the colour.
-  float browD = length((J - vec3(0.0430, 1.7380, 0.080)) * vec3(0.62, 1.45, 1.90));
+  float browD = length((J - vec3(BROW_X, BROW_Y, BROW_Z)) * vec3(0.62, 1.45, 1.90));
   float brow = ss(0.076, 0.016, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.646, 1.672, H.y)
              * ss(-0.020, 0.014, J.z);
   // broken into plates rather than one even wash of colour
@@ -669,6 +669,8 @@ function defines() {
     HEAD_PX: HEAD_XF.pivot[0].toFixed(5), HEAD_PY: HEAD_XF.pivot[1].toFixed(5), HEAD_PZ: HEAD_XF.pivot[2].toFixed(5),
     HEAD_OX: HEAD_XF.offset[0].toFixed(5), HEAD_OY: HEAD_XF.offset[1].toFixed(5), HEAD_OZ: HEAD_XF.offset[2].toFixed(5),
     LIP_Y0: LIP.y0.toFixed(5), LIP_Z0: LIP.z0.toFixed(5), LIP_SLOPE: LIP.slope.toFixed(5),
+    BROW_X: BROW_MARK.c[0].toFixed(5), BROW_Y: BROW_MARK.c[1].toFixed(5), BROW_Z: BROW_MARK.c[2].toFixed(5),
+    CHEEK_X: CHEEK_MARK.c[0].toFixed(5), CHEEK_Y: CHEEK_MARK.c[1].toFixed(5), CHEEK_Z: CHEEK_MARK.c[2].toFixed(5),
   };
 }
 
