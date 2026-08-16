@@ -196,6 +196,37 @@ immediately — both of these were obvious in one frame.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
 
+### Iteration 27 — an inside-out winding bug that had been there all along
+
+`emit()` in core/geom.js orders its triangles assuming **u x v points ALONG the
+tangent**. Both frame helpers in clothing.js supplied the opposite handedness —
+`bandFrame` computes `u = tan x v`, which gives `u x v = -tan`, and the belt's explicit
+frame did the same. So the sash and the belt were **inside-out meshes**. The capture
+audit had been printing their NEGATIVE signed volume every single run and it was read as
+"open tube, volume is meaningless" rather than as the bug it was.
+
+Single-sided, their culled back faces left hard-edged holes across the hip and around
+the hands — the "torn geometry" that cost several iterations chasing the fold noise, the
+projection code, the shadow bias and the bake resolution in turn. `emit()` now enforces
+canonical handedness itself, so no sweep can get this wrong again.
+
+Two related fixes fell out of it:
+- `alignRot` inverts its result when the two normals are near-opposite. On the (now
+  double-sided) garments three.js flips `normal` for back faces, so every back-facing
+  fragment hit that degenerate branch and had its detail normal inverted. The rest
+  normal is now flipped to match `gl_FrontFacing`.
+- Cloth detail normal strength halved. At grazing incidence a strong tangent-space
+  perturbation flips adjacent facets between lit and unlit and combs the silhouette into
+  hard strips. Some of this remains at extreme close range on the silhouette only;
+  normal viewing angles are clean.
+
+Garment values were also re-judged from the REAR of the orbit, where the two rim lights
+hit squarely — the belt, wrist wraps and sash were blowing out to white back there while
+looking correct from the front.
+
+**HANDING OFF TO THE CRITIC** — the builder's own list is empty.
+
+
 ### Iteration 26 — garments, after the head
 
 With the head signed off by eye from every angle, the same treatment on the garments:
