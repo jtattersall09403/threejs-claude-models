@@ -83,23 +83,23 @@ export function clothingFields(body) {
     // the collar must clear the jaw by roughly a quarter of a head height. After any
     // change to HEAD_XF.scale this needs re-checking: scaling the head moves the jaw
     // but leaves the collar where it was.
-    f.add(capsule([0, 1.348, -0.008], [0, 1.390, 0.006], 0.108, 0.092, { k: 0.024 }));
-    f.add(ellipsoid([0, 1.354, 0.038], [0.090, 0.040, 0.064], { k: 0.020 }));  // knotted front
+    f.add(capsule([0, 1.366, -0.008], [0, 1.408, 0.006], 0.108, 0.092, { k: 0.024 }));
+    f.add(ellipsoid([0, 1.372, 0.038], [0.090, 0.040, 0.064], { k: 0.020 }));  // knotted front
     // Wrap ridges. Without them the cowl is a smooth shield and, seen through the
     // coat's neckline, reads as a moulded bib rather than as cloth wound round a neck.
-    for (const [y, z, r] of [[1.336, 0.030, 0.098], [1.356, 0.026, 0.100], [1.376, 0.020, 0.096]]) {
+    for (const [y, z, r] of [[1.354, 0.030, 0.098], [1.374, 0.026, 0.100], [1.394, 0.020, 0.096]]) {
       f.add(capsule([-0.070, y, z], [0.070, y, z], r * 0.13, r * 0.13,
         { k: 0.016, scale: [1, 1, 0.86] }));
     }
     // a rolled rim right around the opening, so the collar reads as a hemmed edge
     // the head sits down into, rather than as a smooth funnel
-    f.add(capsule([0, 1.370, 0.010], [0, 1.374, -0.006], 0.098, 0.096, { k: 0.012 }));
-    f.add(ellipsoid([0.030, 1.376, 0.066], [0.036, 0.026, 0.030], { k: 0.018 }));
+    f.add(capsule([0, 1.388, 0.010], [0, 1.392, -0.006], 0.098, 0.096, { k: 0.012 }));
+    f.add(ellipsoid([0.030, 1.394, 0.066], [0.036, 0.026, 0.030], { k: 0.018 }));
     // The cowl rolled down at the nape. Kept LOW and small — built up as a full hood
     // it read as a backpack strapped between the shoulder blades.
-    f.add(ellipsoid([0, 1.350, -0.074], [0.092, 0.044, 0.044], { k: 0.030 }));
-    f.add(ellipsoid([0, 1.382, -0.086], [0.070, 0.032, 0.032], { k: 0.028 }));
-    f.sub(capsule([0, 1.376, -0.016], [0, 1.70, 0.014], 0.068, 0.078, { k: 0.018 })); // neck hole
+    f.add(ellipsoid([0, 1.368, -0.074], [0.092, 0.044, 0.044], { k: 0.030 }));
+    f.add(ellipsoid([0, 1.400, -0.086], [0.070, 0.032, 0.032], { k: 0.028 }));
+    f.sub(capsule([0, 1.394, -0.016], [0, 1.70, 0.014], 0.066, 0.076, { k: 0.018 })); // neck hole
     out.push({ field: f, bounds, cell: 0.0055, region: REGION.UNDERSHIRT });
   }
 
@@ -163,10 +163,10 @@ export function clothingFields(body) {
     }
     // Neckline: one tilted opening that dips at the front. Cutting a separate hole
     // for the undershirt reads as a disc stuck on the chest — don't.
-    f.sub(capsule([0, 1.352, 0.062], [0, 1.60, 0.010], 0.058, 0.094, { k: 0.028 }));
+    f.sub(capsule([0, 1.370, 0.062], [0, 1.60, 0.010], 0.058, 0.094, { k: 0.028 }));
     // rolled collar band around the opening, so the edge reads as a hem
-    f.add(capsule([0, 1.352, 0.040], [0, 1.382, 0.030], 0.082, 0.080, { k: 0.018 }));
-    f.sub(capsule([0, 1.344, 0.064], [0, 1.62, 0.008], 0.054, 0.088, { k: 0.020 }));
+    f.add(capsule([0, 1.370, 0.040], [0, 1.400, 0.030], 0.082, 0.080, { k: 0.018 }));
+    f.sub(capsule([0, 1.362, 0.064], [0, 1.62, 0.008], 0.054, 0.088, { k: 0.020 }));
     // The hem. A garment edge is a real edge — cloth stops. Cut it flat and let the
     // ring of hem ellipsoids above roll over the cut, so it reads as a hemmed border
     // rather than as a sawn plane or as a closed dome.

@@ -188,7 +188,7 @@ export function buildHeadField() {
   // The z-radius has to TAPER too. Held at 0.046 for every station after the first, the
   // last one reached z 0.19 as a fat bulb and the snout ended in a blunt vertical face;
   // the reference tapers to a rounded point with the nostril right at the tip.
-  const snoutZR = [0.062, 0.048, 0.040, 0.030];
+  const snoutZR = [0.050, 0.044, 0.038, 0.028];
   for (let i = 0; i < snout.length; i++) {
     const [z, cy, hy, hx] = snout[i];
     f.add(ellipsoid([0, cy, z], [hx, hy, snoutZR[i]],
@@ -236,7 +236,7 @@ export function buildHeadField() {
   // NARROWER THAN THE JAW. At 0.057 at the top the throat was wider than the jaw above
   // it, so from below the two fused into one broad column with no jawline at all — the
   // reference shows a jaw with a hard lower edge and a distinctly narrower neck under it.
-  f.add(capsule([0, 1.448, -0.014], [0, 1.532, 0.008], 0.070, 0.0455, { k: 0.04 }));
+  f.add(capsule([0, 1.448, -0.014], [0, 1.532, 0.008], 0.074, 0.0510, { k: 0.04 }));
 
   // ---- cuts ------------------------------------------------------------------
   for (const s of [1, -1]) {
