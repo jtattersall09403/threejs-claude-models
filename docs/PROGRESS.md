@@ -196,6 +196,38 @@ immediately — both of these were obvious in one frame.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
 
+### Iteration 29 — critic round 5 list closed, and what a full sweep then showed
+
+All twelve of critic round 5's defects are worked (status table above). Two were real
+bugs rather than tuning:
+
+- **Defect 5** was structural. Shortening and deepening the muzzle raised its DORSUM to
+  head-space y 1.709, overlapping the brow ridge in both y AND z — so the crown cap and
+  the brow field were both painting straight down the centre of the snout. Neither axis
+  can separate them; a lateral gate can. `debugMasks(1)` showed it in one look.
+- **Defect 8** had a blocker underneath it. `spike()` swept a PARALLEL-TRANSPORT frame,
+  which picks its starting normal from whichever world axis is least parallel to the
+  tangent — so `opts.flat` set the cross-section's aspect but NOT which way the flat face
+  pointed, and across a fanned row they came out random. That is why widening them never
+  made them read flat. `spike()` now takes an explicit frame (`opts.faceUp`).
+
+**Then a full sweep caught two of my own over-corrections**, which is the point of
+sweeping rather than assuming individual fixes compose:
+- The muzzle was cut PAST the critic's target (tip-to-eye ~0.22 against the 0.25 asked
+  for) and read as a snub-nosed pug. Lengthened back.
+- The jaw blades, once the frame fix made them visible, were too long and aimed too far
+  outboard — they read as lateral whiskers. Shortened and swung back along the jaw.
+
+**My remaining open list** (not yet fixed, and the reason this is not a hand-off):
+1. The jaw spikes still project laterally more than the reference's, which tuck along
+   the jaw line.
+2. The brow does not carry the big dark-red mass the reference has, even after the
+   lateral gate — the field is correctly placed now but too weak.
+3. The throat reads as a long pale column; the reference's is shorter with the collar
+   sitting closer under the jaw.
+4. The muzzle still does not project as far as the reference's.
+
+
 ### Iteration 28 — working critic round 5's ranked list
 
 Report and evidence in `critic/latest/`. Status:
