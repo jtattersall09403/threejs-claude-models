@@ -320,6 +320,29 @@ them pale cream — what is dark in the bust shot is the frill *behind* them.
     shader masks that track it have to move with it.** They are two copies of the same
     measurement, exactly like `LIP` in trap 8, and nothing warns you when they diverge.
 
+28. **A NEGATIVE signed volume in the capture audit means the mesh is inside-out — do
+    not explain it away.** The sash and belt printed a negative volume every single run
+    and it was rationalised as "open tube, volume is meaningless". They were genuinely
+    inside-out: `emit()` in core/geom.js orders triangles assuming `u × v` points ALONG
+    the tangent, and both frame helpers in clothing.js supplied the opposite handedness.
+    Single-sided, the culled back faces left hard-edged holes that read as torn geometry
+    and cost several iterations chasing folds, projections, shadow bias and bake
+    resolution. `emit()` now enforces the handedness itself.
+29. **`alignRot(from, to, v)` inverts when `from` and `to` are near-opposite.** On a
+    double-sided material three.js flips `normal` for back faces, so every back-facing
+    fragment hits that degenerate branch and gets its detail normal inverted. Flip the
+    rest normal by `gl_FrontFacing` before calling it.
+30. **Judge garment values from the REAR of the orbit as well as the front.** The two
+    rim lights are strong and hit the back squarely; the belt, wrist wraps and sash all
+    blew out to white back there while looking correct from the front.
+31. **A texture's height channel has to USE ITS RANGE.** Everything that gives the hide
+    its value structure — the reticulated net, the crevice darkening, the plate-size
+    blend, the roughness breakup — keys off it, and a saturated channel makes all of
+    them inert at once. `debugMasks(8)` paints it; reach for that before tuning anything
+    that reads it. Retune the normal strength after changing the range: the two were
+    balanced against each other, and restoring the range turned every scale into a hard
+    pyramid until the strength came down with it.
+
 ## When you are stuck, look it up
 
 If a particular effect is proving hard — a shading technique, a Three.js API, a way of
