@@ -201,21 +201,24 @@ export function buildHeadField() {
   // reference snout is thin in vertical section, not a deep box.
   const snout = [
     // [z,     centre y, half-height, half-width]
-// The face BELOW the eyes has to stay broad. Narrowing the jaw to fix a slab-like
+// TAPER ALONG THE LENGTH, do not scale uniformly. The front view wants width at the
+    // cheek and the low view wants a V narrowing to the chin; correcting either with a
+    // UNIFORM width change breaks the other, and that oscillation cost four iterations.
+    // The face BELOW the eyes has to stay broad. Narrowing the jaw to fix a slab-like
     // read from underneath left the front view a narrow tower under a broad skull, where
     // the reference's lower face is nearly three quarters of the skull's width.
     // Cut too far. The critic measured the muzzle 45% too long and it was, but shortening
     // to tip-to-eye ~0.22 of skull length overshot the 0.25 target and left a snub-nosed
     // pug against a reference muzzle that clearly projects.
     [0.042, 1.6752, 0.0342, 0.0448],
-    [0.090, 1.6612, 0.0280, 0.0378],
-    [0.128, 1.6490, 0.0228, 0.0302],
-    [0.164, 1.6382, 0.0186, 0.0236],   // blunt, not pointed: the reference nose is round
+    [0.090, 1.6612, 0.0280, 0.0352],
+    [0.128, 1.6490, 0.0228, 0.0258],
+    [0.164, 1.6382, 0.0186, 0.0186],   // blunt, not pointed: the reference nose is round
   ];
   // The z-radius has to TAPER too. Held at 0.046 for every station after the first, the
   // last one reached z 0.19 as a fat bulb and the snout ended in a blunt vertical face;
   // the reference tapers to a rounded point with the nostril right at the tip.
-  const snoutZR = [0.048, 0.040, 0.034, 0.026];
+  const snoutZR = [0.048, 0.036, 0.029, 0.022];
   for (let i = 0; i < snout.length; i++) {
     const [z, cy, hy, hx] = snout[i];
     f.add(ellipsoid([0, cy, z], [hx, hy, snoutZR[i]],
@@ -247,7 +250,7 @@ export function buildHeadField() {
     f.add(ellipsoid([s * 0.0540, 1.6720, 0.036], [0.0165, 0.0135, 0.040], { k: 0.011 }));
     f.add(ellipsoid([s * 0.0580, 1.6660, -0.004], [0.0150, 0.0120, 0.030], { k: 0.011 }));
     f.add(ellipsoid([s * 0.0330, 1.6395, 0.014], [0.0158, 0.038, 0.046], { k: 0.048 })); // cheek / masseter
-    f.add(ellipsoid([s * 0.0472, 1.6405, -0.022], [0.0176, 0.050, 0.038], { k: 0.032 })); // jaw hinge
+    f.add(ellipsoid([s * 0.0452, 1.6405, -0.022], [0.0168, 0.050, 0.038], { k: 0.032 })); // jaw hinge
   }
 
   // ---- throat / neck (overlaps the body bake) ------------------------------------
