@@ -18,7 +18,7 @@ import { TAIL_SPINE } from '../rig/skeleton.js';
 
 export const EYE = {
   c: [0.0512, 1.6975, 0.0688],   // mirrored on x
-  r: 0.0192,   // The ball stays a decent size; what stops a free sphere edge showing
+  r: 0.0180,   // The ball stays a decent size; what stops a free sphere edge showing
                // is the APERTURE being clearly smaller than the ball, below. Shrinking
                // and sinking the ball instead just makes the eye vanish.
   gaze: [0.055, 0.0, 0.9985],    // near-forward. At 0.16 outward the iris sat off to
@@ -206,8 +206,8 @@ export function buildHeadField() {
   // ---- lower jaw: deep and straight, turning up at a visible hinge --------------
   // Narrower than the upper muzzle at every station, so the jaw tucks under the lip
   // instead of squaring off flush with it.
-  f.add(roundBox([0, 1.5995, 0.064], [0.0290, 0.0215, 0.028], 0.016, { k: 0.046 }));
-  f.add(roundBox([0, 1.6020, 0.098], [0.0232, 0.019, 0.020], 0.0140, { k: 0.032 }));
+  f.add(roundBox([0, 1.5995, 0.064], [0.0262, 0.0215, 0.028], 0.016, { k: 0.046 }));
+  f.add(roundBox([0, 1.6020, 0.098], [0.0206, 0.019, 0.020], 0.0140, { k: 0.032 }));
   f.add(roundBox([0, 1.6046, 0.122], [0.0170, 0.0148, 0.015], 0.0118, { k: 0.024 }));
   f.add(ellipsoid([0, 1.6106, 0.124], [0.0208, 0.0166, 0.016], { k: 0.014 }));   // chin
   // The cheeks are the whole reason the head reads as a box or as a snouted skull.
@@ -219,8 +219,8 @@ export function buildHeadField() {
     // references this catches light and is one of the head's clearest structures.
     f.add(ellipsoid([s * 0.0540, 1.6720, 0.036], [0.0165, 0.0135, 0.040], { k: 0.011 }));
     f.add(ellipsoid([s * 0.0580, 1.6660, -0.004], [0.0150, 0.0120, 0.030], { k: 0.011 }));
-    f.add(ellipsoid([s * 0.0350, 1.6335, 0.014], [0.0168, 0.044, 0.046], { k: 0.048 })); // cheek / masseter
-    f.add(ellipsoid([s * 0.0485, 1.6405, -0.022], [0.0180, 0.050, 0.038], { k: 0.032 })); // jaw hinge
+    f.add(ellipsoid([s * 0.0306, 1.6335, 0.014], [0.0148, 0.044, 0.046], { k: 0.048 })); // cheek / masseter
+    f.add(ellipsoid([s * 0.0438, 1.6405, -0.022], [0.0158, 0.050, 0.038], { k: 0.032 })); // jaw hinge
   }
 
   // ---- throat / neck (overlaps the body bake) ------------------------------------
@@ -243,7 +243,7 @@ export function buildHeadField() {
     // head's width; ours was under an eighth and read as a bean rather than as the
     // large forward-facing almond that carries the whole expression.
     f.sub(ellipsoid([s * EYE.c[0], EYE.c[1] + 0.0015, EYE.c[2] + 0.008],
-      [0.0272, 0.0166, 0.0296], { k: 0.006 }));
+      [0.0264, 0.0152, 0.0286], { k: 0.006 }));
     // Lid rims above and below, so the opening reads as lidded rather than as a
     // crater. The upper lid is built from two lobes at different heights — outer
     // high, inner low — so the eye slants down toward the snout. The references'
