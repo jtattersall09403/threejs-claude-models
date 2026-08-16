@@ -165,6 +165,24 @@ export function spike(base, dir, length, radius, opts = {}) {
       })(),
     });
   }
+// `flat` only sets the cross-section's ASPECT. Which way the flat face POINTS is
+  // decided by the frame, and the default parallel-transport frame picks its starting
+  // normal from whichever world axis happens to be least parallel to the tangent — so
+  // across a row of spikes fanned at different angles the flat faces come out pointing
+  // essentially at random. That is why the jaw blades kept reading as needles no matter
+  // what `flat` was set to. `opts.faceUp` supplies an explicit reference so the wide
+  // axis lies in a chosen plane; the default is a broadside-out blade.
+  if (opts.flat) {
+    const ref = opts.faceUp || [0, 1, 0];
+    let u = cross(d, ref);
+    if (Math.hypot(u[0], u[1], u[2]) < 1e-3) u = cross(d, [1, 0, 0]);
+    u = norm(u);
+    const v = norm(cross(u, d));
+    return sweep(rings, {
+      sides: opts.sides || 10, capEnd: false, capStart: opts.capStart !== false,
+      frameFn: () => [u, v],
+    });
+  }
   return sweep(rings, { sides: opts.sides || 10, capEnd: false, capStart: opts.capStart !== false });
 }
 
