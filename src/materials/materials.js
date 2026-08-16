@@ -235,8 +235,8 @@ const SKIN_FRAG = /* glsl */`
   // At the old centre the nearest brow surface already evaluated to browD 0.066 against
   // a 0.074 outer radius, i.e. a mask of ~0.05 — three rounds of "the brow does not
   // read" were this, not the colour.
-  float browD = length((J - vec3(0.0430, 1.7380, 0.086)) * vec3(0.62, 1.45, 0.95));
-  float brow = ss(0.086, 0.018, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.646, 1.672, H.y)
+  float browD = length((J - vec3(0.0430, 1.7380, 0.080)) * vec3(0.62, 1.45, 1.90));
+  float brow = ss(0.076, 0.016, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.646, 1.672, H.y)
              * ss(-0.020, 0.014, J.z);
   // broken into plates rather than one even wash of colour
   brow *= 0.62 + 0.55 * ss(0.30, 0.74, fbm(J * 52.0 + 5.0));
@@ -518,8 +518,10 @@ const HORN_FRAG = /* glsl */`
   // — the profile, the close crop and the bust all agree — where the horns, the jaw
   // spikes and the cheek spikes are pale bone. Rendered in bone it read as a tiara.
   if (vRegion > 3.5) {
-    col = mix(vec3(0.0262, 0.0104, 0.0088), vec3(0.0104, 0.0046, 0.0042), ss(0.25, 1.0, t))
-        * (0.78 + 0.38 * grime) * mix(0.86, 1.08, streakH);
+    // DARK OXBLOOD. At the previous value the crest rendered salmon-pink from above and
+    // read as a row of plastic fins; the references show near-black red blades.
+    col = mix(vec3(0.0094, 0.0038, 0.0032), vec3(0.0038, 0.0018, 0.0017), ss(0.25, 1.0, t))
+        * (0.82 + 0.28 * grime) * mix(0.90, 1.05, streakH);
     gRoughOut = clamp(0.62 + grime * 0.24, 0.42, 0.94);
   }
   // region 3 is the claws: dark horn, not the pale bone of the head spikes. Left the

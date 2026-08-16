@@ -107,12 +107,21 @@ export function makeScaleTexture(size = 512, cells = 11, seed = 7) {
       // relief but no pattern — which is the defect that survived a dozen attempts to
       // fix it by tuning the terms that read h.
       const edge = Math.min(1, (f2 - f1) * cells * 1.15);
-      const dome = Math.pow(edge, 0.62);
+// SMOOTHSTEP, not a power curve. pow(edge, 0.62) rises steeply out of the groove and
+      // then flattens, which gives every scale a flat top with a hard rim — a field of
+      // faceted pyramids across the back of the skull. Smoothstep is flat at the plate
+      // centre AND at the groove floor with a smooth shoulder between, which is the
+      // shape a keratin scale actually has.
+      const dome = edge * edge * (3 - 2 * edge);
       const grain = (detail[y * size + x] - 0.5) * 0.16;
       height[y * size + x] = 0.04 + dome * 0.90 + grain * 0.55;
     }
   }
-  return heightToTexture(height, size, 4.6);
+// Normal strength 2.1, not 4.6. That number was tuned when the height channel was
+  // saturated and its gradients were confined to a one-texel groove; now that the dome
+  // uses its full range the same strength turns every scale into a hard pyramid, and the
+  // back of the skull renders as a field of faceted chunks.
+  return heightToTexture(height, size, 2.1);
 }
 
 /** Coarse woven cloth. */
