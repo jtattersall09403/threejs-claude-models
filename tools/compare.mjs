@@ -56,8 +56,11 @@ const PAIRS = [
     name: 'body',
     ref: 'Screenshot_20260815_081046_com_google_android_youtube_MainActivity.jpg',
     crop: [980, 700, 900, 1000],
-    render: 'full_front.png',
-    note: 'full body — garment layers, sash, belt, overall silhouette',
+    // torso_front, NOT full_front. The reference crop is waist-up; against a full-figure
+    // render the two sides were at completely different scales and the sheet answered
+    // nothing (CLAUDE.md's framing rule — judge the framing before judging the model).
+    render: 'torso_front.png',
+    note: 'torso — garment layers, sash, belt, collar, coat value',
   },
 ];
 

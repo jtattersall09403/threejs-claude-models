@@ -30,14 +30,17 @@ SHOTS.push(
   ['head_rear34', 145, 8, 0.96, 1.678, 30],
   ['head_low', 10, -16, 0.94, 1.660, 30],
   ['head_top', 20, 46, 0.96, 1.700, 30],
-  ['torso_front', 8, 2, 1.70, 1.22, 30],
+  ['torso_front', 8, 2, 1.62, 1.26, 30],
   // head AND shoulders together, framed like face-front-and-bust-proportions.jpg. The
   // bust comparison exists to judge head-to-shoulder proportion, so a framing that
   // crops the head out of it answers nothing.
   ['bust', 6, 3, 1.35, 1.575, 30],
   ['hands', 48, -4, 1.05, 0.86, 30],
   ['feet', 25, 10, 1.15, 0.28, 30],
-  ['tail', 205, 4, 1.75, 0.78, 32],
+// The tail leaves the hips going BACK and DOWN to about y 0.2; framed at y 0.78 from
+  // 1.75 m the shot was filled with the coat's back and the tail was out of frame
+  // entirely — the one thing it exists to show.
+  ['tail', 218, 10, 1.55, 0.52, 34],
   ['full_front', 0, 3, 3.95, 0.92, 32],
   ['full_side', 90, 3, 3.95, 0.92, 32],
 );

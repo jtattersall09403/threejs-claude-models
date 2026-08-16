@@ -597,10 +597,13 @@ const CLOTH_FRAG = /* glsl */`
   float dirt = fbm(vRest * 7.5);
   float wear = fbm(vRest * 24.0);
   vec3 col = uBase * (0.82 + 0.34 * dirt);
-  col = mix(col, uBase * 0.60, ss(0.58, 0.92, fbm(vRest * 3.1 + 5.0)));
+// Gentler and finer. At 40% darkening on a 3.1-frequency fbm the garments carried big
+  // soft blobs that read as stains or damage rather than as worn cloth, and on the
+  // trousers they swamped what little leg form the shading had.
+  col = mix(col, uBase * 0.78, ss(0.52, 0.94, fbm(vRest * 5.4 + 5.0)));
   // wide range: the reference cloth is coarse and strongly self-shadowed, and at a
   // narrow range the garments render as one smooth latex bodysuit
-  col *= mix(0.60, 1.12, ss(0.1, 0.75, h));
+  col *= mix(0.66, 1.14, ss(0.1, 0.75, h));
 
   // drape creases — shaded, not baked. Bend the normal into the crease as well as
   // darkening it, or the folds read as a painted-on pattern rather than as relief.
