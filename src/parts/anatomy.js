@@ -81,7 +81,7 @@ export function buildBodyField() {
   const K = 0.055;
 
   // ---- torso ----------------------------------------------------------------
-  f.add(ellipsoid([0, 0.985, 0.005], [0.138, 0.108, 0.1], { k: K }));      // pelvis
+  f.add(ellipsoid([0, 0.985, 0.005], [0.126, 0.108, 0.1], { k: K }));      // pelvis
   f.add(ellipsoid([0, 1.095, 0.012], [0.126, 0.095, 0.097], { k: K }));    // waist
   // Depth, not just width. In profile the torso was a slab: the chest and the belly sat
   // in the same plane as the back, so from the side the figure had no barrel to it and
@@ -91,7 +91,7 @@ export function buildBodyField() {
   f.add(ellipsoid([0, 1.345, 0.0], [0.152, 0.09, 0.112], { k: K }));       // upper chest
   f.add(capsule([-0.166, 1.390, -0.004], [0.166, 1.390, -0.004], 0.074, 0.074, { k: 0.045 }));
   f.add(ellipsoid([0, 1.376, -0.055], [0.140, 0.082, 0.070], { k: 0.06 })); // trapezius mass
-  f.add(ellipsoid([0, 0.95, -0.062], [0.146, 0.09, 0.07], { k: K }));      // glutes
+  f.add(ellipsoid([0, 0.95, -0.062], [0.134, 0.09, 0.07], { k: K }));      // glutes
 
   // ---- neck (continues up into the head bake) --------------------------------
   // STOPS BELOW THE HEAD BAKE. The two bakes overlap inside the neck, and the body's
@@ -131,9 +131,9 @@ export function buildBodyField() {
   // fuses the two legs into a single column. `scale` squashes the distance field in x
   // only, so the section becomes an oval standing front-to-back.
   for (const s of [1, -1]) {
-    f.add(capsule([s * 0.090, 0.955, 0], [s * 0.100, 0.53, 0.012], 0.088, 0.056,
+    f.add(capsule([s * 0.080, 0.955, 0], [s * 0.100, 0.53, 0.012], 0.084, 0.056,
       { k: 0.05, scale: [0.88, 1, 1.04] }));
-    f.add(ellipsoid([s * 0.096, 0.78, 0.012], [0.075, 0.13, 0.088], { k: 0.06 }));   // quad
+    f.add(ellipsoid([s * 0.092, 0.78, 0.012], [0.072, 0.13, 0.088], { k: 0.06 }));   // quad
     f.add(capsule([s * 0.100, 0.53, 0.012], [s * 0.104, 0.105, -0.012], 0.058, 0.033, { k: 0.045 }));
     f.add(ellipsoid([s * 0.100, 0.522, 0.020], [0.052, 0.038, 0.050], { k: 0.035 }));   // knee
     f.add(ellipsoid([s * 0.104, 0.432, -0.034], [0.049, 0.082, 0.048], { k: 0.05 }));     // calf

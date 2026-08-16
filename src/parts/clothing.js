@@ -145,7 +145,7 @@ export function clothingFields(body) {
     // therefore printed straight through the coat across the entire hip and thigh, which
     // is what the shattered pale band round the waist actually was. (Found in one shot
     // with window.argonian.regionDebug(true), which flat-colours each garment region.)
-    addBoth(capsule([0, 1.0, 0.0], [0, 0.700, -0.016], 0.186, 0.208, { k: 0.055, scale: [1, 1, 0.9] }));
+    addBoth(capsule([0, 1.0, 0.0], [0, 0.700, -0.016], 0.166, 0.204, { k: 0.055, scale: [1, 1, 0.9] }));
     // hem roll, waved so the border is not a dead-level line
     for (let i = 0; i < 16; i++) {
       const a = (i / 16) * Math.PI * 2;
@@ -191,8 +191,8 @@ export function clothingFields(body) {
       // proud of the coat and printed through it as a scatter of hard slivers around
       // the hip — which reads as torn geometry, not as a garment.
       roundBox([0, 0.880, 0.0], [0.27, 0.060, 0.24], 0.02),
-      capsule([-0.090, 0.96, 0], [-0.104, 0.222, -0.008], 0.19, 0.082),
-      capsule([0.090, 0.96, 0], [0.104, 0.222, -0.008], 0.19, 0.082),
+      capsule([-0.080, 0.96, 0], [-0.104, 0.222, -0.008], 0.19, 0.082),
+      capsule([0.080, 0.96, 0], [0.104, 0.222, -0.008], 0.19, 0.082),
     ]);
     const f = garment(body, 0.012, cover, bounds, 0.014, folds(0.0080, 13));
     for (const s of [1, -1]) {

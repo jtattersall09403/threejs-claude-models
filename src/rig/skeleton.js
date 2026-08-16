@@ -80,7 +80,13 @@ const MIRROR = [
   // the centreline and the trouser offset bridged what little gap was left below the
   // knee, so the legs read as ONE column from hip to ankle in every full-body framing.
   // A heavy-set figure also stands wider than a slim one.
-  ['hip', 'hips', [0.090, 0.945, 0]],
+// Hip brought back IN to 0.080 while the knee and ankle stay out. Critic round 5
+  // measured the hip as the widest point of the front silhouette, 15% wider than the
+  // shoulders, where the reference's shoulder and belt are equal. Widening the coat to
+  // clear the thighs (which is what the print-through fix required) pushes the wrong way
+  // on that, so the fix has to come from the LEGS: narrow at the hip, still separated
+  // below.
+  ['hip', 'hips', [0.080, 0.945, 0]],
   ['knee', 'hip', [0.100, 0.525, 0.015]],
   ['ankle', 'knee', [0.104, 0.1, -0.015]],
   ['toe', 'ankle', [0.104, 0.03, 0.105]],
