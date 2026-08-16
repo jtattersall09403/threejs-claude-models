@@ -254,7 +254,10 @@ const SKIN_FRAG = /* glsl */`
   // At the old centre the nearest brow surface already evaluated to browD 0.066 against
   // a 0.074 outer radius, i.e. a mask of ~0.05 — three rounds of "the brow does not
   // read" were this, not the colour.
-  float browD = length((J - vec3(BROW_X, BROW_Y, BROW_Z)) * vec3(0.62, 1.45, 1.90));
+  // y-weight 2.6, not 1.45. At 1.45 the field reached 75 mm in y from a centre at 1.749,
+  // i.e. all the way up onto the CROWN, and tinted the top of the skull mauve. The brow
+  // plates are a band, and the band has to be bounded above as well as below.
+  float browD = length((J - vec3(BROW_X, BROW_Y, BROW_Z)) * vec3(0.62, 2.60, 1.90));
   // Hard-gated OFF THE MUZZLE DORSUM. Critic round 5 measured the snout dorsum as the
   // REDDEST region of our head (R/G 1.50 at p90) where it is the LEAST red region of the
   // reference's, and the brow — which should carry the oxblood at 1.66x the muzzle's R/G

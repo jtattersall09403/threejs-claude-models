@@ -106,7 +106,7 @@ export function buildFrontHorns(field) {
   const out = [];
   for (const s of [1, -1]) {
     const dir = [s * 0.26, 0.955, 0.14];
-    out.push(spike(seat(field, [s * 0.0448, 1.7620, 0.020], dir, 0.008), dir, 0.076, 0.0102, {
+    out.push(spike(seat(field, [s * 0.0448, 1.7620, 0.020], dir, 0.008), dir, 0.058, 0.0104, {
       taper: 0.70, sides: 12, steps: 9, bend: [s * 0.004, 0.003, -0.022],
     }));
   }
@@ -201,8 +201,8 @@ export function buildJawSpikes(field) {
       // TWO a side, not three. Counting the crest, the front horns, the main horns and
       // the jaw blades, the head was carrying eleven separate pale points a side and
       // read as a picket fence; the references show a sparse, deliberate arrangement.
-      [[s * 0.0290, 1.7608, 0.0730], [s * 0.20, 0.38, 0.90], 0.0370, 0.0078],
-      [[s * 0.0480, 1.7580, 0.0640], [s * 0.44, 0.34, 0.82], 0.0330, 0.0070],
+      [[s * 0.0290, 1.7608, 0.0730], [s * 0.20, 0.38, 0.90], 0.0270, 0.0080],
+      [[s * 0.0480, 1.7580, 0.0640], [s * 0.44, 0.34, 0.82], 0.0245, 0.0072],
     ]) {
       out.push(spike(seat(field, p, dir, 0.003), dir, len, r, {
         taper: 0.9, flat: 0.38, sides: 10, steps: 7, bend: [0, 0.004, -0.010],

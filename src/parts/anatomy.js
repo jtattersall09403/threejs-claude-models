@@ -234,9 +234,9 @@ export function buildHeadField() {
   // Narrower than the upper muzzle at every station, so the jaw tucks under the lip
   // instead of squaring off flush with it.
   f.add(roundBox([0, 1.6010, 0.066], [0.0296, 0.0215, 0.028], 0.016, { k: 0.046 }));
-  f.add(roundBox([0, 1.6032, 0.100], [0.0238, 0.019, 0.020], 0.0140, { k: 0.032 }));
-  f.add(roundBox([0, 1.6060, 0.128], [0.0196, 0.0148, 0.016], 0.0118, { k: 0.024 }));
-  f.add(ellipsoid([0, 1.6116, 0.130], [0.0208, 0.0166, 0.016], { k: 0.014 }));   // chin
+  f.add(roundBox([0, 1.6032, 0.100], [0.0212, 0.019, 0.020], 0.0140, { k: 0.032 }));
+  f.add(roundBox([0, 1.6060, 0.128], [0.0158, 0.0148, 0.016], 0.0118, { k: 0.024 }));
+  f.add(ellipsoid([0, 1.6116, 0.130], [0.0176, 0.0166, 0.016], { k: 0.014 }));   // chin
   // The cheeks are the whole reason the head reads as a box or as a snouted skull.
   // Kept narrow and swept BACK: in the reference the face steps in hard below the
   // eyes, so the muzzle — not the jaw — is what you see from the front.
@@ -246,7 +246,7 @@ export function buildHeadField() {
     // references this catches light and is one of the head's clearest structures.
     f.add(ellipsoid([s * 0.0540, 1.6720, 0.036], [0.0165, 0.0135, 0.040], { k: 0.011 }));
     f.add(ellipsoid([s * 0.0580, 1.6660, -0.004], [0.0150, 0.0120, 0.030], { k: 0.011 }));
-    f.add(ellipsoid([s * 0.0348, 1.6335, 0.014], [0.0172, 0.044, 0.046], { k: 0.048 })); // cheek / masseter
+    f.add(ellipsoid([s * 0.0330, 1.6395, 0.014], [0.0158, 0.038, 0.046], { k: 0.048 })); // cheek / masseter
     f.add(ellipsoid([s * 0.0472, 1.6405, -0.022], [0.0176, 0.050, 0.038], { k: 0.032 })); // jaw hinge
   }
 

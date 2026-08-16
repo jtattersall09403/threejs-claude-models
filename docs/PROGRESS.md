@@ -196,6 +196,32 @@ immediately — both of these were obvious in one frame.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
 
+### Iteration 31 — sweeping the angles I had not re-checked
+
+After changing the muzzle, collar, brow, spikes and tail, a sweep of the angles I had
+not looked at since caught three more things:
+
+- **Tail had gone back to a rudder** (see iteration 30) — fixed.
+- **Pale spines raked too far** at the low angle: the front horn and the two brow spines
+  a side are short in the reference and ours were projecting like antennae. Shortened.
+- **The brow field was creeping onto the CROWN.** Its y-weight of 1.45 gave it a 75 mm
+  reach from a centre at 1.749, so it tinted the top of the skull mauve. A band has to be
+  bounded above as well as below; y-weight is now 2.6.
+
+**Still on my list — and it is an OSCILLATION, not a simple defect:**
+
+The lower face reads too narrow from the FRONT and too wide/blocky from BELOW, and I
+have now corrected it in each direction twice, each time breaking the other view. The
+resolution is not another uniform width change. It is that the muzzle needs to **taper
+along its length** — wide at the cheek where the front view needs it, narrowing hard to
+the chin where the low view needs it — rather than being scaled uniformly. The jaw boxes
+and the masseter are the pieces to shape; the last change took a first step (jaw boxes
+0.0296 / 0.0212 / 0.0158, masseter raised and slimmed) but not far enough.
+
+Second item: the eyes still read large from the low angle even though they measure
+correctly from the front.
+
+
 ### Iteration 30 — my own list closed, and a process failure worth knowing about
 
 All four items from iteration 29's open list are done:
