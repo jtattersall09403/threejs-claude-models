@@ -96,10 +96,20 @@ export function makeScaleTexture(size = 512, cells = 11, seed = 7) {
       // Wider, flatter plates with a crisper divide. The reference head is large flat
       // plates separated by a BRIGHT reticulated net, not small puffy domes in dark
       // grooves — the albedo polarity is handled in SKIN_FRAG's `mortar` term.
-      const edge = Math.min(1, (f2 - f1) * cells * 3.0);
-      const dome = Math.pow(edge, 0.22);
+      // The HEIGHT CHANNEL HAS TO USE ITS RANGE. At (f2-f1)*cells*3 the edge term
+      // saturates about 3% of the way into a cell, and pow(edge, 0.22) then pinned the
+      // dome to 1 over essentially the whole plate; adding 1.02 and clamping left h = 1
+      // across the entire hide with a groove one or two texels wide.
+      //
+      // Everything that gives the head its value structure keys off h: the reticulated
+      // net, the crevice darkening, the plate-size blend, the roughness breakup. With h
+      // saturated they were all inert, and the face rendered as a smooth flat mass with
+      // relief but no pattern — which is the defect that survived a dozen attempts to
+      // fix it by tuning the terms that read h.
+      const edge = Math.min(1, (f2 - f1) * cells * 1.15);
+      const dome = Math.pow(edge, 0.62);
       const grain = (detail[y * size + x] - 0.5) * 0.16;
-      height[y * size + x] = dome * 1.02 + grain * 0.8;
+      height[y * size + x] = 0.04 + dome * 0.90 + grain * 0.55;
     }
   }
   return heightToTexture(height, size, 4.6);

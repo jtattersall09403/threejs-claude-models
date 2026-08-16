@@ -285,7 +285,16 @@ const SKIN_FRAG = /* glsl */`
   float snoutTop = ss(1.630, 1.676, H.y) * ss(0.020, 0.090, H.z) * ss(0.20, 0.78, Nr.y);
   col = mix(col, col * 0.87, headMask * snoutTop * 0.35);
   col = mix(col, col * mix(0.84, 1.18, ss(0.34, 0.70, fbm(P * 8.5 + 61.0))), headMask * 0.55);
-  col = mix(col, belly, ventral * 0.52);
+  // The pale ventral wash must NOT climb onto the muzzle. In every reference the snout
+  // is among the DARKEST parts of the face and the throat under the jaw is the palest;
+  // ours had it exactly the other way round — a big smooth sage-green blob from the eye
+  // forward — because ventral keys off a downward-forward normal and the entire front
+  // of the snout satisfies that.
+  float ventralHead = 1.0 - headMask * ss(1.585, 1.625, H.y);
+  col = mix(col, belly, ventral * ventralHead * 0.52);
+  // ...and the muzzle is darker than the cheek behind it, not lighter.
+  float muzzle = headMask * ss(1.598, 1.638, H.y) * ss(0.024, 0.062, H.z);
+  col = mix(col, col * vec3(0.70, 0.74, 0.64), muzzle * 0.82);
   col = mix(col, belly * vec3(1.06, 1.00, 0.80), bandZone * bands * 0.55);
   // Transverse scutes across the UNDERSIDE OF THE JAW. The band term above is driven
   // from world P at 62 rad/m — a 10 cm period, which is half a cycle across a jaw that is
@@ -377,9 +386,13 @@ const SKIN_FRAG = /* glsl */`
   // is where it fades out.
   // At b = 0.0008 the fully-dark core was 0.8 mm — sub-pixel at most framings, so the
   // line vanished even though debugMasks(6) showed the mask present and correct.
-  float lip = ss(0.0062 * scute, 0.0022, abs(H.y - lipY))
-            * ss(0.168, 0.157, H.z) * ss(0.006, 0.026, H.z);
-  col = mix(col, vec3(0.0040, 0.0036, 0.0030), lip * 0.80);
+  // The z gates used to stop the mouth at 0.157, well short of a snout tip that now
+  // reaches ~0.19, and to start it at 0.026, well forward of the corner under the eye.
+  // The reference mouth runs the FULL length of the muzzle — about half the head — and
+  // it is the strongest line on the face.
+  float lip = ss(0.0068 * scute, 0.0024, abs(H.y - lipY))
+            * ss(0.200, 0.186, H.z) * ss(-0.034, -0.006, H.z);
+  col = mix(col, vec3(0.0022, 0.0020, 0.0017), lip * 0.88);
 
   // Crevices between scales go dark on the BODY. Range kept narrow: at 0.42..1.06 the
   // detail height alone swung local brightness 2.5x, so wherever the scale texture
