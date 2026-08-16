@@ -147,7 +147,7 @@ export function buildBodyField() {
   // read as a flat strap hanging off the back rather than a heavy muscular counterweight.
   // Spine points come from the rig so the capsules and the bones that skin them can
   // never disagree; only the radii live here.
-  const TAIL_R = [0.074, 0.058, 0.044, 0.032, 0.021, 0.010];
+  const TAIL_R = [0.086, 0.070, 0.054, 0.038, 0.024, 0.011];
   const tail = TAIL_SPINE.map((p, i) => [p, TAIL_R[i]]);
   for (let i = 0; i < tail.length - 1; i++) {
     f.add(capsule(tail[i][0], tail[i + 1][0], tail[i][1], tail[i + 1][1], {
