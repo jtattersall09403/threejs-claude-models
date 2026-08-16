@@ -343,6 +343,14 @@ them pale cream — what is dark in the bust shot is the frill *behind* them.
     balanced against each other, and restoring the range turned every scale into a hard
     pyramid until the strength came down with it.
 
+32. **A batch edit script that asserts can write SOME files and not others.** Two edit
+    batches here aborted on a failed assertion partway through, having already written
+    the earlier files, and the shell still printed the trailing success marker — so
+    changes I reported as applied had silently never been written. Same family as trap
+    19. Either verify each file after editing (`grep -c` for the new value) or collect
+    failures and write nothing until every match is confirmed. Never trust the tail of
+    the output.
+
 ## When you are stuck, look it up
 
 If a particular effect is proving hard — a shading technique, a Three.js API, a way of
