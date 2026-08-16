@@ -18,7 +18,7 @@ import { TAIL_SPINE } from '../rig/skeleton.js';
 
 export const EYE = {
   c: [0.0512, 1.6975, 0.0688],   // mirrored on x
-  r: 0.0176,   // The ball stays a decent size; what stops a free sphere edge showing
+  r: 0.0192,   // The ball stays a decent size; what stops a free sphere edge showing
                // is the APERTURE being clearly smaller than the ball, below. Shrinking
                // and sinking the ball instead just makes the eye vanish.
   gaze: [0.055, 0.0, 0.9985],    // near-forward. At 0.16 outward the iris sat off to
@@ -185,9 +185,13 @@ export function buildHeadField() {
     [0.118, 1.6492, 0.0222, 0.0250],
     [0.144, 1.6402, 0.0182, 0.0192],   // blunt, not pointed: the reference nose is round
   ];
+  // The z-radius has to TAPER too. Held at 0.046 for every station after the first, the
+  // last one reached z 0.19 as a fat bulb and the snout ended in a blunt vertical face;
+  // the reference tapers to a rounded point with the nostril right at the tip.
+  const snoutZR = [0.062, 0.048, 0.040, 0.030];
   for (let i = 0; i < snout.length; i++) {
     const [z, cy, hy, hx] = snout[i];
-    f.add(ellipsoid([0, cy, z], [hx, hy, i === 0 ? 0.062 : 0.046],
+    f.add(ellipsoid([0, cy, z], [hx, hy, snoutZR[i]],
       { k: i === 0 ? 0.055 : 0.038 }));
   }
   // a low dorsal ridge riding the same curve — a crest, not a separate bridge
@@ -239,14 +243,14 @@ export function buildHeadField() {
     // head's width; ours was under an eighth and read as a bean rather than as the
     // large forward-facing almond that carries the whole expression.
     f.sub(ellipsoid([s * EYE.c[0], EYE.c[1] + 0.0015, EYE.c[2] + 0.008],
-      [0.0262, 0.0142, 0.0284], { k: 0.006 }));
+      [0.0272, 0.0166, 0.0296], { k: 0.006 }));
     // Lid rims above and below, so the opening reads as lidded rather than as a
     // crater. The upper lid is built from two lobes at different heights — outer
     // high, inner low — so the eye slants down toward the snout. The references'
     // whole expression comes from that angle; a level lid reads placid.
     f.add(ellipsoid([s * 0.0650, 1.7212, 0.0530], [0.0180, 0.0070, 0.0224], { k: 0.007 }));
     f.add(ellipsoid([s * 0.0426, 1.7118, 0.0680], [0.0194, 0.0068, 0.0228], { k: 0.007 }));
-    f.add(ellipsoid([s * 0.0526, 1.6768, 0.0636], [0.0268, 0.0060, 0.0240], { k: 0.007 }));
+    f.add(ellipsoid([s * 0.0526, 1.6742, 0.0636], [0.0272, 0.0060, 0.0244], { k: 0.007 }));
   }
   // mouth crease — rises toward the jaw hinge like a real reptile jaw line
   // x-extent follows the muzzle's own half-width, narrowing toward the snout, so the

@@ -159,7 +159,7 @@ const SKIN_FRAG = /* glsl */`
   // on the cranium (which samples the coarse plate map) and vanished on the muzzle — the
   // muzzle then read as a smooth panel next to a patterned skull. In the references the
   // muzzle plates are nearly as large as the cranial ones.
-  float freq = mix(16.0, 12.5, headMask);
+  float freq = mix(16.0, 15.0, headMask);
   vec4 fine = triDetail(P, Nr, freq, mix(1.55, 1.45, headMask));
   vec4 plateD = triDetail(P, Nr, freq * 0.30, 1.5);
   float sizeMix = ss(0.38, 0.66, fbm(P * 3.1 + 4.0)) * 0.4;
@@ -382,7 +382,7 @@ const SKIN_FRAG = /* glsl */`
   // letterbox slot painted across the face.
   // Scalloped along its length: the reference mouth is broken by lip scutes, and a
   // single clean line of constant thickness reads as a painted-on dash.
-  float scute = 0.72 + 0.28 * abs(sin(H.z * 118.0));
+  float scute = 0.88 + 0.12 * abs(sin(H.z * 118.0));
   // THIN. debugMasks(6) showed the mask was active and correctly placed but ~33 mm
   // wide — a uniformly dark band that broad over already-dark hide has nothing to
   // contrast against and reads as no mouth at all. The reference mouth is a crisp
@@ -397,7 +397,7 @@ const SKIN_FRAG = /* glsl */`
   // it is the strongest line on the face.
   float lip = ss(0.0068 * scute, 0.0024, abs(H.y - lipY))
             * ss(0.200, 0.186, H.z) * ss(-0.034, -0.006, H.z);
-  col = mix(col, vec3(0.0022, 0.0020, 0.0017), lip * 0.88);
+  col = mix(col, vec3(0.0018, 0.0016, 0.0014), lip * 0.94);
 
   // Crevices between scales go dark on the BODY. Range kept narrow: at 0.42..1.06 the
   // detail height alone swung local brightness 2.5x, so wherever the scale texture
