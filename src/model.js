@@ -10,7 +10,7 @@ import {
   buildBodyField, buildHeadField, transformHeadField, BODY_BOUNDS, HEAD_BOUNDS, HEAD_XF,
 } from './parts/anatomy.js';
 import {
-  buildHorn, buildHornCuff, buildFrontHorns, buildCrownSpikes, buildJawSpikes, buildTeeth, buildFingers,
+  buildHorn, buildHornCuff, buildFrontHorns, buildCrownSpikes, buildJawSpikes, buildFingers,
   buildEyes,
 } from './parts/features.js';
 import {

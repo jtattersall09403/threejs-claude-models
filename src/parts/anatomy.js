@@ -46,7 +46,11 @@ export function headPoint(p) {
   ];
 }
 
-export const EYE_WORLD = headPoint(EYE.c);
+// (There is deliberately NO exported world-space copy of the eye centre. There used to
+// be, it was never consumed, and its existence invited exactly the bug that did happen:
+// EYE_FRAG comparing WORLD vRest against AUTHORING-space eye constants, which put the
+// iris about two eyeball radii off the ball. Shaders undo the head transform instead —
+// see H in SKIN_FRAG and EH in EYE_FRAG.)
 
 /**
  * Centres of the two face MARKINGS whose masks live in SKIN_FRAG.
