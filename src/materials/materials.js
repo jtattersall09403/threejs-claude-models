@@ -204,7 +204,10 @@ const SKIN_FRAG = /* glsl */`
   // a near-black olive, was painted over the whole head at 98%. That single mask is why
   // the head read as one flat dark mass with no internal structure however the brow,
   // the reticulation and the plate colours were tuned. It is the CROWN CAP.
-  float cap = ss(1.700, 1.726, J.y) * ss(0.132, 0.072, J.z);
+// Gated to the CROWN by Z, not by Y alone. Once the muzzle was shortened and deepened
+  // its dorsal surface rose to head-space y 1.709 — above this threshold — so the dark
+  // crown cap was being painted straight down the top of the snout.
+  float cap = ss(1.700, 1.726, J.y) * ss(0.132, 0.072, J.z) * ss(0.060, 0.020, J.z);
   cap = max(cap, ss(1.612, 1.658, J.y) * ss(-0.005, -0.075, J.z));  // occiput
   cap *= ss(0.132, 0.104, abs(J.x));                                 // not the very flanks
   // NARROW. debugMasks(1) showed this term evaluating to 1 across the ENTIRE cranium
@@ -248,8 +251,16 @@ const SKIN_FRAG = /* glsl */`
   // a 0.074 outer radius, i.e. a mask of ~0.05 — three rounds of "the brow does not
   // read" were this, not the colour.
   float browD = length((J - vec3(BROW_X, BROW_Y, BROW_Z)) * vec3(0.62, 1.45, 1.90));
-  float brow = ss(0.076, 0.016, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.646, 1.672, H.y)
-             * ss(-0.020, 0.014, J.z);
+  // Hard-gated OFF THE MUZZLE DORSUM. Critic round 5 measured the snout dorsum as the
+  // REDDEST region of our head (R/G 1.50 at p90) where it is the LEAST red region of the
+  // reference's, and the brow — which should carry the oxblood at 1.66x the muzzle's R/G
+  // — sitting at 1.01x, i.e. no contrast at all.
+// LATERAL GATE — the same fix as the black-muzzle bug. The brow ridge and the snout
+  // dorsum overlap in BOTH y and z on a short deep muzzle, so neither axis can separate
+  // them; what does separate them is x. The brow plates sit out at |x| ~0.045, the snout
+  // dorsum is on the centreline.
+  float brow = ss(0.086, 0.016, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.646, 1.672, H.y)
+             * ss(-0.020, 0.014, J.z) * ss(0.020, 0.036, abs(J.x));
   // broken into plates rather than one even wash of colour
   brow *= 0.62 + 0.55 * ss(0.30, 0.74, fbm(J * 52.0 + 5.0));
 
@@ -290,7 +301,7 @@ const SKIN_FRAG = /* glsl */`
   // key — the reference's brow plates read because they are dark shields, not because
   // they are red. (The old note about pure red flooding the crown pink applied when
   // this field covered the whole cranium; it is a confined band now.)
-  vec3 maroon   = vec3(0.0286, 0.0094, 0.0078);
+  vec3 maroon   = vec3(0.0330, 0.0082, 0.0066);
   vec3 boneCol  = vec3(0.082, 0.080, 0.052);
 
   vec3 col = mix(dorsal2, dorsal, ss(0.30, 0.72, mottle * 0.6 + blotch * 0.7));
@@ -331,7 +342,7 @@ const SKIN_FRAG = /* glsl */`
   col = mix(col, plate * vec3(1.15, 1.20, 1.55), socket * 0.98);
   // partial mix, so the olive hide shows through and the band lands near the
   // reference's 1.74 rather than at the paint's own ratio
-  col = mix(col, maroon, brow * 0.95);
+  col = mix(col, maroon, brow * 0.99);
   // three cream claw-mark streaks across the maroon brow band
   float streak = ss(0.72, 0.97, abs(sin((J.x - 0.010) * 150.0)));
   col = mix(col, boneCol * 0.78, brow * streak * ss(0.012, 0.052, abs(J.x)) * 0.95);
@@ -532,8 +543,11 @@ const HORN_FRAG = /* glsl */`
   if (vRegion > 3.5) {
     // DARK OXBLOOD. At the previous value the crest rendered salmon-pink from above and
     // read as a row of plastic fins; the references show near-black red blades.
-    col = mix(vec3(0.0094, 0.0038, 0.0032), vec3(0.0038, 0.0018, 0.0017), ss(0.25, 1.0, t))
-        * (0.82 + 0.28 * grime) * mix(0.90, 1.05, streakH);
+    // Critic round 5 measured horn/crest luminance at 1.06 where the reference has a 4:1
+    // value break between pale bone horns and the dark oxblood crest behind them. Ours
+    // read as one undifferentiated pale fan across the whole crown.
+    col = mix(vec3(0.0040, 0.0017, 0.0014), vec3(0.0017, 0.0008, 0.0007), ss(0.25, 1.0, t))
+        * (0.84 + 0.24 * grime) * mix(0.92, 1.04, streakH);
     gRoughOut = clamp(0.62 + grime * 0.24, 0.42, 0.94);
   }
   // region 3 is the claws: dark horn, not the pale bone of the head spikes. Left the

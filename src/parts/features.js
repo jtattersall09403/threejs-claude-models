@@ -133,8 +133,16 @@ export function buildCrownSpikes(field) {
     [0.0078, 1.7670, -0.070, 0.0640, 0.0160],
     [0.0240, 1.7530, -0.062, 0.0450, 0.0136],
   ];
-  for (const [x, y, z, len, r] of defs) {
-    const dir = [x * 3.2, 0.56, -0.83];   // lying BACK over the crown, not standing up
+  // Irregular on purpose. Five identical evenly-spaced plates of equal length on one
+  // midline ridge read as cardboard; the reference crest is a ragged fan of quills of
+  // clearly varying length and angle, spread across the WIDTH of the crown.
+  const jitter = [0.86, 1.13, 0.94, 1.08, 0.79, 1.16, 0.90, 1.05, 0.83, 1.10];
+  for (let i = 0; i < defs.length; i++) {
+    const [x, y, z, len0, r0] = defs[i];
+    const len = len0 * jitter[i % jitter.length];
+    const r = r0 * (0.88 + 0.26 * jitter[(i + 3) % jitter.length]);
+    const yaw = (jitter[(i + 5) % jitter.length] - 1.0) * 1.9;
+    const dir = [x * 3.2 + yaw * 0.5, 0.56 + (jitter[i % jitter.length] - 1.0) * 0.5, -0.83];
     out.push(spike(seat(field, [x, y, z], dir, 0.004), dir, len, r, {
       taper: 0.62, bend: [0, 0.003, -0.016], sides: 10, steps: 8, flat: 0.26,
     }));

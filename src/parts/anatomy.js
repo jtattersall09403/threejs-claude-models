@@ -62,7 +62,7 @@ export function headPoint(p) {
  * several rounds of tuning the COLOUR, which was never the problem. If you move the
  * brow shelf or the cheek, move these with it.
  */
-export const BROW_MARK = { c: [0.0430, 1.7380, 0.080] };   // maroon brow plates
+export const BROW_MARK = { c: [0.0455, 1.7490, 0.074] };   // maroon brow plates
 export const CHEEK_MARK = { c: [0.054, 1.6775, -0.004] };  // dark stripe, eye to jaw hinge
 
 // The mouth line. The geometry cut and the shader's lip paint MUST share this or
