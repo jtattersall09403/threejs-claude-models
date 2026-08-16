@@ -66,11 +66,14 @@ export function buildHorn(side, field) {
  */
 export function buildHornCuff(side, field) {
   const full = hornRings(side, field);
-  const a = Math.round(HORN_STEPS * 0.31), b = Math.round(HORN_STEPS * 0.45);
+// A narrow RING, not a sleeve. Spanning 14% of the horn's run at 1.2x its radius the
+  // cuff read as a pale collar swallowing a third of the horn; in the references it is a
+  // thin gold band.
+  const a = Math.round(HORN_STEPS * 0.34), b = Math.round(HORN_STEPS * 0.395);
   const rings = full.slice(a, b + 1).map((ring, i, arr) => {
     const u = i / (arr.length - 1);
     // barrelled slightly, so it reads as a band clamped on rather than a swelling
-    return { p: ring.p, r: ring.r * (1.20 + 0.06 * Math.sin(u * Math.PI)) };
+    return { p: ring.p, r: ring.r * (1.13 + 0.05 * Math.sin(u * Math.PI)) };
   });
   return sweep(rings, { sides: 18 });
 }
@@ -114,22 +117,22 @@ export function buildCrownSpikes(field) {
   // read as a tiara; built pale they compete with the horns for the eye.
   const defs = [
     // [x, y, z, length, radius]  — tallest at the centre, shrinking outboard
-    [-0.0405, 1.7530, -0.010, 0.0370, 0.0098],
-    [-0.0250, 1.7670, -0.016, 0.0520, 0.0118],
-    [-0.0085, 1.7725, -0.022, 0.0600, 0.0126],
-    [0.0085, 1.7725, -0.022, 0.0600, 0.0126],
-    [0.0250, 1.7670, -0.016, 0.0520, 0.0118],
-    [0.0405, 1.7530, -0.010, 0.0370, 0.0098],
+    [-0.0405, 1.7530, -0.010, 0.0390, 0.0142],
+    [-0.0250, 1.7670, -0.016, 0.0545, 0.0168],
+    [-0.0085, 1.7725, -0.022, 0.0625, 0.0180],
+    [0.0085, 1.7725, -0.022, 0.0625, 0.0180],
+    [0.0250, 1.7670, -0.016, 0.0545, 0.0168],
+    [0.0405, 1.7530, -0.010, 0.0390, 0.0142],
     // a shorter second rank over the occiput, so the crest has depth from the side
-    [-0.0230, 1.7330, -0.062, 0.0330, 0.0086],
-    [-0.0075, 1.7470, -0.070, 0.0460, 0.0102],
-    [0.0075, 1.7470, -0.070, 0.0460, 0.0102],
-    [0.0230, 1.7330, -0.062, 0.0330, 0.0086],
+    [-0.0230, 1.7330, -0.062, 0.0345, 0.0128],
+    [-0.0075, 1.7470, -0.070, 0.0480, 0.0150],
+    [0.0075, 1.7470, -0.070, 0.0480, 0.0150],
+    [0.0230, 1.7330, -0.062, 0.0345, 0.0128],
   ];
   for (const [x, y, z, len, r] of defs) {
     const dir = [x * 3.2, 0.56, -0.83];   // lying BACK over the crown, not standing up
     out.push(spike(seat(field, [x, y, z], dir, 0.004), dir, len, r, {
-      taper: 0.62, bend: [0, 0.003, -0.016], sides: 10, steps: 8, flat: 0.40,
+      taper: 0.62, bend: [0, 0.003, -0.016], sides: 10, steps: 8, flat: 0.26,
     }));
   }
   return out;
