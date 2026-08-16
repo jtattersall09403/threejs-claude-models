@@ -753,12 +753,15 @@ export function createMaterials() {
     // defect the critic measured; overshooting into cream trades one error for another.
     undershirt: clothMat('undershirt', [0.0298, 0.0332, 0.0286], 0.95, 12.0, cloth),
     trousers: clothMat('trousers', [0.0152, 0.0142, 0.0130], 0.95, 9.0, cloth),
-    wrap: clothMat('wrap', [0.0745, 0.0778, 0.0708], 0.96, 14.0, cloth),
+    wrap: clothMat('wrap', [0.0512, 0.0534, 0.0486], 0.96, 14.0, cloth),
     leather: clothMat('leather', [0.0162, 0.0114, 0.0082], 0.91, 22.0, leather),
     // sash and belt sit only a little above the tunic. Pushed further apart they
     // stopped reading as cloth and became bright metal blades laid across the chest.
-    sash: clothMat('sash', [0.0812, 0.0768, 0.0678], 0.90, 18.0, leather),
-    belt: clothMat('belt', [0.0742, 0.0716, 0.0648], 0.92, 9.0, cloth),
+    sash: clothMat('sash', [0.0498, 0.0470, 0.0416], 0.90, 18.0, leather),
+    // Judge garment values from the REAR of the orbit as well as the front. The two rim
+    // lights are strong and hit the back squarely; at 0.074 the belt rendered as a white
+    // towel across the back while looking correct from the front.
+    belt: clothMat('belt', [0.0412, 0.0398, 0.0360], 0.94, 9.0, cloth),
     textures: { scale, cloth, leather },
   };
 }
