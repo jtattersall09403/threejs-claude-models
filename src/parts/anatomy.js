@@ -232,8 +232,11 @@ export function buildHeadField() {
   // mass with a hard lower edge and the neck sits shadowed underneath it.
   // Set further back and tucked under: the reference's neck disappears into a deep
   // shadow beneath the jawline rather than meeting it flush.
-  f.add(ellipsoid([0, 1.5560, -0.004], [0.044, 0.030, 0.042], { k: 0.014 }));
-  f.add(capsule([0, 1.448, -0.014], [0, 1.532, 0.008], 0.078, 0.057, { k: 0.04 }));
+  f.add(ellipsoid([0, 1.5560, -0.004], [0.0375, 0.030, 0.040], { k: 0.014 }));
+  // NARROWER THAN THE JAW. At 0.057 at the top the throat was wider than the jaw above
+  // it, so from below the two fused into one broad column with no jawline at all — the
+  // reference shows a jaw with a hard lower edge and a distinctly narrower neck under it.
+  f.add(capsule([0, 1.448, -0.014], [0, 1.532, 0.008], 0.070, 0.0455, { k: 0.04 }));
 
   // ---- cuts ------------------------------------------------------------------
   for (const s of [1, -1]) {
