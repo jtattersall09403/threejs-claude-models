@@ -183,9 +183,11 @@ export function buildJawSpikes(field) {
     // spines lying back along the brow ridge, and they carry a lot of the face's
     // character. Angled back rather than out, so they read against the skull.
     for (const [p, dir, len, r] of [
-      [[s * 0.0268, 1.7452, 0.0780], [s * 0.18, 0.38, 0.91], 0.0355, 0.0072],
-      [[s * 0.0418, 1.7442, 0.0720], [s * 0.38, 0.36, 0.85], 0.0330, 0.0068],
-      [[s * 0.0548, 1.7382, 0.0600], [s * 0.58, 0.32, 0.75], 0.0300, 0.0062],
+      // TWO a side, not three. Counting the crest, the front horns, the main horns and
+      // the jaw blades, the head was carrying eleven separate pale points a side and
+      // read as a picket fence; the references show a sparse, deliberate arrangement.
+      [[s * 0.0290, 1.7448, 0.0770], [s * 0.20, 0.38, 0.90], 0.0370, 0.0078],
+      [[s * 0.0480, 1.7420, 0.0680], [s * 0.44, 0.34, 0.82], 0.0330, 0.0070],
     ]) {
       out.push(spike(seat(field, p, dir, 0.003), dir, len, r, {
         taper: 0.9, flat: 0.38, sides: 10, steps: 7, bend: [0, 0.004, -0.010],

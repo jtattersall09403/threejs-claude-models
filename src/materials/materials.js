@@ -154,9 +154,14 @@ const SKIN_FRAG = /* glsl */`
   float headMask = ss(1.535, 1.585, H.y);
   // Two FIXED scale frequencies blended by a noise mask. Scaling the triplanar UVs
   // by a spatially varying factor warps the domain and produces contour-line swirls.
-  float freq = mix(16.0, 25.0, headMask);
+// The head's scales have to be BIG enough to read. At 25 cycles/m the muzzle's plates
+  // were ~4 mm and their grooves sub-pixel at head-shot distance, so the pale net showed
+  // on the cranium (which samples the coarse plate map) and vanished on the muzzle — the
+  // muzzle then read as a smooth panel next to a patterned skull. In the references the
+  // muzzle plates are nearly as large as the cranial ones.
+  float freq = mix(16.0, 17.5, headMask);
   vec4 fine = triDetail(P, Nr, freq, mix(1.55, 1.45, headMask));
-  vec4 plateD = triDetail(P, Nr, freq * 0.19, 1.5);
+  vec4 plateD = triDetail(P, Nr, freq * 0.30, 1.5);
   float sizeMix = ss(0.38, 0.66, fbm(P * 3.1 + 4.0)) * 0.4;
   // zoned scale size: big armour plates over the cranium, fine pebbling on the
   // muzzle and cheek. One uniform frequency reads as fishnet, not hide.
