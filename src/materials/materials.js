@@ -600,7 +600,11 @@ const EYE_FRAG = /* glsl */`
 
 const CLOTH_FRAG = /* glsl */`
   vec3 Nr = normalize(vRestN);
-  vec4 det = triDetail(vRest, Nr, uWeave, 1.1);
+  // Strength 0.62, not 1.1. At grazing incidence a strong tangent-space perturbation
+  // flips adjacent facets between lit and unlit, and along a garment's silhouette that
+  // renders as a comb of hard-edged light and dark strips — easy to mistake for torn
+  // geometry. Cloth weave is a shallow feature; it does not need a strong normal.
+  vec4 det = triDetail(vRest, Nr, uWeave, 0.62);
   gNormal = det.xyz;
   float h = det.w;
   float dirt = fbm(vRest * 7.5);
