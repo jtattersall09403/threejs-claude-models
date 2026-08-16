@@ -196,6 +196,28 @@ immediately — both of these were obvious in one frame.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
 
+### Iteration 30 — my own list closed, and a process failure worth knowing about
+
+All four items from iteration 29's open list are done:
+- **Brow oxblood.** The lateral gate that keeps red off the snout dorsum was being
+  applied EVERYWHERE, so it also cut the red out from between the eyes — where the
+  reference carries it as one continuous mass across the brow, not two patches over each
+  eye. The gate now only engages forward, on the snout. Field widened and strengthened.
+- **Throat** shortened to ~0.2 head heights (was 0.32) by raising the whole collar
+  assembly again. **Muzzle** projects further, with mouth, nostrils and jaw following.
+  **Jaw blades** swung back along the jaw instead of outboard.
+- **Tail** re-balanced: swinging it clear of the legs for critic 11 had reintroduced the
+  RUDDER read (0.51 m back while dropping only to y 0.262). It now drops ~0.74 for every
+  0.43 it travels back, which clears the leg line and still hangs.
+
+**PROCESS FAILURE — see trap 32.** Two batch edit scripts aborted on a failed assertion
+partway through, having already written the earlier files, and the shell still printed
+the trailing success marker. Changes reported as applied had silently never been written
+— the jaw-spike edits in particular were "applied" twice before actually landing. Every
+edit since is verified with a `grep -c` for the new value. Do not trust the tail of a
+batch script's output.
+
+
 ### Iteration 29 — critic round 5 list closed, and what a full sweep then showed
 
 All twelve of critic round 5's defects are worked (status table above). Two were real
