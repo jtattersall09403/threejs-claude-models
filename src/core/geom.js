@@ -73,7 +73,19 @@ function emit(rings, frames, tangents, sides, opts) {
 
   for (let i = 0; i < n; i++) {
     const ring = rings[i];
-    const [u, v] = frames[i];
+    let [u, v] = frames[i];
+    // CANONICAL HANDEDNESS. The triangle order below assumes u x v points ALONG the
+    // tangent; when a frame is supplied the other way round every triangle in the sweep
+    // comes out inside-out. Both frame helpers in clothing.js did exactly that
+    // (bandFrame's u = tan x v gives u x v = -tan), so the sash and the belt were
+    // inside-out meshes — visible in the capture audit as a NEGATIVE signed volume, and
+    // on screen as hard-edged shards where their culled back faces left holes. Flipping
+    // v here rather than in each caller means no sweep can get this wrong again.
+    const t = tangents[i];
+    const cx = u[1] * v[2] - u[2] * v[1];
+    const cy = u[2] * v[0] - u[0] * v[2];
+    const cz = u[0] * v[1] - u[1] * v[0];
+    if (cx * t[0] + cy * t[1] + cz * t[2] < 0) v = [-v[0], -v[1], -v[2]];
     const r = Array.isArray(ring.r) ? ring.r : [ring.r, ring.r];
     const twist = ring.twist || 0;
     for (let s = 0; s < sides; s++) {

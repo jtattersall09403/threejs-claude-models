@@ -128,7 +128,16 @@ function patch(material, { fragColor, fragNormal = true, uniforms = {} }) {
     if (fragNormal) {
       shader.fragmentShader = shader.fragmentShader.replace(
         '#include <normal_fragment_maps>',
-        `#include <normal_fragment_maps>\n  normal = normalize(alignRot(normalize(vRestN), normalize(normal), gNormal));`,
+        // gl_FrontFacing matters here. alignRot rotates the detail normal from rest
+        // space into shaded space by aligning the REST normal with the SHADED one — and
+        // when those two are near-opposite the rotation is degenerate and the function
+        // falls back to negating the vector. On a double-sided garment three.js flips
+        // `normal` for back faces, so every back-facing fragment hit that degenerate
+        // branch and got its detail normal inverted: hard-edged inverted patches that
+        // read as torn geometry, and which survive both the winding audit and a
+        // double-sided test. Flipping the rest normal to match the facing keeps the
+        // rotation well-conditioned.
+        `#include <normal_fragment_maps>\n  vec3 rN = normalize(vRestN);\n  if (!gl_FrontFacing) rN = -rN;\n  normal = normalize(alignRot(rN, normalize(normal), gNormal));`,
       );
     }
     material.userData.shader = shader;
