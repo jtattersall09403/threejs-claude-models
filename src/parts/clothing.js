@@ -163,10 +163,10 @@ export function clothingFields(body) {
     }
     // Neckline: one tilted opening that dips at the front. Cutting a separate hole
     // for the undershirt reads as a disc stuck on the chest — don't.
-    f.sub(capsule([0, 1.370, 0.062], [0, 1.60, 0.010], 0.058, 0.094, { k: 0.028 }));
+    f.sub(capsule([0, 1.382, 0.066], [0, 1.60, 0.010], 0.050, 0.078, { k: 0.028 }));
     // rolled collar band around the opening, so the edge reads as a hem
-    f.add(capsule([0, 1.370, 0.040], [0, 1.400, 0.030], 0.082, 0.080, { k: 0.018 }));
-    f.sub(capsule([0, 1.362, 0.064], [0, 1.62, 0.008], 0.054, 0.088, { k: 0.020 }));
+    f.add(capsule([0, 1.382, 0.040], [0, 1.412, 0.030], 0.074, 0.072, { k: 0.018 }));
+    f.sub(capsule([0, 1.374, 0.068], [0, 1.62, 0.008], 0.046, 0.072, { k: 0.020 }));
     // The hem. A garment edge is a real edge — cloth stops. Cut it flat and let the
     // ring of hem ellipsoids above roll over the cut, so it reads as a hemmed border
     // rather than as a sawn plane or as a closed dome.
