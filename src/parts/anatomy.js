@@ -18,7 +18,7 @@ import { TAIL_SPINE } from '../rig/skeleton.js';
 
 export const EYE = {
   c: [0.0512, 1.6975, 0.0688],   // mirrored on x
-  r: 0.0180,   // The ball stays a decent size; what stops a free sphere edge showing
+  r: 0.0152,   // The ball stays a decent size; what stops a free sphere edge showing
                // is the APERTURE being clearly smaller than the ball, below. Shrinking
                // and sinking the ball instead just makes the eye vanish.
   gaze: [0.055, 0.0, 0.9985],    // near-forward. At 0.16 outward the iris sat off to
@@ -166,14 +166,14 @@ export function buildHeadField() {
   // TALLER THAN IT IS LONG-ISH. Traced over the profile reference the skull is a
   // compact rounded mass, length:height about 1.09. Ours ran to 1.4+: a long low
   // lozenge with the muzzle taking 39% of the length where the reference's takes 24%.
-  f.add(ellipsoid([0, 1.7085, -0.006], [0.0724, 0.1035, 0.0930], { k: 0.055 }));
+  f.add(ellipsoid([0, 1.7060, -0.006], [0.0752, 0.0985, 0.0930], { k: 0.055 }));
   f.add(ellipsoid([0, 1.6920, -0.046], [0.047, 0.070, 0.042], { k: 0.05 }));  // domed occiput
   // The rear of the skull DROPS STEEPLY from the crown in the annotated profile — the
   // back of the head and the back of the neck sit on roughly one vertical line. A
   // plain dome trails backwards instead and reads as a long low skull.
   f.add(capsule([0, 1.7640, -0.058], [0, 1.6280, -0.052], 0.0280, 0.0400,
     { k: 0.045, scale: [1.4, 1, 1] }));
-  f.add(ellipsoid([0, 1.7955, -0.010], [0.048, 0.026, 0.062], { k: 0.030 })); // raised crown plate
+  f.add(ellipsoid([0, 1.7880, -0.010], [0.050, 0.026, 0.062], { k: 0.030 })); // raised crown plate
 
   // ---- brow / eye ridges -------------------------------------------------------
   for (const s of [1, -1]) {
@@ -201,10 +201,13 @@ export function buildHeadField() {
   // reference snout is thin in vertical section, not a deep box.
   const snout = [
     // [z,     centre y, half-height, half-width]
-    [0.042, 1.6752, 0.0342, 0.0400],
-    [0.078, 1.6636, 0.0280, 0.0330],
-    [0.106, 1.6538, 0.0228, 0.0262],
-    [0.130, 1.6452, 0.0186, 0.0204],   // blunt, not pointed: the reference nose is round
+// The face BELOW the eyes has to stay broad. Narrowing the jaw to fix a slab-like
+    // read from underneath left the front view a narrow tower under a broad skull, where
+    // the reference's lower face is nearly three quarters of the skull's width.
+    [0.042, 1.6752, 0.0342, 0.0448],
+    [0.078, 1.6636, 0.0280, 0.0378],
+    [0.106, 1.6538, 0.0228, 0.0302],
+    [0.130, 1.6452, 0.0186, 0.0236],   // blunt, not pointed: the reference nose is round
   ];
   // The z-radius has to TAPER too. Held at 0.046 for every station after the first, the
   // last one reached z 0.19 as a fat bulb and the snout ended in a blunt vertical face;
@@ -227,9 +230,9 @@ export function buildHeadField() {
   // ---- lower jaw: deep and straight, turning up at a visible hinge --------------
   // Narrower than the upper muzzle at every station, so the jaw tucks under the lip
   // instead of squaring off flush with it.
-  f.add(roundBox([0, 1.6010, 0.062], [0.0262, 0.0215, 0.027], 0.016, { k: 0.046 }));
-  f.add(roundBox([0, 1.6040, 0.088], [0.0206, 0.019, 0.019], 0.0140, { k: 0.032 }));
-  f.add(roundBox([0, 1.6076, 0.110], [0.0170, 0.0148, 0.015], 0.0118, { k: 0.024 }));
+  f.add(roundBox([0, 1.6010, 0.062], [0.0296, 0.0215, 0.027], 0.016, { k: 0.046 }));
+  f.add(roundBox([0, 1.6040, 0.088], [0.0238, 0.019, 0.019], 0.0140, { k: 0.032 }));
+  f.add(roundBox([0, 1.6076, 0.110], [0.0196, 0.0148, 0.015], 0.0118, { k: 0.024 }));
   f.add(ellipsoid([0, 1.6136, 0.112], [0.0208, 0.0166, 0.016], { k: 0.014 }));   // chin
   // The cheeks are the whole reason the head reads as a box or as a snouted skull.
   // Kept narrow and swept BACK: in the reference the face steps in hard below the
@@ -240,8 +243,8 @@ export function buildHeadField() {
     // references this catches light and is one of the head's clearest structures.
     f.add(ellipsoid([s * 0.0540, 1.6720, 0.036], [0.0165, 0.0135, 0.040], { k: 0.011 }));
     f.add(ellipsoid([s * 0.0580, 1.6660, -0.004], [0.0150, 0.0120, 0.030], { k: 0.011 }));
-    f.add(ellipsoid([s * 0.0306, 1.6335, 0.014], [0.0148, 0.044, 0.046], { k: 0.048 })); // cheek / masseter
-    f.add(ellipsoid([s * 0.0438, 1.6405, -0.022], [0.0158, 0.050, 0.038], { k: 0.032 })); // jaw hinge
+    f.add(ellipsoid([s * 0.0348, 1.6335, 0.014], [0.0172, 0.044, 0.046], { k: 0.048 })); // cheek / masseter
+    f.add(ellipsoid([s * 0.0472, 1.6405, -0.022], [0.0176, 0.050, 0.038], { k: 0.032 })); // jaw hinge
   }
 
   // ---- throat / neck (overlaps the body bake) ------------------------------------
@@ -267,14 +270,17 @@ export function buildHeadField() {
     // head's width; ours was under an eighth and read as a bean rather than as the
     // large forward-facing almond that carries the whole expression.
     f.sub(ellipsoid([s * EYE.c[0], EYE.c[1] + 0.0015, EYE.c[2] + 0.008],
-      [0.0264, 0.0152, 0.0286], { k: 0.006 }));
+      // Critic round 5: visible iris area was 3.5x the reference's normalised by
+      // interocular distance, and iris width +45%. The reference eye is a small ALMOND —
+      // wider than tall — set back under the brow, not a round port.
+      [0.0196, 0.0090, 0.0212], { k: 0.006 }));
     // Lid rims above and below, so the opening reads as lidded rather than as a
     // crater. The upper lid is built from two lobes at different heights — outer
     // high, inner low — so the eye slants down toward the snout. The references'
     // whole expression comes from that angle; a level lid reads placid.
-    f.add(ellipsoid([s * 0.0650, 1.7212, 0.0530], [0.0180, 0.0070, 0.0224], { k: 0.007 }));
-    f.add(ellipsoid([s * 0.0426, 1.7118, 0.0680], [0.0194, 0.0068, 0.0228], { k: 0.007 }));
-    f.add(ellipsoid([s * 0.0526, 1.6742, 0.0636], [0.0272, 0.0060, 0.0244], { k: 0.007 }));
+    f.add(ellipsoid([s * 0.0630, 1.7148, 0.0530], [0.0176, 0.0074, 0.0210], { k: 0.007 }));
+    f.add(ellipsoid([s * 0.0424, 1.7078, 0.0672], [0.0184, 0.0072, 0.0214], { k: 0.007 }));
+    f.add(ellipsoid([s * 0.0524, 1.6850, 0.0636], [0.0250, 0.0064, 0.0228], { k: 0.007 }));
   }
   // mouth crease — rises toward the jaw hinge like a real reptile jaw line
   // x-extent follows the muzzle's own half-width, narrowing toward the snout, so the

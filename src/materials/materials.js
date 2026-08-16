@@ -583,7 +583,9 @@ const EYE_FRAG = /* glsl */`
   // sclera ring, and a reptile eye has no visible sclera.
   vec3 col = mix(iris, vec3(0.006, 0.005, 0.004), ss(0.88, 0.99, r));
   // vertical slit pupil
-  float slit = length(vec2(x / 0.150, y / 0.92));
+// The pupil is a HAIR-FINE slit. At 0.150 it rendered as a black bar 12% of the iris
+  // width against the reference's ~4%.
+  float slit = length(vec2(x / 0.055, y / 0.92));
   col = mix(vec3(0.004, 0.0035, 0.003), col, ss(0.92, 1.02, slit));
   // limbal ring
   col *= 1.0 - 0.42 * ss(0.74, 0.90, r);   // limbal darkening at the very rim

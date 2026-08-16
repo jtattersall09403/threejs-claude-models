@@ -196,6 +196,31 @@ immediately — both of these were obvious in one frame.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
 
+### Iteration 28 — working critic round 5's ranked list
+
+Report and evidence in `critic/latest/`. Status:
+
+| # | defect | status |
+|---|---|---|
+| 1 | waist/hip shatters into pale shards over ~120 deg of orbit | **DONE** — it was the TROUSERS printing through the coat skirt. The widened stance put the thigh's outer surface at x ~0.175 against a skirt only 0.155 wide there. Found in ONE shot with the new `window.argonian.regionDebug(true)`, which flat-colours every garment by region; the same artefact had previously been misattributed to fold noise, sash/belt projection, shadow bias and winding in turn. Verified clean at az 300 and az 60. |
+| 2 | eye 3.5x too big, marble in a slot | **DONE** — aperture cut to an almond (was nearly round), ball 0.0180 -> 0.0152, pupil slit 0.150 -> 0.055 of iris width. |
+| 3 | bottom-heavy and armless front silhouette | **DONE, both halves.** Arms hang at the sides (which also cleared the hand/wrap pile-up feeding defect 1); then hip bone, pelvis and glutes narrowed so the shoulders are the widest point again. The critic warned these were coupled and that widening the skirt for defect 1 pushed the wrong way — it did, and the fix had to come from the legs. |
+| 4 | muzzle 45% too long, skull 17% too flat | **DONE** — muzzle shortened, cranial dome raised, all crown-seated features and the horn re-seated on it, collar raised 18 mm to follow the lower jaw (trap 17). Then the lower face was WIDENED again: narrowing the jaw for the from-below view had left the front a narrow tower under a broad skull. |
+| 7 | horn is a spear | **DONE** — re-authored to ~0.75 skull length at ~29 deg, base 50% thicker. |
+| 10 | mouth rises 6 deg, should be 22 | **DONE** — LIP.slope 0.176 -> 0.330, sitting lower on the muzzle. |
+| 5 | oxblood brow absent, red on the snout dorsum | open |
+| 6 | crest pale; five identical plates | open |
+| 8 | jaw/cheek spikes are cones not blades | open |
+| 9 | hands read as a rake | open |
+| 11 | tail reads as a third limb | open |
+| 12 | muzzle scale texture too fine and uniform | open |
+
+**Do not regress what the critic signed off:** winding/translucency, lighting and mood,
+lit skin hue (43-52 deg, measured as matching), skull-cap scale net, nostrils, horn metal
+band, jaw-spike placement, throat scute banding, sash direction/braid/belt/knot, bare
+forearms with wrist wraps, eye slit legibility, boots and feet.
+
+
 ### Iteration 27 — an inside-out winding bug that had been there all along
 
 `emit()` in core/geom.js orders its triangles assuming **u x v points ALONG the
