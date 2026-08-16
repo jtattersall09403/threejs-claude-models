@@ -120,8 +120,8 @@ export function clothingFields(body) {
       // at the shoulder, and since the garment is a smooth intersection with this
       // volume, that cap prints straight through as a balloon — a leg-of-mutton
       // sleeve with a seam ring around the upper arm.
-      capsule([-0.110, 1.425, 0], [-0.222, 1.128, -0.006], 0.115, 0.086),
-      capsule([0.110, 1.425, 0], [0.222, 1.128, -0.006], 0.115, 0.086),
+      capsule([-0.110, 1.425, 0], [-0.222, 1.128, -0.006], 0.098, 0.082),
+      capsule([0.110, 1.425, 0], [0.222, 1.128, -0.006], 0.098, 0.082),
     ]);
     const f = garment(body, 0.026, cover, bounds, 0.016, folds(0.0092, 12));
     // The projection target for the sash, the medallion and the belt. It has to carry
@@ -316,7 +316,9 @@ export function buildStrap(tunicField, lift = 0.019) {
       // cross-section is a wide thin ribbon. Nearer to round it reads as a rope.
       // Tapered at both ends, or a flat band terminates in a hard cap that catches
       // the light edge-on and reads as a knife blade laid across the hip.
-      r: [0.0198 * (0.62 + 0.38 * Math.min(1, Math.min(t, 1 - t) / 0.05)), 0.0050],
+// Narrower: the reference sash is a braided CORD lying on the coat, not the wide
+      // flat belt-width band ours had become.
+      r: [0.0146 * (0.62 + 0.38 * Math.min(1, Math.min(t, 1 - t) / 0.05)), 0.0046],
       profile: (a) => 1 + 0.10 * Math.sin(a * 3.0 + t * 40.0)
                     + 0.05 * Math.sin(a * 6.0 - t * 62.0),  // braid relief
     };

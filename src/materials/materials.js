@@ -745,17 +745,20 @@ export function createMaterials() {
     // — the reference reads as separate garments before you resolve any detail.
     // warm dark brown with a maroon undertone, per the full-body reference — not the
     // neutral tan it was, which read as canvas rather than as a dyed woollen tunic
-    tunic: clothMat('tunic', [0.0178, 0.0147, 0.0126], 0.95, 9.0, cloth),
+    // Darker. Against the reference the coat is a near-charcoal brown; ours rendered as a
+    // light khaki, which changes the whole figure's read from a labourer in a worn dark
+    // coat to one in pale canvas.
+    tunic: clothMat('tunic', [0.0096, 0.0080, 0.0068], 0.95, 9.0, cloth),
     // Clearly above the coat, but a muted grey-GREEN, not cream. Polarity was the
     // defect the critic measured; overshooting into cream trades one error for another.
-    undershirt: clothMat('undershirt', [0.0402, 0.0442, 0.0396], 0.95, 12.0, cloth),
-    trousers: clothMat('trousers', [0.0196, 0.0183, 0.0168], 0.95, 9.0, cloth),
+    undershirt: clothMat('undershirt', [0.0298, 0.0332, 0.0286], 0.95, 12.0, cloth),
+    trousers: clothMat('trousers', [0.0152, 0.0142, 0.0130], 0.95, 9.0, cloth),
     wrap: clothMat('wrap', [0.0745, 0.0778, 0.0708], 0.96, 14.0, cloth),
     leather: clothMat('leather', [0.0162, 0.0114, 0.0082], 0.91, 22.0, leather),
     // sash and belt sit only a little above the tunic. Pushed further apart they
     // stopped reading as cloth and became bright metal blades laid across the chest.
     sash: clothMat('sash', [0.0812, 0.0768, 0.0678], 0.90, 18.0, leather),
-    belt: clothMat('belt', [0.0648, 0.0632, 0.0580], 0.92, 9.0, cloth),
+    belt: clothMat('belt', [0.0742, 0.0716, 0.0648], 0.92, 9.0, cloth),
     textures: { scale, cloth, leather },
   };
 }

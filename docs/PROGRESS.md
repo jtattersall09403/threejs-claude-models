@@ -196,6 +196,21 @@ immediately — both of these were obvious in one frame.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
 
+### Iteration 26 — garments, after the head
+
+With the head signed off by eye from every angle, the same treatment on the garments:
+- Coat, trousers and undershirt darkened toward the reference's near-charcoal; ours was
+  reading as pale canvas.
+- Cloth macro blotching made gentler and finer — at 40% on a low-frequency fbm the
+  garments carried soft blobs that read as stains, and on the trousers they swamped the
+  leg's form entirely.
+- The sash is a braided CORD again, not a belt-width flat band.
+- Sleeve coverage narrowed so the shoulder stops reading as padded.
+- **Two capture framings were lying.** The `body` compare sheet put a waist-up reference
+  next to a full-figure render — the two sides were at completely different scales and
+  the sheet answered nothing. The `tail` shot was aimed at y 0.78 from 1.75 m and had no
+  tail in it at all. Both fixed; judge the framing before judging the model.
+
 ### Iteration 25 — head pass, all angles
 
 Continued from the height-channel fix. Every change below was made by looking at the

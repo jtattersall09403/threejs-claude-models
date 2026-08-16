@@ -30,7 +30,7 @@ SHOTS.push(
   ['head_rear34', 145, 8, 0.96, 1.678, 30],
   ['head_low', 10, -16, 0.94, 1.660, 30],
   ['head_top', 20, 46, 0.96, 1.700, 30],
-  ['torso_front', 8, 2, 1.62, 1.26, 30],
+  ['torso_front', 8, 2, 2.05, 1.30, 30],
   // head AND shoulders together, framed like face-front-and-bust-proportions.jpg. The
   // bust comparison exists to judge head-to-shoulder proportion, so a framing that
   // crops the head out of it answers nothing.
