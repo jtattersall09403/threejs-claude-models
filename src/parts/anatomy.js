@@ -3,6 +3,9 @@
 // carries all the silhouette-critical detail). They overlap deep inside the neck,
 // so the join is never visible.
 //
+// The reference face is BROAD — a wide shield seen from the front, widest across the
+// temples and cheeks. Ours read as a narrow tower with a long snout, so the skull, the
+// temples, the cheekbones, the jaw hinges and the eye spacing were all widened together.
 // Head proportions target the references: length : height : width ≈ 1.6 : 1 : 0.9,
 // i.e. long-snouted but with a tall braincase and a deep jaw — NOT a flat plank.
 //
@@ -14,7 +17,7 @@ import { Field, capsule, ellipsoid, roundBox, creaseSlot } from '../core/sdf.js'
 import { TAIL_SPINE } from '../rig/skeleton.js';
 
 export const EYE = {
-  c: [0.0468, 1.6975, 0.0688],   // mirrored on x
+  c: [0.0512, 1.6975, 0.0688],   // mirrored on x
   r: 0.0176,   // The ball stays a decent size; what stops a free sphere edge showing
                // is the APERTURE being clearly smaller than the ball, below. Shrinking
                // and sinking the ball instead just makes the eye vanish.
@@ -142,7 +145,7 @@ export function buildHeadField() {
   // TALLER THAN IT IS LONG-ISH. Traced over the profile reference the skull is a
   // compact rounded mass, length:height about 1.09. Ours ran to 1.4+: a long low
   // lozenge with the muzzle taking 39% of the length where the reference's takes 24%.
-  f.add(ellipsoid([0, 1.7015, -0.006], [0.0668, 0.0925, 0.0930], { k: 0.055 }));
+  f.add(ellipsoid([0, 1.7015, -0.006], [0.0724, 0.0925, 0.0930], { k: 0.055 }));
   f.add(ellipsoid([0, 1.6840, -0.046], [0.047, 0.062, 0.042], { k: 0.05 }));  // domed occiput
   // The rear of the skull DROPS STEEPLY from the crown in the annotated profile — the
   // back of the head and the back of the neck sit on roughly one vertical line. A
@@ -157,9 +160,9 @@ export function buildHeadField() {
     // centre. At y 1.7268 with a half-height of 0.0175 its underside was 1.7093, below
     // the aperture's top at 1.7117 — so the shelf ate the eye and the face read as a
     // visored helmet with two orange slits in it.
-    f.add(ellipsoid([s * 0.0468, 1.7345, 0.070], [0.032, 0.0175, 0.048], { k: 0.026 }));  // brow shelf, outer
-    f.add(ellipsoid([s * 0.0256, 1.7255, 0.086], [0.024, 0.0158, 0.040], { k: 0.024 })); // ...dipping inboard
-    f.add(ellipsoid([s * 0.0575, 1.6905, 0.022], [0.016, 0.054, 0.055], { k: 0.035 }));  // temple
+    f.add(ellipsoid([s * 0.0512, 1.7345, 0.070], [0.034, 0.0175, 0.048], { k: 0.026 }));  // brow shelf, outer
+    f.add(ellipsoid([s * 0.0280, 1.7255, 0.086], [0.026, 0.0158, 0.040], { k: 0.024 })); // ...dipping inboard
+    f.add(ellipsoid([s * 0.0630, 1.6905, 0.022], [0.018, 0.054, 0.055], { k: 0.035 }));  // temple
   }
 
   f.add(capsule([-0.030, 1.7285, 0.084], [0.030, 1.7285, 0.084], 0.0136, 0.0136,
@@ -210,10 +213,10 @@ export function buildHeadField() {
     // cheekbone: a distinct ridge running back from under the eye to the hinge
     // Cheekbone: a pronounced ridge from under the eye back to the hinge. In the
     // references this catches light and is one of the head's clearest structures.
-    f.add(ellipsoid([s * 0.0492, 1.6720, 0.036], [0.0150, 0.0135, 0.040], { k: 0.011 }));
-    f.add(ellipsoid([s * 0.0530, 1.6660, -0.004], [0.0135, 0.0120, 0.030], { k: 0.011 }));
-    f.add(ellipsoid([s * 0.0305, 1.6335, 0.014], [0.0140, 0.044, 0.046], { k: 0.048 })); // cheek / masseter
-    f.add(ellipsoid([s * 0.0430, 1.6405, -0.022], [0.0155, 0.050, 0.038], { k: 0.032 })); // jaw hinge
+    f.add(ellipsoid([s * 0.0540, 1.6720, 0.036], [0.0165, 0.0135, 0.040], { k: 0.011 }));
+    f.add(ellipsoid([s * 0.0580, 1.6660, -0.004], [0.0150, 0.0120, 0.030], { k: 0.011 }));
+    f.add(ellipsoid([s * 0.0350, 1.6335, 0.014], [0.0168, 0.044, 0.046], { k: 0.048 })); // cheek / masseter
+    f.add(ellipsoid([s * 0.0485, 1.6405, -0.022], [0.0180, 0.050, 0.038], { k: 0.032 })); // jaw hinge
   }
 
   // ---- throat / neck (overlaps the body bake) ------------------------------------
@@ -241,9 +244,9 @@ export function buildHeadField() {
     // crater. The upper lid is built from two lobes at different heights — outer
     // high, inner low — so the eye slants down toward the snout. The references'
     // whole expression comes from that angle; a level lid reads placid.
-    f.add(ellipsoid([s * 0.0604, 1.7212, 0.0530], [0.0180, 0.0070, 0.0224], { k: 0.007 }));
-    f.add(ellipsoid([s * 0.0382, 1.7118, 0.0680], [0.0194, 0.0068, 0.0228], { k: 0.007 }));
-    f.add(ellipsoid([s * 0.0482, 1.6768, 0.0636], [0.0268, 0.0060, 0.0240], { k: 0.007 }));
+    f.add(ellipsoid([s * 0.0650, 1.7212, 0.0530], [0.0180, 0.0070, 0.0224], { k: 0.007 }));
+    f.add(ellipsoid([s * 0.0426, 1.7118, 0.0680], [0.0194, 0.0068, 0.0228], { k: 0.007 }));
+    f.add(ellipsoid([s * 0.0526, 1.6768, 0.0636], [0.0268, 0.0060, 0.0240], { k: 0.007 }));
   }
   // mouth crease — rises toward the jaw hinge like a real reptile jaw line
   // x-extent follows the muzzle's own half-width, narrowing toward the snout, so the
@@ -259,14 +262,14 @@ export function buildHeadField() {
   }
   // ear depression
   for (const s of [1, -1]) {
-    f.sub(ellipsoid([s * 0.0745, 1.6665, -0.036], [0.008, 0.014, 0.011], { k: 0.006 }));
+    f.sub(ellipsoid([s * 0.0800, 1.6665, -0.036], [0.008, 0.014, 0.011], { k: 0.006 }));
   }
   // The round tympanic plate on the side of the skull — a clear disc in
   // face-left-profile.jpg, and one of the few landmarks that reads at profile
   // distance. A raised rim with a shallow dish inside it.
   for (const s of [1, -1]) {
-    f.add(ellipsoid([s * 0.0630, 1.6790, -0.0330], [0.0075, 0.0215, 0.0215], { k: 0.008 }));
-    f.sub(ellipsoid([s * 0.0680, 1.6790, -0.0330], [0.0075, 0.0148, 0.0148], { k: 0.005 }));
+    f.add(ellipsoid([s * 0.0685, 1.6790, -0.0330], [0.0075, 0.0215, 0.0215], { k: 0.008 }));
+    f.sub(ellipsoid([s * 0.0735, 1.6790, -0.0330], [0.0075, 0.0148, 0.0148], { k: 0.005 }));
   }
 
   return f;
