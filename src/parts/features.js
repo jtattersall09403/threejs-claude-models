@@ -21,16 +21,17 @@ const HORN_DIR = (s) => [s * 0.55, 0.72, 0.2];
 
 function hornPts(s) {
   return [
-    // Measured off the reference: the horn axis rises ~27 deg above horizontal and is
-    // ~0.66 of head length. Authored at 46 deg and 1.02x it read as a tall vertical
-    // antelope spire instead of a short swept-back stub — the largest silhouette error
-    // in critic round 4.
-    [s * 0.0500, 1.7255, 0.004],
-    [s * 0.0645, 1.7590, -0.034],
-    [s * 0.0748, 1.7920, -0.090],
-    [s * 0.0802, 1.8200, -0.152],
-    [s * 0.0798, 1.8400, -0.208],
-    [s * 0.0768, 1.8510, -0.250],
+    // Critic round 5 measured this against the profile: length 0.95 of skull length where
+    // the reference is 0.73-0.76, rising 20 deg where the reference rises 25-31, and 35%
+    // too slender at the base. A quarter too long at too shallow an angle turns a compact
+    // upswept horn into a dragon's spear, and that silhouette dominates the whole head.
+    // Re-authored ~0.75 skull length at ~29 deg, seated on the raised cranial dome.
+    [s * 0.0500, 1.7455, 0.006],
+    [s * 0.0642, 1.7690, -0.028],
+    [s * 0.0742, 1.8020, -0.070],
+    [s * 0.0796, 1.8330, -0.112],
+    [s * 0.0798, 1.8560, -0.148],
+    [s * 0.0776, 1.8690, -0.174],
   ];
 }
 
@@ -40,7 +41,10 @@ function hornPts(s) {
 // 0.0165. Measured across the profile reference the main horn is about a twentieth of
 // the head's length thick at the base; at 0.0212 it read as a heavy bull horn and was
 // the loudest thing in the silhouette.
-const hornRadius = (t) => (0.0165 * Math.pow(1 - t, 0.62) + 0.0008)
+// 0.0235: the critic measured our base thickness at 0.088 of skull length against the
+// reference's 0.135. A slender horn of this length reads as a spike rather than as the
+// heavy keratin the reference carries.
+const hornRadius = (t) => (0.0235 * Math.pow(1 - t, 0.62) + 0.0008)
   * (1 + 0.055 * Math.sin(t * 38) * Math.max(0, 1 - t * 1.6));
 
 function hornRings(side, field) {
@@ -102,7 +106,7 @@ export function buildFrontHorns(field) {
   const out = [];
   for (const s of [1, -1]) {
     const dir = [s * 0.26, 0.955, 0.14];
-    out.push(spike(seat(field, [s * 0.0448, 1.7420, 0.024], dir, 0.008), dir, 0.076, 0.0102, {
+    out.push(spike(seat(field, [s * 0.0448, 1.7620, 0.020], dir, 0.008), dir, 0.076, 0.0102, {
       taper: 0.70, sides: 12, steps: 9, bend: [s * 0.004, 0.003, -0.022],
     }));
   }
@@ -117,17 +121,17 @@ export function buildCrownSpikes(field) {
   // read as a tiara; built pale they compete with the horns for the eye.
   const defs = [
     // [x, y, z, length, radius]  — tallest at the centre, shrinking outboard
-    [-0.0455, 1.7520, -0.010, 0.0510, 0.0150],
-    [-0.0262, 1.7670, -0.016, 0.0720, 0.0178],
-    [-0.0088, 1.7725, -0.022, 0.0830, 0.0192],
-    [0.0088, 1.7725, -0.022, 0.0830, 0.0192],
-    [0.0262, 1.7670, -0.016, 0.0720, 0.0178],
-    [0.0455, 1.7520, -0.010, 0.0510, 0.0150],
+    [-0.0455, 1.7720, -0.010, 0.0510, 0.0150],
+    [-0.0262, 1.7870, -0.016, 0.0720, 0.0178],
+    [-0.0088, 1.7925, -0.022, 0.0830, 0.0192],
+    [0.0088, 1.7925, -0.022, 0.0830, 0.0192],
+    [0.0262, 1.7870, -0.016, 0.0720, 0.0178],
+    [0.0455, 1.7720, -0.010, 0.0510, 0.0150],
     // a shorter second rank over the occiput, so the crest has depth from the side
-    [-0.0240, 1.7330, -0.062, 0.0450, 0.0136],
-    [-0.0078, 1.7470, -0.070, 0.0640, 0.0160],
-    [0.0078, 1.7470, -0.070, 0.0640, 0.0160],
-    [0.0240, 1.7330, -0.062, 0.0450, 0.0136],
+    [-0.0240, 1.7530, -0.062, 0.0450, 0.0136],
+    [-0.0078, 1.7670, -0.070, 0.0640, 0.0160],
+    [0.0078, 1.7670, -0.070, 0.0640, 0.0160],
+    [0.0240, 1.7530, -0.062, 0.0450, 0.0136],
   ];
   for (const [x, y, z, len, r] of defs) {
     const dir = [x * 3.2, 0.56, -0.83];   // lying BACK over the crown, not standing up
@@ -171,8 +175,8 @@ export function buildJawSpikes(field) {
     // them somewhere the reference does not have them, and read as whiskers or a
     // picket fence rather than as part of the jaw's outline.
     for (const [p, dir, len, r] of [
-      [[s * 0.0300, 1.5960, 0.100], [s * 0.30, -0.26, -0.92], 0.0250, 0.0104],
-      [[s * 0.0400, 1.5975, 0.056], [s * 0.34, -0.20, -0.92], 0.0330, 0.0132],
+      [[s * 0.0300, 1.5990, 0.086], [s * 0.30, -0.26, -0.92], 0.0250, 0.0104],
+      [[s * 0.0400, 1.6005, 0.048], [s * 0.34, -0.20, -0.92], 0.0330, 0.0132],
       [[s * 0.0505, 1.6110, 0.012], [s * 0.40, -0.10, -0.91], 0.0620, 0.0196],
       [[s * 0.0565, 1.6410, -0.006], [s * 0.44, 0.10, -0.89], 0.0685, 0.0208],
     ]) {
@@ -189,8 +193,8 @@ export function buildJawSpikes(field) {
       // TWO a side, not three. Counting the crest, the front horns, the main horns and
       // the jaw blades, the head was carrying eleven separate pale points a side and
       // read as a picket fence; the references show a sparse, deliberate arrangement.
-      [[s * 0.0290, 1.7448, 0.0770], [s * 0.20, 0.38, 0.90], 0.0370, 0.0078],
-      [[s * 0.0480, 1.7420, 0.0680], [s * 0.44, 0.34, 0.82], 0.0330, 0.0070],
+      [[s * 0.0290, 1.7608, 0.0730], [s * 0.20, 0.38, 0.90], 0.0370, 0.0078],
+      [[s * 0.0480, 1.7580, 0.0640], [s * 0.44, 0.34, 0.82], 0.0330, 0.0070],
     ]) {
       out.push(spike(seat(field, p, dir, 0.003), dir, len, r, {
         taper: 0.9, flat: 0.38, sides: 10, steps: 7, bend: [0, 0.004, -0.010],
