@@ -263,10 +263,15 @@ const SKIN_FRAG = /* glsl */`
   // dorsum overlap in BOTH y and z on a short deep muzzle, so neither axis can separate
   // them; what does separate them is x. The brow plates sit out at |x| ~0.045, the snout
   // dorsum is on the centreline.
-  float brow = ss(0.086, 0.016, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.646, 1.672, H.y)
-             * ss(-0.020, 0.014, J.z) * ss(0.020, 0.036, abs(J.x));
+  float brow = ss(0.108, 0.014, browD) * ss(-0.62, 0.10, Nr.y) * ss(1.646, 1.672, H.y)
+             * ss(-0.020, 0.014, J.z)
+             // The lateral gate is only needed FORWARD, on the snout dorsum. Applied
+             // everywhere it also cut the red out from BETWEEN the eyes, where the
+             // reference carries it — the oxblood there is one continuous mass across
+             // the brow, not two separate patches over each eye.
+             * mix(1.0, ss(0.020, 0.036, abs(J.x)), ss(0.055, 0.105, J.z));
   // broken into plates rather than one even wash of colour
-  brow *= 0.62 + 0.55 * ss(0.30, 0.74, fbm(J * 52.0 + 5.0));
+  brow *= 0.82 + 0.34 * ss(0.30, 0.74, fbm(J * 52.0 + 5.0));
 
   // dorsal scute ridge down the tail — a plain taper reads as a rubber tube
   float tailZone = ss(-0.10, -0.16, P.z) * ss(1.02, 0.94, P.y);
@@ -305,7 +310,7 @@ const SKIN_FRAG = /* glsl */`
   // key — the reference's brow plates read because they are dark shields, not because
   // they are red. (The old note about pure red flooding the crown pink applied when
   // this field covered the whole cranium; it is a confined band now.)
-  vec3 maroon   = vec3(0.0330, 0.0082, 0.0066);
+  vec3 maroon   = vec3(0.0392, 0.0086, 0.0068);
   vec3 boneCol  = vec3(0.082, 0.080, 0.052);
 
   vec3 col = mix(dorsal2, dorsal, ss(0.30, 0.72, mottle * 0.6 + blotch * 0.7));

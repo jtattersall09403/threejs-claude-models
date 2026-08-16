@@ -67,7 +67,7 @@ export const CHEEK_MARK = { c: [0.054, 1.6775, -0.004] };  // dark stripe, eye t
 
 // The mouth line. The geometry cut and the shader's lip paint MUST share this or
 // the dark line drifts off the groove and smears onto the cheek.
-export const LIP = { y0: 1.6300, z0: 0.138, slope: 0.300 };
+export const LIP = { y0: 1.6292, z0: 0.150, slope: 0.290 };
 
 export const BODY_BOUNDS = [-0.35, -0.03, -0.62, 0.35, 1.55, 0.24];
 const HEAD_BOX = [-0.15, 1.40, -0.16, 0.15, 1.86, 0.28];
@@ -208,9 +208,9 @@ export function buildHeadField() {
     // to tip-to-eye ~0.22 of skull length overshot the 0.25 target and left a snub-nosed
     // pug against a reference muzzle that clearly projects.
     [0.042, 1.6752, 0.0342, 0.0448],
-    [0.086, 1.6620, 0.0280, 0.0378],
-    [0.120, 1.6506, 0.0228, 0.0302],
-    [0.150, 1.6408, 0.0186, 0.0236],   // blunt, not pointed: the reference nose is round
+    [0.090, 1.6612, 0.0280, 0.0378],
+    [0.128, 1.6490, 0.0228, 0.0302],
+    [0.164, 1.6382, 0.0186, 0.0236],   // blunt, not pointed: the reference nose is round
   ];
   // The z-radius has to TAPER too. Held at 0.046 for every station after the first, the
   // last one reached z 0.19 as a fat bulb and the snout ended in a blunt vertical face;
@@ -228,7 +228,7 @@ export function buildHeadField() {
   // in it at all.
   f.add(capsule([0, 1.7390, 0.070], [0, 1.6480, 0.134], 0.0168, 0.0080,
     { k: 0.026, scale: [1, 0.62, 1] }));
-  f.add(ellipsoid([0, 1.6414, 0.1560], [0.0154, 0.0134, 0.0120], { k: 0.016 })); // nose pad
+  f.add(ellipsoid([0, 1.6388, 0.1700], [0.0154, 0.0134, 0.0120], { k: 0.016 })); // nose pad
 
   // ---- lower jaw: deep and straight, turning up at a visible hinge --------------
   // Narrower than the upper muzzle at every station, so the jaw tucks under the lip
@@ -290,12 +290,12 @@ export function buildHeadField() {
   // crease stays on the surface instead of running out past the corners of the mouth
   // halfT 0.0026 is ~1.7 head-bake cells — too shallow to survive polygonisation, so
   // the mouth reduced to a faint scale-row transition. Deepened to ~2.7 cells.
-  f.sub(creaseSlot((z) => LIP.y0 + (LIP.z0 - z) * LIP.slope, 0.0042, [-0.005, 0.146],
-    (z) => 0.046 - 0.160 * Math.max(0, z - 0.030),
+  f.sub(creaseSlot((z) => LIP.y0 + (LIP.z0 - z) * LIP.slope, 0.0042, [-0.005, 0.160],
+    (z) => 0.046 - 0.148 * Math.max(0, z - 0.030),
     { k: 0.0045, yMin: 1.56, yMax: 1.68, xBound: 0.07 }));
   // nostrils — at the old size they were below the bake resolution and invisible
   for (const s of [1, -1]) {
-    f.sub(ellipsoid([s * 0.0100, 1.6644, 0.1430], [0.0056, 0.0070, 0.0106], { k: 0.0035 }));
+    f.sub(ellipsoid([s * 0.0100, 1.6620, 0.1560], [0.0056, 0.0070, 0.0106], { k: 0.0035 }));
   }
   // ear depression
   for (const s of [1, -1]) {
