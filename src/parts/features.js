@@ -183,13 +183,13 @@ export function buildJawSpikes(field) {
     // them somewhere the reference does not have them, and read as whiskers or a
     // picket fence rather than as part of the jaw's outline.
     for (const [p, dir, len, r] of [
-      [[s * 0.0300, 1.5990, 0.086], [s * 0.30, -0.26, -0.92], 0.0250, 0.0104],
-      [[s * 0.0400, 1.6005, 0.048], [s * 0.34, -0.20, -0.92], 0.0330, 0.0132],
-      [[s * 0.0505, 1.6110, 0.012], [s * 0.40, -0.10, -0.91], 0.0620, 0.0196],
-      [[s * 0.0565, 1.6410, -0.006], [s * 0.44, 0.10, -0.89], 0.0685, 0.0208],
+      [[s * 0.0300, 1.5990, 0.086], [s * 0.30, -0.26, -0.92], 0.0195, 0.0180],
+      [[s * 0.0400, 1.6005, 0.048], [s * 0.34, -0.20, -0.92], 0.0255, 0.0230],
+      [[s * 0.0505, 1.6110, 0.012], [s * 0.40, -0.10, -0.91], 0.0470, 0.0330],
+      [[s * 0.0565, 1.6410, -0.006], [s * 0.44, 0.10, -0.89], 0.0520, 0.0350],
     ]) {
       out.push(spike(seat(field, p, dir, 0.004), dir, len, r, {
-        taper: 0.62, flat: 0.32, sides: 10, steps: 7, bend: [0, -0.005, 0.0],
+        taper: 0.74, flat: 0.20, sides: 10, steps: 7, bend: [0, -0.004, 0.0],
       }));
     }
     // brow scutes: three flat claw-like plates lying back along the brow ridge,

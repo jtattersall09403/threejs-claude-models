@@ -208,12 +208,12 @@ Report and evidence in `critic/latest/`. Status:
 | 4 | muzzle 45% too long, skull 17% too flat | **DONE** — muzzle shortened, cranial dome raised, all crown-seated features and the horn re-seated on it, collar raised 18 mm to follow the lower jaw (trap 17). Then the lower face was WIDENED again: narrowing the jaw for the from-below view had left the front a narrow tower under a broad skull. |
 | 7 | horn is a spear | **DONE** — re-authored to ~0.75 skull length at ~29 deg, base 50% thicker. |
 | 10 | mouth rises 6 deg, should be 22 | **DONE** — LIP.slope 0.176 -> 0.330, sitting lower on the muzzle. |
-| 5 | oxblood brow absent, red on the snout dorsum | open |
-| 6 | crest pale; five identical plates | open |
-| 8 | jaw/cheek spikes are cones not blades | open |
+| 5 | oxblood brow absent, red on the snout dorsum | **DONE** — and the cause was structural, not a colour choice. On a short deep muzzle the snout's DORSUM rises to head-space y 1.709, overlapping the brow ridge in both y AND z, so neither axis could separate them: the crown cap and the brow field were both painting straight down the middle of the snout. `debugMasks(1)` showed it immediately. Fixed with a LATERAL gate — the same fix as the black-muzzle bug. |
+| 6 | crest pale; five identical plates | **DONE** — crest darkened to a real value break against the pale horns, and blade length, width and yaw jittered so it reads as a ragged fan rather than cardboard. |
+| 12 | muzzle scale texture too fine and uniform | **DONE** — head scale frequency now varies, with the fine pebble reserved for the centre of the snout. Went too coarse first (cobblestones) and was pulled back. |
+| 8 | jaw/cheek spikes are cones not blades | **PARTIAL — and there is a real blocker.** Widened and shortened per the critic, but they still do not read flat, and now I know why: `spike()` sweeps along a PARALLEL-TRANSPORT frame, so `opts.flat` controls the cross-section's aspect but NOT which way the flat face points. It comes out effectively random per spike. Making these read as blades needs an explicit frame in `spike()` (an `up` hint, as `buildBelt` does with `frameFn`). |
 | 9 | hands read as a rake | open |
 | 11 | tail reads as a third limb | open |
-| 12 | muzzle scale texture too fine and uniform | open |
 
 **Do not regress what the critic signed off:** winding/translucency, lighting and mood,
 lit skin hue (43-52 deg, measured as matching), skull-cap scale net, nostrils, horn metal

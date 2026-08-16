@@ -168,7 +168,11 @@ const SKIN_FRAG = /* glsl */`
   // on the cranium (which samples the coarse plate map) and vanished on the muzzle — the
   // muzzle then read as a smooth panel next to a patterned skull. In the references the
   // muzzle plates are nearly as large as the cranial ones.
-  float freq = mix(16.0, 15.0, headMask);
+// CRITIC 12: at matched scale the reference cheek carries a LARGE crisp polygonal net
+  // and reserves the fine pebble for the centre of the snout only; ours ran one fine
+  // frequency uniformly over the whole muzzle and cheek, which reads mushy.
+  float snoutFine = ss(0.026, 0.086, A.z) * ss(0.042, 0.014, abs(A.x));
+  float freq = mix(16.0, 15.0 + 6.0 * snoutFine, headMask);
   vec4 fine = triDetail(P, Nr, freq, mix(1.55, 1.45, headMask));
   vec4 plateD = triDetail(P, Nr, freq * 0.30, 1.5);
   float sizeMix = ss(0.38, 0.66, fbm(P * 3.1 + 4.0)) * 0.4;
