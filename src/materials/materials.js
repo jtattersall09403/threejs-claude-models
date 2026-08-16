@@ -178,13 +178,12 @@ const SKIN_FRAG = /* glsl */`
   float sizeMix = ss(0.38, 0.66, fbm(P * 3.1 + 4.0)) * 0.4;
   // zoned scale size: big armour plates over the cranium, fine pebbling on the
   // muzzle and cheek. One uniform frequency reads as fishnet, not hide.
-// Same overlap bug as `cap` and `brow` had, found by auditing every head mask that
-  // keys off H.y after the muzzle was re-proportioned: the y gate opens above 1.690 and
-  // the z gate stays solid all the way to 0.105, so on a short deep muzzle whose dorsum
-  // reaches y 1.709 this was firing along the top of the SNOUT as well as the cranium —
-  // giving the snout the cranium's coarse armour plates via plateMix. Confined to the
-  // crown by z, exactly as `cap` is.
-  float crownZone = ss(1.652, 1.690, H.y) * ss(0.170, 0.105, H.z) * ss(0.075, 0.030, H.z);
+  // Same overlap bug the cap and brow masks had, found by auditing every head mask
+  // that keys off H.y after the muzzle was re-proportioned: with only a y gate, a short
+  // deep muzzle whose dorsum reaches y 1.709 fires this along the top of the SNOUT as
+  // well as the cranium, giving the snout the cranium's coarse armour plates through
+  // plateMix. Gated in z too, so it stops behind the eye.
+  float crownZone = ss(1.652, 1.690, H.y) * ss(0.130, 0.070, H.z);
   // big scutes under the chin and along the lower jaw — in the references these are
   // the largest scales on the animal and markedly darker than the muzzle
   // the Z gate has to reach past the front of the chin (H.z ~0.168) or it closes on
