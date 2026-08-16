@@ -4229,6 +4229,13 @@ ${t}`),e&&(i.fragmentShader=i.fragmentShader.replace("#include <normal_fragment_
   float lip = ss(0.0068 * scute, 0.0024, abs(H.y - lipY))
             * ss(0.200, 0.186, H.z) * ss(-0.034, -0.006, H.z);
   col = mix(col, vec3(0.0018, 0.0016, 0.0014), lip * 0.94);
+  // A LIT UPPER LIP above the dark line. debugMasks(6) showed the lip mask present,
+  // correctly placed and running the full muzzle \u2014 the line was simply dark-on-dark and
+  // had nothing to read against. A mouth is legible because of the highlight on the lip
+  // over the groove, not because of the groove.
+  float lipEdge = ss(0.0082, 0.0040, abs(H.y - (lipY + 0.0068)))
+                * ss(0.200, 0.186, H.z) * ss(-0.034, -0.006, H.z);
+  col = mix(col, col * 1.75 + vec3(0.0034, 0.0036, 0.0024), lipEdge * 0.58);
 
   // Crevices between scales go dark on the BODY. Range kept narrow: at 0.42..1.06 the
   // detail height alone swung local brightness 2.5x, so wherever the scale texture

@@ -196,6 +196,50 @@ immediately — both of these were obvious in one frame.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
 
+### Iteration 24 — THE HIDE'S HEIGHT CHANNEL WAS DEAD, and the head after fixing it
+
+The single most important finding in the project so far. `debugMasks(8)` (added this
+iteration, paints the scale-texture height `h`) showed **h saturated at 1.0 across the
+entire head**. `makeScaleTexture` computed `edge = min(1, (f2-f1)*cells*3)` then
+`pow(edge, 0.22)` — the edge term saturates about 3% into a cell and the power curve
+pinned it there, so after `*1.02` and the clamp the height was 1 everywhere with a
+groove one or two texels wide.
+
+Everything that gives the hide its value structure keys off h: the bright reticulated
+net, the crevice darkening, the plate-size blend, the roughness breakup. All of them
+were inert. That is why the face rendered as a smooth flat mass with relief but no
+pattern, and why a dozen attempts to fix it by tuning the terms that READ h had no
+visible effect. Fixed by making the dome use its range (`*cells*1.15`, `pow(...,0.62)`,
+`0.04 + dome*0.90`).
+
+Then, with the hide finally responding, the head from every angle:
+- Head scales sized to actually read (freq 25 → 15 on the head); at 4 mm plates the
+  grooves were sub-pixel on the muzzle so the net showed only on the cranium.
+- Face WIDENED — skull, temples, cheekbones, jaw hinges and eye spacing. The reference
+  face is a broad shield; ours was a narrow tower. Then the jaw hinge and masseter were
+  narrowed again, because from BELOW the widening made the jaw as broad as the skull.
+- Throat narrowed below the jaw so a jawline exists from underneath, then thickened and
+  the collar raised, because at three-quarter the head ended up perched on a stalk.
+- Snout z-radius tapers; the tip is a rounded point, not a blunt bulb.
+- Horn cuff is a band, not a sleeve. Crest blades widened to serrate the silhouette.
+- **The mouth finally reads.** `debugMasks(6)` showed the mask correct and full-length
+  all along — it was dark-on-dark with nothing to contrast against. Adding a LIT UPPER
+  LIP just above the dark line is what made it legible.
+
+Also fixed, before the head work: the torn-geometry artefact across the hip and hands
+was BACK-FACE CULLING of thin sheets in the garment bakes — not fold noise, not the
+sash/belt projection, not shadow bias, all of which were investigated first. Located by
+ablation plus a double-sided test. Garments are double-sided now; the audit still
+requires skin/horn/eye to be single-sided so trap 1 stays visible.
+
+**Standing user instructions recorded in CLAUDE.md:** judge visually rather than from
+tool measurements, and finish the head before anything else.
+
+**Still open on the head:** the muzzle is shorter and the skull taller than the
+reference's; the cheek spikes are cones where the reference's are flat plates; the neck
+is still slightly long.
+
+
 ### Iteration 23b — where the head stands, and what is NOT working
 
 Architecture from the blueprint is now largely in: compact skull, short muzzle, convex
