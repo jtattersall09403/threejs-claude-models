@@ -31,7 +31,11 @@ export const EYE = {
 // scale 1.16: measured against the full-body reference, head height against shoulder
 // width was 0.38 where the reference is ~0.6. The head was reading as too small for
 // the body from every full-length angle.
-export const HEAD_XF = { scale: 1.16, pivot: [0, 1.578, 0.028], offset: [0, -0.034, 0.004] };
+// 1.21. At 1.16 the head read as small on a heavy body in every full-length framing.
+// TRAP 17: scaling the head moves the JAW but not the collar, so the cowl and the coat
+// neckline have to be re-checked after any change here — and so do the head capture
+// framings.
+export const HEAD_XF = { scale: 1.21, pivot: [0, 1.578, 0.028], offset: [0, -0.030, 0.004] };
 
 export function headPoint(p) {
   const { scale: s, pivot: c, offset: o } = HEAD_XF;
