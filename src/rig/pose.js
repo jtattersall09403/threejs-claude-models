@@ -39,14 +39,21 @@ export const IDLE_STANCE = {
   // ---- arms: hanging, not glued. Unequal on purpose ------------------------
   // Abduction is what separates the silhouette of the arm from the silhouette of the
   // torso. Without it the coat, the arm and the flank merge into one slab.
+  // The arms HANG AT THE SIDES, as they do in the reference. They used to carry 13 and
+  // 19.5 degrees of elbow flexion, which brought both hands round in front of the belly
+  // — and that cost two separate things. From the front the upper arms were pinned
+  // inside the torso silhouette so no arm read at all, and at the hip the hands, wrist
+  // wraps, belt, sash and skirt all piled into one another, which is where the shattered
+  // pale band across the waist was coming from. A few degrees of flex is enough to stop
+  // the arm looking locked.
   'clavicle.L': { z: -1.6, y: -1.8 },
-  'shoulder.L': { z: 7.6, y: 3.0, x: -3.5 },
-  'elbow.L': { x: -13.0, y: 5.0, z: 1.5 },
-  'wrist.L': { x: -5.0, z: -4.0, y: 3.0 },
+  'shoulder.L': { z: 6.6, y: 2.0, x: -1.2 },
+  'elbow.L': { x: -4.5, y: 3.0, z: 1.0 },
+  'wrist.L': { x: -2.0, z: -3.0, y: 2.0 },
   'clavicle.R': { z: 2.2, y: 1.4 },
-  'shoulder.R': { z: -6.2, y: -2.0, x: -7.0 },
-  'elbow.R': { x: -19.5, y: -6.0, z: -2.0 },
-  'wrist.R': { x: -3.0, z: 5.0, y: -2.0 },
+  'shoulder.R': { z: -5.4, y: -1.4, x: -3.0 },
+  'elbow.R': { x: -7.5, y: -4.0, z: -1.5 },
+  'wrist.R': { x: -1.5, z: 3.5, y: -1.5 },
 
   // ---- legs: the -x leg carries the weight, the +x leg is soft ---------------
   'hip.R': { z: 0.9, x: 1.4, y: -1.5 },

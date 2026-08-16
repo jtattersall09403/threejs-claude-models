@@ -41,6 +41,20 @@ function boot() {
     THREE,
     bone: (name) => model.rig.byName.get(name),
     boneNames: model.rig.bones.map((b) => b.name),
+    /**
+     * Flat-colour every garment by its material region: 3 tunic (red), 4 undershirt
+     * (green), 5 leather (blue), 6 trousers (yellow), 7 wrap (magenta), 8 sash (cyan),
+     * 9 belt (orange). This is the fastest way to find a garment printing through
+     * another one — it located the trousers punching through the coat skirt across the
+     * whole hip in a single shot, after the same artefact had been misattributed to
+     * fold noise, projection, shadow bias and winding in turn.
+     */
+    regionDebug: (on) => {
+      for (const [k, m] of Object.entries(model.materials)) {
+        const sh = m && m.userData && m.userData.shader;
+        if (sh && sh.uniforms.uRegionDebug) sh.uniforms.uRegionDebug.value = on ? 1 : 0;
+      }
+    },
     debugMasks: (n) => {
       const u = model.materials.skin.userData.shader.uniforms.uDebug;
       u.value = n;

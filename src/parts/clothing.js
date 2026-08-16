@@ -139,12 +139,18 @@ export function clothingFields(body) {
     // A coat skirt, not a peplum: it reaches mid-thigh and FLARES, so the figure gets a
     // waist. Stopping it just under the belt left the hips as the widest thing in the
     // silhouette and the whole figure read pear-shaped.
-    addBoth(capsule([0, 1.0, 0.0], [0, 0.700, -0.016], 0.148, 0.170, { k: 0.055, scale: [1, 1, 0.9] }));
+// THE SKIRT MUST CLEAR THE LEGS. When the stance was widened the thigh's outer surface
+    // moved to x ~0.175, and with the trousers offset 12 mm on top of that they reached
+    // 0.187 — well outside a skirt that was only 0.155 at the same height. The trousers
+    // therefore printed straight through the coat across the entire hip and thigh, which
+    // is what the shattered pale band round the waist actually was. (Found in one shot
+    // with window.argonian.regionDebug(true), which flat-colours each garment region.)
+    addBoth(capsule([0, 1.0, 0.0], [0, 0.700, -0.016], 0.186, 0.208, { k: 0.055, scale: [1, 1, 0.9] }));
     // hem roll, waved so the border is not a dead-level line
     for (let i = 0; i < 16; i++) {
       const a = (i / 16) * Math.PI * 2;
-      addBoth(ellipsoid([Math.cos(a) * 0.146, 0.700 + Math.sin(a * 3) * 0.017, Math.sin(a) * 0.126 - 0.016],
-        [0.038, 0.021, 0.036], { k: 0.038 }));
+      addBoth(ellipsoid([Math.cos(a) * 0.184, 0.700 + Math.sin(a * 3) * 0.017, Math.sin(a) * 0.160 - 0.016],
+        [0.040, 0.021, 0.038], { k: 0.038 }));
     }
     for (const s of [1, -1]) {
       addBoth(ellipsoid([s * 0.2205, 1.098, -0.008], [0.0560, 0.024, 0.0560], { k: 0.010 })); // rolled cuff

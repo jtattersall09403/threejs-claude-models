@@ -657,6 +657,19 @@ const CLOTH_FRAG = /* glsl */`
   gRoughOut = clamp(uRough + (1.0 - h) * 0.16 - wear * 0.08 + seam * 0.10
                     + bootSeam * 0.12, 0.35, 1.0);
   diffuseColor.rgb = col;
+  // TEMP region debug: 3 tunic, 4 undershirt, 5 leather, 6 trousers, 7 wrap, 8 sash, 9 belt
+  if (uRegionDebug > 0.5) {
+    vec3 rc = vec3(0.0);
+    if (vRegion < 3.5) rc = vec3(0.5, 0.05, 0.05);
+    else if (vRegion < 4.5) rc = vec3(0.05, 0.5, 0.05);
+    else if (vRegion < 5.5) rc = vec3(0.05, 0.05, 0.6);
+    else if (vRegion < 6.5) rc = vec3(0.5, 0.5, 0.05);
+    else if (vRegion < 7.5) rc = vec3(0.5, 0.05, 0.5);
+    else if (vRegion < 8.5) rc = vec3(0.05, 0.5, 0.5);
+    else rc = vec3(0.6, 0.3, 0.05);
+    diffuseColor.rgb = rc;
+    gRoughOut = 1.0;
+  }
 `;
 
 // ---------------------------------------------------------------------------
@@ -749,6 +762,7 @@ export function createMaterials() {
     uBase: { value: new THREE.Color(...base) },
     uRough: { value: rough },
     uWeave: { value: weave },
+    uRegionDebug: { value: 0 },
   });
 
   return {
