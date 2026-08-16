@@ -22,6 +22,14 @@ core/mc.js           marching cubes → indexed mesh, CCW-from-outside
         ▼
 core/skin.js         auto skin weights: nearest bone segments, inverse-cube falloff
 core/geom.js         MeshBuilder merges parts → one SkinnedMesh per material
+        │             (emit() enforces canonical sweep handedness — see below)
+        ▼
+rig/pose.js          THE DISPLAY STANCE, applied as bone rotations AFTER mesh.bind().
+        │             The rest pose above is a MEASURING pose: symmetric, arms vertical,
+        │             feet together. Rendered raw it reads as a shop mannequin. Applying
+        │             the stance before bind() bakes it in twice (THREE.Skeleton has
+        │             already snapshotted the bind inverses by then). applyStance() also
+        │             re-plants the feet, since rotating the pelvis lifts one ankle.
         ▼
 materials/           MeshStandardMaterial + injected GLSL; colour is driven by the
                      REST-POSE position so patterns stay locked to the body when
@@ -98,6 +106,7 @@ and the symptom is never obviously a drift problem:
 | constant | defined in | also used by | what drift looks like |
 |---|---|---|---|
 | `LIP` | `parts/anatomy.js` | the geometry crease cut **and** `SKIN_FRAG`'s lip paint | the dark line slides off the groove and smears onto the cheek |
+| sweep frame handedness | `core/geom.js` `emit()` | every `frameFn` caller in `parts/clothing.js` | `emit()` orders triangles assuming `u × v` points ALONG the tangent; a frame supplied the other way round produces an INSIDE-OUT mesh. It shows in the capture audit as a negative signed volume and on screen as hard-edged shards where the culled back faces leave holes. `emit()` now flips `v` itself when the handedness is wrong. |
 | `TAIL_SPINE` | `rig/skeleton.js` | `parts/anatomy.js` tail capsules | tail geometry skins to the wrong bone spans and deforms wrongly once animated |
 | `EYE`, `HEAD_XF` | `parts/anatomy.js` | anatomy, features, eyes, and every head-space mask in `SKIN_FRAG`/`EYE_FRAG` via `defines()` | masks land in the wrong place; the iris centres off the eyeball |
 
