@@ -224,7 +224,9 @@ const FINGER_R = { thumb: 0.0142, index: 0.0126, middle: 0.0132, ring: 0.0120, p
 // NOTE: the tip is offset by c * TIP_CURL below, so the effective displacement is
 // ~2x these numbers. Raising c 3-4x on top of that multiplier swept the fingers
 // forward into long curved tentacles.
-const FINGER_CURL = { thumb: 0.013, index: 0.026, middle: 0.030, ring: 0.026, pinky: 0.020 };
+// Unequal on purpose: fingers that curl by the same amount stay parallel and read as a
+// comb however well they are shaped.
+const FINGER_CURL = { thumb: 0.013, index: 0.021, middle: 0.032, ring: 0.038, pinky: 0.042 };
 const TIP_CURL = 1.9;
 
 /** Fingers swept along their bones, each finished with a claw. */
@@ -245,10 +247,13 @@ export function buildFingers(rig) {
       // couple of centimetres off the fingertip.
       const p2c = curl(p2, c);
       const p3c = curl(p3, c * TIP_CURL);
+      // CRITIC 9: the hand read as a rake — parallel cylinders of uniform diameter with
+      // no knuckle break and blunt tips. A finger is a tapering column with two distinct
+      // swellings, and the taper has to be strong enough to see.
       const rings = curveRings([root, p1, p2c, p3c], (t) => {
-        const taper = 1 - 0.42 * t;
-        const knuckle = 1 + 0.20 * Math.exp(-Math.pow((t - 0.34) * 7, 2))
-                          + 0.16 * Math.exp(-Math.pow((t - 0.66) * 8, 2));
+        const taper = 1 - 0.58 * t * t - 0.16 * t;
+        const knuckle = 1 + 0.30 * Math.exp(-Math.pow((t - 0.32) * 7, 2))
+                          + 0.24 * Math.exp(-Math.pow((t - 0.64) * 8, 2));
         return r * taper * knuckle;
       }, 16, { tension: 0.4 });
       parts.push({ geom: sweep(rings, { sides: 12, capEnd: false }), region: 'skin' });

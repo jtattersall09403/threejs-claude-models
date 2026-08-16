@@ -68,16 +68,16 @@ const MIRROR = [
   ['thumb3', 'thumb2', [0.222, 0.752, 0.082]],
   ['index1', 'hand', [0.243, 0.792, 0.038]],
   ['index2', 'index1', [0.247, 0.7455, 0.045]],
-  ['index3', 'index2', [0.248, 0.7145, 0.056]],
+  ['index3', 'index2', [0.246, 0.7085, 0.050]],
   ['middle1', 'hand', [0.244, 0.79, 0.011]],
   ['middle2', 'middle1', [0.248, 0.7395, 0.027]],
-  ['middle3', 'middle2', [0.249, 0.6985, 0.047]],
+  ['middle3', 'middle2', [0.247, 0.6905, 0.038]],
   ['ring1', 'hand', [0.242, 0.79, -0.015]],
   ['ring2', 'ring1', [0.246, 0.7435, 0.005]],
-  ['ring3', 'ring2', [0.247, 0.7110, 0.026]],
+  ['ring3', 'ring2', [0.245, 0.7130, 0.020]],
   ['pinky1', 'hand', [0.238, 0.788, -0.04]],
   ['pinky2', 'pinky1', [0.241, 0.7510, -0.018]],
-  ['pinky3', 'pinky2', [0.242, 0.7295, 0.001]],
+  ['pinky3', 'pinky2', [0.240, 0.7395, 0.002]],
 
   // Stance width. At the old ±0.078 hip / ±0.089 ankle the thighs overlapped through
   // the centreline and the trouser offset bridged what little gap was left below the

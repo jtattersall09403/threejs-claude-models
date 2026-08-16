@@ -35,7 +35,10 @@ SHOTS.push(
   // bust comparison exists to judge head-to-shoulder proportion, so a framing that
   // crops the head out of it answers nothing.
   ['bust', 6, 3, 1.35, 1.575, 30],
-  ['hands', 48, -4, 1.05, 0.86, 30],
+// Re-aimed after the arms were returned to hanging at the sides: at target y 0.86 from
+  // az 48 this shot was full of coat with the hand at the frame edge. Judge the framing
+  // before judging the model.
+  ['hands', 62, -8, 0.90, 0.775, 32],
   ['feet', 25, 10, 1.15, 0.28, 30],
 // The tail leaves the hips going BACK and DOWN to about y 0.2; framed at y 0.78 from
   // 1.75 m the shot was filled with the coat's back and the tail was out of frame
