@@ -196,6 +196,25 @@ immediately — both of these were obvious in one frame.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
 
+### Iteration 32 — the front-vs-below oscillation resolved, and HAND-OFF for critic round 6
+
+The lower face had been corrected twice in each direction — widened for the front view,
+narrowed for the low view, each change breaking the other. The resolution was not another
+uniform width change: the muzzle has to **taper along its LENGTH**, carrying width at the
+cheek where the front needs it and narrowing hard to the chin where the low angle needs
+it. Snout half-widths now run 0.0448 / 0.0352 / 0.0258 / 0.0186 with matching z-radii,
+and the jaw boxes and masseter taper with them. Both views verified after the change.
+The note is in `parts/anatomy.js` beside the numbers so a future uniform tweak does not
+undo it.
+
+**Handing off with an empty list.** Everything from critic round 5 is worked, and the
+four items I raised for myself in iteration 29 plus the three the angle sweep added in
+iteration 31 are all closed. What remains are places where I have oscillated and where a
+cold read should adjudicate rather than me tuning further — chiefly the muzzle's overall
+length, which critic 5 measured 45% too long, which I then cut past the target into a
+snub nose, and which I have since lengthened back twice.
+
+
 ### Iteration 31 — sweeping the angles I had not re-checked
 
 After changing the muzzle, collar, brow, spikes and tail, a sweep of the angles I had
