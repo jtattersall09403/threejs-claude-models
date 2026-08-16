@@ -213,7 +213,10 @@ const SKIN_FRAG = /* glsl */`
   // it was the reach across x that did it. An explicit lateral gate is the fix.
   float lateral = ss(0.024, 0.046, abs(J.x));
   float eyeD = length((J - vec3(EYE_X, EYE_Y + 0.004, EYE_Z + 0.018)) * vec3(0.60, 1.05, 0.46));
-  float socket = ss(0.140, 0.050, eyeD) * ss(1.618, 1.646, H.y) * lateral;
+// A DARK MASK around the eye. In every reference the eye sits in a near-black socket
+  // that reads at any distance and is most of what makes the eye look set INTO the head
+  // rather than stuck on it. Ours was too small and too weak to register.
+  float socket = ss(0.170, 0.058, eyeD) * ss(1.618, 1.646, H.y) * lateral;
   // ...continuing back from the eye to the jaw hinge as a dark mask stripe. This is
   // the strongest value break on the reference face and without it the cheek reads
   // as one flat panel between brow and jaw.

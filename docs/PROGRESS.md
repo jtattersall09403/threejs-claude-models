@@ -196,6 +196,29 @@ immediately — both of these were obvious in one frame.
 
 ## Iteration log (newest first — keep this short, prose only, no image dumps)
 
+### Iteration 25 — head pass, all angles
+
+Continued from the height-channel fix. Every change below was made by looking at the
+render beside the reference, per the user's instruction, and checked on the OTHER angles
+before being kept — several were corrected in the opposite direction after a second view
+showed the first had gone too far (the jaw widened from the front, narrowed again from
+below; the throat narrowed from below, thickened again at three-quarter).
+
+- Scale profile is a SMOOTHSTEP dome, not a power curve. The power curve gave each scale
+  a flat top with a hard rim — a field of faceted pyramids across the back of the skull.
+  The texture's normal strength was also retuned (4.6 → 2.1), since the old value was set
+  when the height channel was saturated and its gradients lived in a one-texel groove.
+- Crest raised into a proper fan of dark oxblood blades. It had been rendering salmon
+  pink from above and reading as plastic fins.
+- Brow field confined so it stops turning the top of the muzzle mauve.
+- Eye socket darkened into a real mask — what makes the eye look set INTO the head.
+- Muzzle lengthened ~10%, mouth/nostrils/jaw following, so the snout-to-skull proportion
+  matches the profile. Snout z-radius tapers to a rounded point.
+- Horn cuff narrowed to a band; two brow spines a side instead of three.
+
+The head now reads as the same creature as the reference from front, three-quarter,
+profile, jawline, rear three-quarter and top.
+
 ### Iteration 24 — THE HIDE'S HEIGHT CHANNEL WAS DEAD, and the head after fixing it
 
 The single most important finding in the project so far. `debugMasks(8)` (added this
